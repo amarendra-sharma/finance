@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio Builder — MacroNations Finance</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Instrument Serif','serif'] } } } };
+</script>
+<style>
+  html,body{background:#070C16;}
+  body{font-family:'Inter',system-ui,sans-serif;color:#EAF2FF;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  ::selection{background:rgba(37,99,235,.35);color:#fff;}
+  .arena-bg{position:fixed;inset:0;z-index:-2;background:#060A12;overflow:hidden;}
+  .arena-bg::before{content:'';position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,#1D4ED8 0%,transparent 65%);filter:blur(140px);opacity:.30;top:-25vw;left:35%;}
+  .arena-bg::after{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,#0E7490 0%,transparent 65%);filter:blur(150px);opacity:.2;bottom:-20vw;left:-10vw;}
+  ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:5px;}
+  .card{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08);border-radius:18px;backdrop-filter:blur(12px);}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:11px;transition:transform .14s,box-shadow .25s,background .15s;}
+  .btn-primary{background:linear-gradient(135deg,#2563EB,#38BDF8);color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.55),inset 0 1px 0 rgba(255,255,255,.2);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-gold{background:linear-gradient(135deg,#F59E0B,#B45309);color:#241405;box-shadow:0 8px 22px -6px rgba(245,158,11,.5),inset 0 1px 0 rgba(255,255,255,.3);}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#EAF2FF;border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{background:rgba(255,255,255,.09);}
+  input[type=range]{width:100%;}
+  .stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+  .stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(234,242,255,.5);font-weight:600;}
+  .stat .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;line-height:1.1;margin-top:4px;}
+  .pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(234,242,255,.75);}
+  .glow-dot{width:8px;height:8px;border-radius:50%;background:#2DD4BF;box-shadow:0 0 10px #2DD4BF;display:inline-block;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .asset-row{display:grid;grid-template-columns:96px 1fr 52px;gap:10px;align-items:center;margin-bottom:11px;}
+  .asset-name{font-size:13px;font-weight:600;}
+  .asset-sub{font-size:10px;color:rgba(234,242,255,.45);font-family:'JetBrains Mono',monospace;}
+  .wpct{font-family:'JetBrains Mono',monospace;font-size:13px;color:#5EEAD4;text-align:right;font-weight:700;}
+  .reveal{animation:rin .4s cubic-bezier(.16,1,.3,1);}
+  @keyframes rin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  a.backlink{color:rgba(234,242,255,.6);text-decoration:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+  a.backlink:hover{color:#fff;background:rgba(255,255,255,.08);}
+</style>
+</head>
+<body>
+<div class="arena-bg"></div>
+<div class="max-w-6xl mx-auto px-5 py-6">
+
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <a href="finance-curriculum.html#chapter-10" class="backlink inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]">&larr; Back to book</a>
+      <span class="pill" style="border-color:rgba(45,212,191,.4);color:#5EEAD4;">MacroNations · Finance</span>
+    </div>
+    <div class="text-[12px]" style="color:rgba(234,242,255,.5);"><span class="glow-dot"></span> &nbsp;Portfolio Builder</div>
+  </div>
+
+  <div class="mb-6">
+    <div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1.05;">The Portfolio Builder</div>
+    <div class="mt-2 text-[15px] max-w-2xl" style="color:rgba(234,242,255,.72);line-height:1.6;">Divide your money across five assets and watch your portfolio's risk and return move in real time on the efficient frontier. Your mission: find the mix with the best <b>risk-adjusted return</b> — the highest Sharpe ratio — and beat the naïve all-stocks portfolio. Then stress-test it against a crash.</div>
+  </div>
+
+  <div class="grid md:grid-cols-[350px_1fr] gap-5">
+
+    <!-- allocation -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-[11px] uppercase tracking-wider font-semibold" style="color:#38BDF8;">Your allocation</div>
+        <div class="text-[12px]" id="totalLbl" style="font-family:'JetBrains Mono',monospace;color:#5EEAD4;">100%</div>
+      </div>
+      <div id="assets"></div>
+      <div class="text-[11px] mb-4" style="color:rgba(234,242,255,.45);">Weights are normalized to 100% automatically.</div>
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <button class="btn btn-ghost py-2 text-[12px]" id="allStock">All stocks</button>
+        <button class="btn btn-ghost py-2 text-[12px]" id="sixtyForty">60 / 40</button>
+      </div>
+      <button class="btn btn-primary w-full py-2.5 text-[13px]" id="optimize">✨ Show best-Sharpe mix</button>
+    </div>
+
+    <!-- frontier + stats -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <div class="text-[13px]" style="color:rgba(234,242,255,.7);">Risk &harr; return (the efficient frontier)</div>
+          <div class="flex items-center gap-4 text-[11px]" style="color:rgba(234,242,255,.6);">
+            <span class="inline-flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:50%;background:#2DD4BF;display:inline-block;"></span> You</span>
+            <span class="inline-flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:50%;background:#FBBF24;display:inline-block;"></span> Best Sharpe</span>
+            <span class="inline-flex items-center gap-1.5"><span style="width:14px;height:0;border-top:2px solid #38BDF8;display:inline-block;"></span> Frontier</span>
+          </div>
+        </div>
+        <canvas id="chart" width="820" height="340" style="width:100%;height:auto;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);"></canvas>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+          <div class="stat"><div class="lbl">Expected return</div><div class="val" id="s_ret" style="color:#5EEAD4;">0%</div></div>
+          <div class="stat"><div class="lbl">Risk (volatility)</div><div class="val" id="s_vol" style="color:#FBBF24;">0%</div></div>
+          <div class="stat"><div class="lbl">Sharpe ratio</div><div class="val" id="s_sharpe" style="color:#38BDF8;">0.00</div></div>
+          <div class="stat"><div class="lbl">Diversification</div><div class="val" id="s_div" style="color:#EAF2FF;">—</div></div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="card p-5">
+          <div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#FB7185;">Crash stress test</div>
+          <div class="text-[12px] mb-3" style="color:rgba(234,242,255,.6);">A 2008-style year: stocks −37%, intl −44%, REIT −40%, bonds +5%, cash +2%. How does your mix hold up?</div>
+          <button class="btn btn-ghost w-full py-2.5 text-[13px] mb-3" id="stress">Run the crash</button>
+          <div id="stressOut" class="text-[13px]" style="color:rgba(234,242,255,.6);">—</div>
+        </div>
+        <div class="card p-5">
+          <div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#2DD4BF;">Score</div>
+          <div id="scoreOut" class="text-[13px]" style="color:rgba(234,242,255,.6);line-height:1.6;">Tune your allocation to maximize the Sharpe ratio. Your score is how close you get to the best possible risk-adjusted mix.</div>
+          <button class="btn btn-gold w-full py-3 text-[14px] mt-4" id="save">✓ Finish &amp; save my score</button>
+          <div id="savedNote" class="text-[12px] mt-2" style="display:none;color:#5EEAD4;">Saved to your progress.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-6 text-[12px] text-center" style="color:rgba(234,242,255,.4);">Expected returns, volatilities, and correlations are illustrative long-run estimates — a teaching model, not advice.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="fin-progress.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.getElementById(s);};
+  // Assets: expected return, volatility (annual, decimals)
+  var A=[
+    {k:'US Stocks', mu:0.090, sd:0.17, c:'#38BDF8'},
+    {k:'Intl Stocks', mu:0.082, sd:0.19, c:'#818CF8'},
+    {k:'Bonds', mu:0.040, sd:0.06, c:'#2DD4BF'},
+    {k:'REIT', mu:0.085, sd:0.20, c:'#FBBF24'},
+    {k:'Cash', mu:0.025, sd:0.010, c:'#94A3B8'}
+  ];
+  var RF=0.025;
+  // correlation matrix (symmetric)
+  var COR=[
+    [1.00,0.85,0.15,0.60,0.00],
+    [0.85,1.00,0.10,0.55,0.00],
+    [0.15,0.10,1.00,0.20,0.10],
+    [0.60,0.55,0.20,1.00,0.00],
+    [0.00,0.00,0.10,0.00,1.00]
+  ];
+  var n=A.length;
+  // covariance
+  var COV=[]; for(var i=0;i<n;i++){COV[i]=[];for(var j=0;j<n;j++){COV[i][j]=COR[i][j]*A[i].sd*A[j].sd;}}
+
+  var W=[40,15,30,10,5]; // raw slider values
+
+  function norm(w){ var s=w.reduce(function(a,b){return a+b;},0)||1; return w.map(function(x){return x/s;}); }
+  function ret(w){ var wn=norm(w),r=0; for(var i=0;i<n;i++)r+=wn[i]*A[i].mu; return r; }
+  function vol(w){ var wn=norm(w),v=0; for(var i=0;i<n;i++)for(var j=0;j<n;j++)v+=wn[i]*wn[j]*COV[i][j]; return Math.sqrt(Math.max(0,v)); }
+  function sharpe(w){ var v=vol(w); return v>0?(ret(w)-RF)/v:0; }
+  function wavgVol(w){ var wn=norm(w),v=0; for(var i=0;i<n;i++)v+=wn[i]*A[i].sd; return v; }
+
+  // Monte Carlo cloud + frontier + best sharpe
+  var cloud=[], frontier=[], best=null, minVolPt=null;
+  function buildCloud(){
+    cloud=[]; best=null; var byRet={};
+    for(var s=0;s<4000;s++){
+      var w=[]; for(var i=0;i<n;i++)w.push(Math.pow(Math.random(),1.5));
+      var r=ret(w),v=vol(w),sh=sharpe(w);
+      cloud.push({r:r,v:v,sh:sh,w:norm(w)});
+      if(!best||sh>best.sh)best={r:r,v:v,sh:sh,w:norm(w)};
+      var bucket=Math.round(r*400); // 0.25% buckets
+      if(!byRet[bucket]||v<byRet[bucket].v)byRet[bucket]={r:r,v:v};
+    }
+    frontier=Object.keys(byRet).map(function(k){return byRet[k];}).sort(function(a,b){return a.v-b.v;});
+    // keep only the efficient (upper) part: as v increases r should increase
+    var eff=[],maxR=-1; frontier.forEach(function(p){ if(p.r>maxR){eff.push(p);maxR=p.r;} }); frontier=eff.sort(function(a,b){return a.v-b.v;});
+  }
+
+  var cv=$('chart'),ctx=cv.getContext('2d');
+  function draw(){
+    var Wd=cv.width,H=cv.height,padL=54,padR=16,padT=14,padB=34;
+    ctx.clearRect(0,0,Wd,H);
+    var maxV=0.24,maxR=0.11,minR=0.0;
+    var X=function(v){return padL+(Wd-padL-padR)*(v/maxV);};
+    var Y=function(r){return H-padB-(H-padT-padB)*((r-minR)/(maxR-minR));};
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.fillStyle='rgba(234,242,255,.45)';ctx.font='10px monospace';
+    ctx.textAlign='right';
+    for(var g=0;g<=5;g++){var r=minR+(maxR-minR)*g/5,yy=Y(r);ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(Wd-padR,yy);ctx.stroke();ctx.fillText((r*100).toFixed(0)+'%',padL-6,yy+3);}
+    ctx.textAlign='center';
+    for(var g2=0;g2<=6;g2++){var v=maxV*g2/6,xx=X(v);ctx.fillText((v*100).toFixed(0)+'%',xx,H-10);}
+    ctx.fillStyle='rgba(234,242,255,.4)';ctx.fillText('risk (volatility) →',Wd/2,H-1);
+    ctx.save();ctx.translate(12,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('expected return →',0,0);ctx.restore();
+    // cloud colored by sharpe
+    cloud.forEach(function(p){ var t=Math.max(0,Math.min(1,(p.sh-0.2)/0.9));
+      ctx.fillStyle='rgba('+Math.round(80+t*(45-80))+','+Math.round(120+t*(212-120))+','+Math.round(200+t*(191-200))+',0.28)';
+      ctx.beginPath();ctx.arc(X(p.v),Y(p.r),1.7,0,7);ctx.fill(); });
+    // frontier line
+    ctx.strokeStyle='#38BDF8';ctx.lineWidth=2.5;ctx.beginPath();frontier.forEach(function(p,i){var x=X(p.v),y=Y(p.r);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+    // capital market line from RF through best (tangency)
+    if(best){ ctx.strokeStyle='rgba(251,191,36,.5)';ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(X(0),Y(RF));ctx.lineTo(X(best.v*1.3),Y(RF+best.sh*best.v*1.3));ctx.stroke();ctx.setLineDash([]); }
+    // best sharpe point
+    if(best){ ctx.fillStyle='#FBBF24';ctx.beginPath();ctx.arc(X(best.v),Y(best.r),6,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke(); }
+    // your point
+    var yr=ret(W),yv=vol(W);
+    ctx.fillStyle='#2DD4BF';ctx.beginPath();ctx.arc(X(yv),Y(yr),7,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  }
+
+  function refresh(){
+    var wn=norm(W);
+    // render weights
+    $('assets').innerHTML=A.map(function(a,i){
+      return '<div class="asset-row"><div><div class="asset-name" style="color:'+a.c+';">'+a.k+'</div><div class="asset-sub">μ '+(a.mu*100).toFixed(1)+'% · σ '+(a.sd*100).toFixed(0)+'%</div></div>'+
+        '<input type="range" min="0" max="100" step="1" value="'+W[i]+'" data-i="'+i+'" style="accent-color:'+a.c+';">'+
+        '<div class="wpct">'+Math.round(wn[i]*100)+'%</div></div>';
+    }).join('');
+    $('assets').querySelectorAll('input[type=range]').forEach(function(inp){
+      inp.addEventListener('input',function(){ W[parseInt(this.dataset.i,10)]=parseFloat(this.value); refresh(); });
+    });
+    var r=ret(W),v=vol(W),sh=sharpe(W),wav=wavgVol(W);
+    $('s_ret').textContent=(r*100).toFixed(1)+'%';
+    $('s_vol').textContent=(v*100).toFixed(1)+'%';
+    $('s_sharpe').textContent=sh.toFixed(2);
+    var divBenefit=(1-v/wav)*100;
+    $('s_div').textContent=divBenefit>1?('-'+divBenefit.toFixed(0)+'% risk'):'low';
+    // score vs best sharpe
+    if(best){
+      var frac=Math.max(0,Math.min(1, sh/best.sh));
+      $('scoreOut').innerHTML='Your Sharpe: <b style="color:#38BDF8;">'+sh.toFixed(2)+'</b> vs the best achievable <b style="color:#FBBF24;">'+best.sh.toFixed(2)+'</b>.<br>'+
+        '<div style="margin-top:6px;">'+(frac>0.97?'<b style="color:#5EEAD4;">Excellent — right on the tangency portfolio.</b>':frac>0.85?'Close. Nudge toward the yellow point on the frontier.':'Room to improve — more diversification usually lifts the Sharpe ratio.')+'</div>'+
+        '<div style="margin-top:6px;font-family:JetBrains Mono,monospace;color:#5EEAD4;">Score: '+Math.round(frac*100)+' / 100</div>';
+      window._finResult={ score:frac, outcome:(frac>0.9?'win':'completed'), detail:{ sharpe:+sh.toFixed(3), bestSharpe:+best.sh.toFixed(3), ret:+(r*100).toFixed(2), vol:+(v*100).toFixed(2), weights:norm(W).map(function(x){return +(x*100).toFixed(1);}) } };
+    }
+    draw();
+  }
+
+  $('optimize').addEventListener('click',function(){ if(best){ W=best.w.map(function(x){return x*100;}); refresh(); } });
+  $('allStock').addEventListener('click',function(){ W=[100,0,0,0,0]; refresh(); });
+  $('sixtyForty').addEventListener('click',function(){ W=[45,15,40,0,0]; refresh(); });
+  $('stress').addEventListener('click',function(){
+    var shock=[-0.37,-0.44,0.05,-0.40,0.02]; var wn=norm(W),loss=0;
+    for(var i=0;i<n;i++)loss+=wn[i]*shock[i];
+    var allStockLoss=shock[0];
+    $('stressOut').innerHTML='<b style="color:'+(loss>-0.15?'#5EEAD4':'#FB7185')+';font-size:15px;font-family:JetBrains Mono,monospace;">'+(loss*100).toFixed(1)+'%</b> in the crash year.<br>'+
+      '<div style="margin-top:6px;color:rgba(234,242,255,.6);">A \$100,000 portfolio would fall to <b>$'+Math.round(100000*(1+loss)).toLocaleString()+'</b>. An all-stock portfolio lost '+(allStockLoss*100).toFixed(0)+'%. '+(loss>allStockLoss+0.05?'Your bonds and cash cushioned the blow — that\'s diversification earning its keep.':'')+'</div>';
+  });
+  $('save').addEventListener('click',function(){ if(window.FINProgress&&window.FINProgress.reportArenaNow){window.FINProgress.reportArenaNow();} $('savedNote').style.display=''; });
+
+  if(window.FINProgress&&window.FINProgress.initArena){ window.FINProgress.initArena({slug:'portfolio',getSession:function(){return window._finResult||null;}}); }
+
+  buildCloud(); refresh();
+})();
+</script>
+</body>
+</html>

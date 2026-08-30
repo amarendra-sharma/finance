@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trading Floor — MacroNations Finance</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Instrument Serif','serif'] } } } };
+</script>
+<style>
+  html,body{background:#070C16;}
+  body{font-family:'Inter',system-ui,sans-serif;color:#EAF2FF;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  ::selection{background:rgba(37,99,235,.35);color:#fff;}
+  .arena-bg{position:fixed;inset:0;z-index:-2;background:#060A12;overflow:hidden;}
+  .arena-bg::before{content:'';position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,#1D4ED8 0%,transparent 65%);filter:blur(140px);opacity:.28;top:-25vw;left:38%;}
+  .arena-bg::after{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,#0E7490 0%,transparent 65%);filter:blur(150px);opacity:.2;bottom:-20vw;left:-10vw;}
+  ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:5px;}
+  .card{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08);border-radius:18px;backdrop-filter:blur(12px);}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:11px;transition:transform .14s,box-shadow .25s,background .15s;}
+  .btn-buy{background:linear-gradient(135deg,#14B8A6,#0E7490);color:#fff;box-shadow:0 8px 22px -6px rgba(20,184,166,.5);}
+  .btn-sell{background:linear-gradient(135deg,#FB7185,#BE123C);color:#fff;box-shadow:0 8px 22px -6px rgba(251,113,133,.5);}
+  .btn-primary{background:linear-gradient(135deg,#2563EB,#38BDF8);color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.55);}
+  .btn-gold{background:linear-gradient(135deg,#F59E0B,#B45309);color:#241405;box-shadow:0 8px 22px -6px rgba(245,158,11,.5);}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#EAF2FF;border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{background:rgba(255,255,255,.09);}
+  .btn:hover{transform:translateY(-1px);} .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+  .stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+  .stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(234,242,255,.5);font-weight:600;}
+  .stat .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:19px;line-height:1.1;margin-top:4px;}
+  .pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(234,242,255,.75);}
+  .glow-dot{width:8px;height:8px;border-radius:50%;background:#2DD4BF;box-shadow:0 0 10px #2DD4BF;display:inline-block;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .news{font-size:12.5px;padding:9px 12px;border-radius:9px;margin-bottom:7px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);line-height:1.45;}
+  .news.up{border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.06);}
+  .news.down{border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.06);}
+  .news.noise{border-color:rgba(148,163,184,.25);}
+  .reveal{animation:rin .4s cubic-bezier(.16,1,.3,1);}
+  @keyframes rin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  a.backlink{color:rgba(234,242,255,.6);text-decoration:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+  a.backlink:hover{color:#fff;background:rgba(255,255,255,.08);}
+</style>
+</head>
+<body>
+<div class="arena-bg"></div>
+<div class="max-w-6xl mx-auto px-5 py-6">
+
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <a href="finance-curriculum.html#chapter-11" class="backlink inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]">&larr; Back to book</a>
+      <span class="pill" style="border-color:rgba(45,212,191,.4);color:#5EEAD4;">MacroNations · Finance</span>
+    </div>
+    <div class="text-[12px]" style="color:rgba(234,242,255,.5);"><span class="glow-dot"></span> &nbsp;Trading Floor &middot; <span id="dayLbl">Day 0 / 30</span></div>
+  </div>
+
+  <div class="mb-6">
+    <div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1.05;">The Trading Floor</div>
+    <div class="mt-2 text-[15px] max-w-2xl" style="color:rgba(234,242,255,.72);line-height:1.6;">Thirty trading days. Buy and sell a stock as news breaks, and try to beat a rival who simply bought on day one and never touched it again. Every trade costs a little. Can active trading win — or will the market teach you why it's called <i>efficient</i>?</div>
+  </div>
+
+  <div class="grid md:grid-cols-[1fr_330px] gap-5">
+
+    <!-- market -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <div class="flex items-baseline gap-3">
+            <div style="font-family:'Instrument Serif',serif;font-size:22px;">MNTX</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;" id="price">$100.00</div>
+            <div id="chg" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#5EEAD4;">+0.0%</div>
+          </div>
+          <div class="flex items-center gap-4 text-[11px]" style="color:rgba(234,242,255,.6);">
+            <span class="inline-flex items-center gap-1.5"><span style="width:14px;height:3px;background:#2DD4BF;display:inline-block;border-radius:2px;"></span> Your portfolio</span>
+            <span class="inline-flex items-center gap-1.5"><span style="width:14px;height:0;border-top:2px dashed #FBBF24;display:inline-block;"></span> Buy &amp; hold</span>
+          </div>
+        </div>
+        <canvas id="chart" width="820" height="300" style="width:100%;height:auto;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);"></canvas>
+        <div class="grid grid-cols-3 gap-3 mt-4">
+          <div class="stat"><div class="lbl">Your portfolio</div><div class="val" id="s_you" style="color:#5EEAD4;">$10,000</div></div>
+          <div class="stat"><div class="lbl">Buy &amp; hold</div><div class="val" id="s_bh" style="color:#FBBF24;">$10,000</div></div>
+          <div class="stat"><div class="lbl">You vs market</div><div class="val" id="s_vs" style="color:#EAF2FF;">0.0%</div></div>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-[11px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Position</div>
+            <div class="text-[14px] mt-1" id="posLine" style="color:rgba(234,242,255,.8);">100% cash · $10,000 · 0 shares</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-buy px-5 py-3 text-[14px]" id="buy">Buy all</button>
+            <button class="btn btn-sell px-5 py-3 text-[14px]" id="sell">Sell all</button>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button class="btn btn-primary flex-1 py-3 text-[14px]" id="advance">Next day &rarr;</button>
+          <button class="btn btn-ghost px-4 py-3 text-[13px]" id="auto">Auto-play</button>
+        </div>
+        <div class="text-[11px] mt-2 text-center" style="color:rgba(234,242,255,.4);">Each Buy or Sell costs 0.15% in fees &amp; spread — trading is not free.</div>
+      </div>
+    </div>
+
+    <!-- news + result -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="text-[11px] uppercase tracking-wider font-semibold mb-3" style="color:#FBBF24;">News wire</div>
+        <div id="news" style="max-height:300px;overflow:auto;"><div class="text-[13px]" style="color:rgba(234,242,255,.45);">Press <b style="color:#EAF2FF;">Next day</b> to open the market.</div></div>
+      </div>
+      <div class="card p-5" id="resultCard" style="display:none;">
+        <div class="text-[11px] uppercase tracking-wider font-semibold mb-3" style="color:#2DD4BF;">Final result</div>
+        <div id="result" class="text-[13px]" style="color:rgba(234,242,255,.7);line-height:1.6;"></div>
+        <button class="btn btn-gold w-full py-3 text-[14px] mt-4" id="save">✓ Finish &amp; save my score</button>
+        <div id="savedNote" class="text-[12px] mt-2" style="display:none;color:#5EEAD4;">Saved to your progress.</div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-6 text-[12px] text-center" style="color:rgba(234,242,255,.4);">A simulated market. Some headlines are surprises that move the price; many are already "priced in" and move nothing — that's the efficient-markets lesson in miniature.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="fin-progress.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.getElementById(s);};
+  var money=function(x){return '$'+Math.round(x).toLocaleString('en-US');};
+  var DAYS=30, COST=0.0015, START=10000;
+  var day=0, price=100, prices=[100], invested=false, cash=START, shares=0;
+  var youHist=[START], bhHist=[START], bhShares=START/100;
+  var autoTimer=null, over=false;
+
+  var HEAD_UP=['Analysts upgrade MNTX to "buy"','MNTX lands a major new customer','Earnings beat expectations','New product launch draws strong reviews','Cost cuts lift margins'];
+  var HEAD_DN=['Regulator opens inquiry into MNTX','Earnings miss; guidance cut','Key executive resigns abruptly','A rival undercuts MNTX on price','Supply-chain disruption reported'];
+  var HEAD_NOISE=['CEO interviewed on cable news (nothing new said)','MNTX added to a popular stock newsletter','Rumor circulates that was already reported last week','Trading volume ticks up on no news','Blogger reiterates well-known bull case'];
+
+  function fmtPos(){
+    if(invested) $('posLine').textContent='100% invested · '+shares.toFixed(1)+' shares · '+money(shares*price);
+    else $('posLine').textContent='100% cash · '+money(cash)+' · 0 shares';
+  }
+  function youValue(){ return invested? shares*price : cash; }
+
+  var cv=$('chart'),ctx=cv.getContext('2d');
+  function draw(){
+    var W=cv.width,H=cv.height,padL=54,padR=16,padT=14,padB=26;
+    ctx.clearRect(0,0,W,H);
+    var all=youHist.concat(bhHist); var maxY=Math.max.apply(null,all)*1.03, minY=Math.min.apply(null,all)*0.97;
+    var n=youHist.length;
+    var X=function(i){return padL+(W-padL-padR)*(n<=1?0:i/(DAYS));};
+    var Y=function(v){return H-padB-(H-padT-padB)*((v-minY)/(maxY-minY||1));};
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.fillStyle='rgba(234,242,255,.45)';ctx.font='10px monospace';ctx.textAlign='right';
+    for(var g=0;g<=4;g++){var v=minY+(maxY-minY)*g/4,yy=Y(v);ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(W-padR,yy);ctx.stroke();ctx.fillText(money(v),padL-6,yy+3);}
+    // buy&hold dashed
+    ctx.strokeStyle='#FBBF24';ctx.setLineDash([6,4]);ctx.lineWidth=2;ctx.beginPath();bhHist.forEach(function(v,i){var x=X(i),y=Y(v);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();ctx.setLineDash([]);
+    // you
+    ctx.strokeStyle='#2DD4BF';ctx.lineWidth=2.8;ctx.beginPath();youHist.forEach(function(v,i){var x=X(i),y=Y(v);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+    // dot
+    var ci=n-1;ctx.fillStyle='#5EEAD4';ctx.beginPath();ctx.arc(X(ci),Y(youHist[ci]),4,0,7);ctx.fill();
+    ctx.fillStyle='rgba(234,242,255,.45)';ctx.textAlign='center';ctx.fillText('day 0',X(0),H-9);ctx.fillText('day '+DAYS,X(DAYS),H-9);
+  }
+
+  function addNews(txt,cls){ var d=document.createElement('div'); d.className='news '+(cls||'')+' reveal'; d.innerHTML=txt; var nn=$('news'); if(nn.querySelector('.text-\\[13px\\]'))nn.innerHTML=''; nn.insertBefore(d,nn.firstChild); }
+
+  function stepDay(){
+    if(over) return;
+    day++;
+    // price move: base random walk + occasional news shock
+    var z=(function(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);})();
+    var ret=0.015*z; // daily vol ~1.5%
+    var roll=Math.random(); var head=null, cls='noise';
+    if(roll<0.22){ ret+=0.02+Math.random()*0.05; head=HEAD_UP[Math.floor(Math.random()*HEAD_UP.length)]; cls='up'; }
+    else if(roll<0.44){ ret-=0.02+Math.random()*0.05; head=HEAD_DN[Math.floor(Math.random()*HEAD_DN.length)]; cls='down'; }
+    else if(roll<0.72){ head=HEAD_NOISE[Math.floor(Math.random()*HEAD_NOISE.length)]; cls='noise'; } // priced in: no extra move
+    price=price*(1+ret); prices.push(price);
+    if(invested){ /* shares constant, value tracks price */ }
+    bhHist.push(bhShares*price);
+    youHist.push(youValue());
+    // ui
+    var chg=(price/prices[prices.length-2]-1)*100;
+    $('price').textContent='$'+price.toFixed(2);
+    $('chg').textContent=(chg>=0?'+':'')+chg.toFixed(1)+'%'; $('chg').style.color=chg>=0?'#5EEAD4':'#FB7185';
+    $('dayLbl').textContent='Day '+day+' / '+DAYS;
+    if(head){ var tag= cls==='up'?' <span style="color:#5EEAD4;font-weight:600;">▲ '+chg.toFixed(1)+'%</span>' : cls==='down'?' <span style="color:#FB7185;font-weight:600;">▼ '+chg.toFixed(1)+'%</span>' : ' <span style="color:rgba(234,242,255,.45);">— no move</span>';
+      addNews('<b>Day '+day+':</b> '+head+tag+(cls==='noise'?'<div style="font-size:11px;color:rgba(234,242,255,.45);margin-top:3px;">Already priced in — the market shrugged.</div>':''), cls); }
+    fmtPos(); updateStats(); draw();
+    if(day>=DAYS){ endGame(); }
+  }
+
+  function updateStats(){
+    var you=youValue(), bh=bhShares*price, vs=(you/bh-1)*100;
+    $('s_you').textContent=money(you); $('s_bh').textContent=money(bh);
+    $('s_vs').textContent=(vs>=0?'+':'')+vs.toFixed(1)+'%'; $('s_vs').style.color=vs>=0?'#5EEAD4':'#FB7185';
+  }
+
+  var trades=0;
+  $('buy').addEventListener('click',function(){ if(over||invested)return; shares=(cash*(1-COST))/price; cash=0; invested=true; trades++; fmtPos(); youHist[youHist.length-1]=youValue(); updateStats(); draw(); });
+  $('sell').addEventListener('click',function(){ if(over||!invested)return; cash=shares*price*(1-COST); shares=0; invested=false; trades++; fmtPos(); youHist[youHist.length-1]=youValue(); updateStats(); draw(); });
+  $('advance').addEventListener('click',function(){ stepDay(); });
+  $('auto').addEventListener('click',function(){ if(autoTimer){ clearInterval(autoTimer); autoTimer=null; this.textContent='Auto-play'; } else { this.textContent='Pause'; var self=this; autoTimer=setInterval(function(){ if(over){clearInterval(autoTimer);autoTimer=null;self.textContent='Auto-play';return;} stepDay(); },700); } });
+
+  function endGame(){
+    over=true; if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('auto').textContent='Auto-play';}
+    $('advance').disabled=true; $('buy').disabled=true; $('sell').disabled=true;
+    var you=youValue(), bh=bhShares*price;
+    var youRet=(you/START-1)*100, bhRet=(bh/START-1)*100, diff=youRet-bhRet;
+    var beat=you>bh;
+    var costDrag=trades*COST*100;
+    $('resultCard').style.display='';
+    $('result').innerHTML='<b style="color:'+(beat?'#5EEAD4':'#FBBF24')+';font-size:16px;font-family:Instrument Serif,serif;">'+(beat?'You beat the market by '+diff.toFixed(1)+'%':'The market won by '+(-diff).toFixed(1)+'%')+'</b>'+
+      '<div style="margin-top:8px;">You: <b style="color:#5EEAD4;">'+money(you)+'</b> ('+(youRet>=0?'+':'')+youRet.toFixed(1)+'%) &nbsp;·&nbsp; Buy &amp; hold: <b style="color:#FBBF24;">'+money(bh)+'</b> ('+(bhRet>=0?'+':'')+bhRet.toFixed(1)+'%).</div>'+
+      '<div style="margin-top:8px;color:rgba(234,242,255,.6);">You traded <b>'+trades+'</b> times, paying about <b>'+costDrag.toFixed(2)+'%</b> in fees. '+(beat?'Nicely done — but notice how much the fees ate into your edge.':'This is the efficient-markets lesson: reacting to news that everyone already sees rarely beats simply holding, and every trade leaks money to costs.')+'</div>';
+    var score=Math.max(0,Math.min(1, 0.5 + diff/40)); // beating by ~20% => ~1.0
+    window._finResult={ score:score, outcome:(beat?'win':'loss'), detail:{ youReturn:+youRet.toFixed(1), bhReturn:+bhRet.toFixed(1), trades:trades, finalValue:Math.round(you) } };
+  }
+
+  $('save').addEventListener('click',function(){ if(window.FINProgress&&window.FINProgress.reportArenaNow){window.FINProgress.reportArenaNow();} $('savedNote').style.display=''; });
+  if(window.FINProgress&&window.FINProgress.initArena){ window.FINProgress.initArena({slug:'market-floor',getSession:function(){return window._finResult||null;}}); }
+
+  fmtPos(); draw();
+})();
+</script>
+</body>
+</html>
