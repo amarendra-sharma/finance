@@ -119,7 +119,7 @@
         arena_slug: slug,
         score: (typeof score === 'number') ? score : null,
         outcome: outcome ? String(outcome) : null,
-        detail: detail ? detail : null
+        details: detail ? detail : null
       };
       return sb.from('fin_arena_results').insert(row);
     }).catch(function () { return null; });
