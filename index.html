@@ -3342,7 +3342,7 @@ function openExamEditor(examId){
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
         '<div class="field" style="grid-column:1/3;"><label>Title</label><input id="edTitle" value="'+esc(e.title||'')+'"></div>'+
         '<div class="field" style="grid-column:1/3;"><label>Instructions (shown before the exam)</label><textarea id="edInstr" rows="2">'+esc(e.instructions||'')+'</textarea></div>'+
-        '<div class="field"><label>Kind</label><select id="edKind"><option value="midterm"'+(e.kind==='midterm'?' selected':'')+'>Midterm</option><option value="final"'+(e.kind==='final'?' selected':'')+'>Final</option></select></div>'+
+        '<div class="field"><label>Kind</label><select id="edKind"><option value="quiz"'+(e.kind==='quiz'?' selected':'')+'>Quiz</option><option value="midterm"'+(e.kind==='midterm'?' selected':'')+'>Midterm</option><option value="final"'+(e.kind==='final'?' selected':'')+'>Final</option><option value="practice"'+(e.kind==='practice'?' selected':'')+'>Practice</option></select></div>'+
         '<div class="field"><label>Time limit (minutes)</label><input id="edTime" type="number" min="0" value="'+(e.time_limit_minutes||'')+'"></div>'+
         '<div class="field"><label>Opens at</label><input id="edOpens" type="datetime-local" value="'+dtLocalValue(e.opens_at)+'"></div>'+
         '<div class="field"><label>Closes at</label><input id="edCloses" type="datetime-local" value="'+dtLocalValue(e.closes_at)+'"></div>'+
@@ -3354,9 +3354,10 @@ function openExamEditor(examId){
       '</div>'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px;border-top:1px solid var(--border);padding-top:12px;">'+
         '<div style="font-size:14px;color:var(--text-bright);">Questions (<span id="edCount">'+EDIT_IDS.length+'</span>) \u00b7 <span id="edPts">'+pointsTotal()+'</span> pts</div>'+
-        '<button class="btn btn-ghost btn-sm" id="edAddToggle">+ Add questions</button></div>'+
+        '<div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm" id="edRandToggle">⚄ Random draw</button><button class="btn btn-ghost btn-sm" id="edAddToggle">+ Add questions</button></div></div>'+
       '<div id="edQList"></div>'+
       '<div id="edAddPanel" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px;"></div>'+
+      '<div id="edRandPanel" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px;"></div>'+
       '<div class="inline-actions" style="justify-content:flex-end;margin-top:16px;">'+
         '<button class="btn btn-ghost btn-sm" id="edCancel">Cancel</button>'+
         '<button class="btn btn-primary btn-sm" id="edSave">Save changes</button></div>';
@@ -3364,6 +3365,7 @@ function openExamEditor(examId){
     renderQList();
     $('edCancel').addEventListener('click', close);
     $('edAddToggle').addEventListener('click', function(){ var p=$('edAddPanel'); if(p.style.display==='none'){ p.style.display='block'; loadAddBank(); } else { p.style.display='none'; } });
+    $('edRandToggle').addEventListener('click', function(){ var p=$('edRandPanel'); if(p.style.display==='none'){ p.style.display='block'; loadRandPanel(); } else { p.style.display='none'; } });
     $('edSave').addEventListener('click', save);
   }
 
@@ -3425,6 +3427,41 @@ function openExamEditor(examId){
     });
   }
 
+  function loadRandPanel(){
+    var p=$('edRandPanel'); if(!p){ return; }
+    var chOpts='<option value="">All chapters</option>'; for(var c=1;c<=14;c++){ chOpts+='<option value="'+c+'">Chapter '+c+'</option>'; }
+    p.innerHTML=''+
+      '<div style="font-size:13px;color:var(--text-bright);margin-bottom:4px;">Random draw</div>'+
+      '<div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Add N questions drawn at random from a chapter / type / difficulty. Run it several times with different settings to mix (e.g. 5 from Ch 3 + 5 from Ch 5). Duplicates already in the exam are skipped.</div>'+
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">'+
+        '<div class="field" style="max-width:160px;margin:0;"><label>Chapter</label><select id="edRandCh">'+chOpts+'</select></div>'+
+        '<div class="field" style="max-width:170px;margin:0;"><label>Type</label><select id="edRandType"><option value="">Any type</option><option value="multiple_choice">Multiple choice</option><option value="parameterized_numeric">Numeric</option><option value="free_response">Written</option></select></div>'+
+        '<div class="field" style="max-width:150px;margin:0;"><label>Difficulty</label><select id="edRandDiff"><option value="">Any</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>'+
+        '<div class="field" style="max-width:100px;margin:0;"><label>How many</label><input id="edRandN" type="number" min="1" value="5"></div>'+
+        '<button class="btn btn-primary btn-sm" id="edRandGo" style="margin-bottom:2px;">Draw &amp; add</button>'+
+      '</div><div id="edRandMsg" style="font-size:12px;color:var(--text-muted);margin-top:8px;"></div>';
+    $('edRandGo').addEventListener('click', drawRandom);
+  }
+  function drawRandom(){
+    var ch=$('edRandCh').value, ty=$('edRandType').value, df=$('edRandDiff').value;
+    var n=parseInt($('edRandN').value,10); if(isNaN(n)||n<1){ n=1; }
+    var msg=$('edRandMsg'); msg.style.color='var(--text-muted)'; msg.textContent='Drawing…';
+    var q=sb.from('fin_assessment_items').select('id,chapter,concept_tag,difficulty,item_type,points,prompt,options,figure').eq('is_active',true);
+    if(ch){ q=q.eq('chapter',parseInt(ch,10)); }
+    if(ty){ q=q.eq('item_type',ty); }
+    if(df){ q=q.eq('difficulty',df); }
+    q.then(function(res){
+      if(res.error){ msg.style.color='var(--danger,#e5484d)'; msg.textContent=res.error.message; return; }
+      var pool=(res.data||[]).filter(function(it){ return EDIT_IDS.indexOf(it.id)<0; });
+      for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
+      var take=pool.slice(0,n);
+      take.forEach(function(it){ bank[it.id]=it; EDIT_IDS.push(it.id); });
+      renderQList();
+      if(take.length===0){ msg.style.color='var(--danger,#e5484d)'; msg.textContent='No new questions matched those filters (they may already be in the exam).'; }
+      else if(take.length<n){ msg.style.color='var(--amber,#e5a54b)'; msg.textContent='Added '+take.length+' (only '+take.length+' new questions matched that filter).'; }
+      else { msg.style.color='var(--text-muted)'; msg.textContent='Added '+take.length+' random question'+(take.length===1?'':'s')+'. Draw again to add more.'; }
+    });
+  }
   function save(){
     if(EDIT_IDS.length===0){ var e0=$('edMsg'); e0.className='msg err'; e0.textContent='An exam needs at least one question.'; return; }
     var opens=localToIso($('edOpens').value); var closes=localToIso($('edCloses').value);
@@ -3444,9 +3481,10 @@ function openExamEditor(examId){
       total_points: pointsTotal()
     };
     $('edSave').disabled=true;
-    sb.from('fin_exams').update(patch).eq('id',examId).then(function(r){
+    sb.from('fin_exams').update(patch).eq('id',examId).select('id').then(function(r){
       $('edSave').disabled=false;
       if(r.error){ var e2=$('edMsg'); e2.className='msg err'; e2.textContent=r.error.message; return; }
+      if(!r.data || r.data.length===0){ var e3=$('edMsg'); e3.className='msg err'; e3.textContent='Nothing was saved. You may not have edit rights on this exam’s course (are you signed in as its instructor or an admin?), or the exam no longer exists.'; return; }
       close(); loadExams();
     });
   }
@@ -3992,8 +4030,8 @@ function loadStaff(){
 }
 
 /* ---- Access gating: Ch1-2 + Prisoner's Dilemma arena are free; rest needs a sub ---- */
-var FREE_CHAPTERS = { 1:true, 2:true, 3:true };
-var FREE_ARENAS = { 'retirement':true };
+var FREE_CHAPTERS = { 1:true, 2:true };
+var FREE_ARENAS = {};
 function resolveAccess() {
   // Cache on State.hasAccess. Staff always have access. Otherwise true if the
   // student has an active, non-expired subscription OR a super-admin fee waiver
