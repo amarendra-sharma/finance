@@ -2627,7 +2627,7 @@ function openArenaReview(slug){
   q.then(function(res){
     var rows=(res&&res.data)?res.data:[];
     if(rows.length===0){ $('arvBody').innerHTML='<div class="card empty">You didn’t play this arena before it closed, so there is nothing to review.</div>'; return; }
-    var html='<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">This arena is closed. Here are your recorded attempts and how each was graded.</p>';
+    var html='<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">Here are your recorded attempts and how each was graded.</p>';
     rows.forEach(function(r,i){
       var pct=(r.score!==null&&r.score!==undefined)?(Math.round(Number(r.score)*100)+'%'):'—';
       html+='<div class="card" style="margin-bottom:10px;background:var(--bg2);">'+
@@ -4381,7 +4381,8 @@ function renderArenas() {
       div.innerHTML =
         '<div class="c-eyebrow">Arena' + (FREE_ARENAS[slug] ? ' · Free' : '') + '</div>' +
         '<div class="c-title">' + esc(ARENA_TITLE[slug]) + '</div>' +
-        '<div class="c-meta mono">' + esc(slug) + '</div>' + pill;
+        '<div class="c-meta mono">' + esc(slug) + '</div>' + pill +
+        ((uid && used > 0) ? '<div style="margin-top:6px;"><a href="#" data-arena-results="' + esc(slug) + '" style="font-size:12px;color:#38BDF8;">View my results &amp; grading \u2197</a></div>' : '');
       if (file && locked) {
         div.style.opacity = '.7';
         div.addEventListener('click', function() { openSubscribePrompt(ARENA_TITLE[slug] + ' arena'); });
@@ -4399,6 +4400,8 @@ function renderArenas() {
       } else {
         div.style.opacity = '.6'; div.style.cursor = 'default';
       }
+      var _rl = div.querySelector('[data-arena-results]');
+      if (_rl) { _rl.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); openArenaReview(this.getAttribute('data-arena-results')); }); }
       g.appendChild(div);
     });
   }
@@ -4481,24 +4484,32 @@ function loadHomeDeadlines(){
       sb.from('fin_arena_deadlines').select('course_id,arena_slug,opens_at,closes_at').in('course_id',ids),
       sb.from('fin_assignments').select('id,course_id,title,opens_at,closes_at,due_at,is_published').in('course_id',ids).eq('is_published',true),
       sb.from('fin_quiz_deadline_overrides').select('course_id,chapter,closes_at').eq('student_id',uid),
-      sb.from('fin_exam_overrides').select('exam_id,closes_at').eq('student_id',uid)
+      sb.from('fin_exam_overrides').select('exam_id,closes_at').eq('student_id',uid),
+      sb.from('fin_chapter_progress').select('course_id,chapter,quiz_attempts').eq('student_id',uid),
+      sb.from('fin_arena_results').select('course_id,arena_slug').eq('student_id',uid),
+      sb.from('fin_submissions').select('assignment_id').eq('student_id',uid),
+      sb.from('fin_attempts').select('exam_id').eq('student_id',uid).not('exam_id','is',null)
     ]).then(function(res){
       var now=Date.now(), items=[];
       var qOvr={}; ((res[4]&&res[4].data)||[]).forEach(function(o){ qOvr[o.course_id+'|'+o.chapter]=o.closes_at; });
       var eOvr={}; ((res[5]&&res[5].data)||[]).forEach(function(o){ eOvr[o.exam_id]=o.closes_at; });
+      var quizDone={}; ((res[6]&&res[6].data)||[]).forEach(function(r){ if((r.quiz_attempts||0)>0){ quizDone[r.course_id+'|'+r.chapter]=true; } });
+      var arenaDone={}; ((res[7]&&res[7].data)||[]).forEach(function(r){ arenaDone[r.course_id+'|'+r.arena_slug]=true; });
+      var asgDone={}; ((res[8]&&res[8].data)||[]).forEach(function(r){ asgDone[r.assignment_id]=true; });
+      var examDone={}; ((res[9]&&res[9].data)||[]).forEach(function(r){ if(r.exam_id){ examDone[r.exam_id]=true; } });
       ((res[0]&&res[0].data)||[]).forEach(function(e){
         var t=e.kind==='quiz'?'Quiz':(e.kind==='midterm'?'Midterm':(e.kind==='final'?'Final':'Exam'));
-        items.push({type:t,name:e.title,opens:e.opens_at,closes:eOvr[e.id]||e.closes_at});
+        items.push({type:t,name:e.title,opens:e.opens_at,closes:eOvr[e.id]||e.closes_at,done:!!examDone[e.id]});
       });
       ((res[1]&&res[1].data)||[]).forEach(function(q){
-        items.push({type:'Quiz',name:'Chapter '+q.chapter+' quiz',opens:q.opens_at,closes:qOvr[q.course_id+'|'+q.chapter]||q.closes_at});
+        items.push({type:'Quiz',name:'Chapter '+q.chapter+' quiz',opens:q.opens_at,closes:qOvr[q.course_id+'|'+q.chapter]||q.closes_at,done:!!quizDone[q.course_id+'|'+q.chapter]});
       });
       var aName={retirement:'Retirement arena',dcf:'DCF / Valuation arena',portfolio:'Portfolio arena',options:'Options lab','market-floor':'Market floor'};
       ((res[2]&&res[2].data)||[]).forEach(function(a){
-        items.push({type:'Arena',name:aName[a.arena_slug]||a.arena_slug,opens:a.opens_at,closes:a.closes_at});
+        items.push({type:'Arena',name:aName[a.arena_slug]||a.arena_slug,opens:a.opens_at,closes:a.closes_at,done:!!arenaDone[a.course_id+'|'+a.arena_slug]});
       });
       ((res[3]&&res[3].data)||[]).forEach(function(a){
-        items.push({type:'Assignment',name:a.title,opens:a.opens_at,closes:a.closes_at||a.due_at});
+        items.push({type:'Assignment',name:a.title,opens:a.opens_at,closes:a.closes_at||a.due_at,done:!!asgDone[a.id]});
       });
       items=items.filter(function(x){ return x.closes; });
       items.sort(function(a,b){ return new Date(a.closes)-new Date(b.closes); });
@@ -4506,8 +4517,9 @@ function loadHomeDeadlines(){
       var html='<div class="card" style="margin-top:4px;"><h3 style="font-size:16px;margin:0 0 10px;">Upcoming deadlines</h3><div style="display:flex;flex-direction:column;gap:2px;">';
       items.slice(0,14).forEach(function(x){
         var c=new Date(x.closes), cm=c.getTime(), status, color;
-        if(x.opens && now<new Date(x.opens).getTime()){ status='opens '+new Date(x.opens).toLocaleString(); color='var(--text-subtle)'; }
-        else if(now>cm){ status='closed '+c.toLocaleString(); color='var(--danger,#e5484d)'; }
+        if(x.done){ status='\u2713 Completed'; color='#34D399'; }
+        else if(x.opens && now<new Date(x.opens).getTime()){ status='opens '+new Date(x.opens).toLocaleString(); color='var(--text-subtle)'; }
+        else if(now>cm){ status='missed \u00b7 closed '+c.toLocaleString(); color='var(--danger,#e5484d)'; }
         else { var hrs=(cm-now)/3600000; status='due '+c.toLocaleString(); color=(hrs<48?'var(--amber,#e5a54b)':'var(--text-muted)'); }
         html+='<div style="display:flex;align-items:center;gap:10px;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);">'+
           '<div style="min-width:0;"><span class="tag dim" style="font-size:10.5px;">'+esc(x.type)+'</span> <span style="font-size:13.5px;color:var(--text-bright);">'+esc(x.name||'')+'</span></div>'+
