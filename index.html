@@ -4732,9 +4732,10 @@ function loadNewQuestion() {
   sb.from('fin_assessment_items')
     .select('id, item_type, points')
     .eq('chapter', chapter).eq('is_active', true)
+    .in('item_type', ['parameterized_numeric','multiple_choice'])
     .then(function(res) {
       if (res.error) { area.innerHTML = errCard(res.error.message); return; }
-      if (!res.data || res.data.length === 0) { area.innerHTML = errCard('No items found for this chapter.'); return; }
+      if (!res.data || res.data.length === 0) { area.innerHTML = errCard('No auto-graded practice items for this chapter yet. (Written questions are practiced on exams, where your instructor grades them.)'); return; }
       var pick = res.data[Math.floor(Math.random() * res.data.length)];
       // 2) ask the Edge Function to ISSUE a per-student instance
       sb.functions.invoke('fin-grade-attempt', {
