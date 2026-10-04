@@ -2748,11 +2748,12 @@ function openArenaReview(slug){
 
 function renderExams(host){
   if(!needCourse(host)){ return; }
-  host.innerHTML='<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn btn-primary" id="newExamBtn">+ Assemble exam</button><button class="btn btn-ghost" id="libBtn">\uD83D\uDCDA Use a ready-made exam</button><button class="btn btn-ghost" id="quizDlBtn">\u23F0 Quiz deadlines</button><button class="btn btn-ghost" id="arenaDlBtn">\u23F0 Arena deadlines</button></div><div id="examList">'+loadingCard()+'</div>';
+  host.innerHTML='<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn btn-primary" id="newExamBtn">+ Assemble exam</button><button class="btn btn-ghost" id="libBtn">\uD83D\uDCDA Use a ready-made exam</button><button class="btn btn-ghost" id="quizDlBtn">\u23F0 Quiz deadlines</button><button class="btn btn-ghost" id="arenaDlBtn">\u23F0 Arena deadlines</button><button class="btn btn-ghost" id="readDlBtn">\uD83D\uDCD6 Reading deadlines</button></div><div id="examList">'+loadingCard()+'</div>';
   $('newExamBtn').addEventListener('click', function(){ openAssembler(); });
   $('libBtn').addEventListener('click', function(){ openExamLibrary(); });
   $('quizDlBtn').addEventListener('click', function(){ openQuizDeadlines(); });
   if($('arenaDlBtn')){ $('arenaDlBtn').addEventListener('click', function(){ openArenaDeadlines(); }); }
+  if($('readDlBtn')){ $('readDlBtn').addEventListener('click', function(){ openReadingDeadlines(); }); }
   loadExams();
 }
 
@@ -2810,6 +2811,56 @@ function openQuizDeadlines(){
       btn.disabled=false; btn.textContent='Save deadlines';
       alert('Could not save: '+String(e && e.message ? e.message : e));
     });
+  });
+}
+
+function openReadingDeadlines(){
+  if(!State.teachCourseId){ alert('Select a course first.'); return; }
+  var ov=document.createElement('div'); ov.className='modal-overlay';
+  ov.innerHTML='<div class="modal" style="max-width:560px;"><h3 style="margin-bottom:6px;">Reading deadlines</h3>'+
+    '<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">Set an optional <b>opens</b> time and a <b>closes</b> time for each chapter’s assigned reading. These apply to the whole class. Leave <b>closes</b> blank for no deadline. To extend one student, use <b>Reschedule</b> on their row.</p>'+
+    '<div id="rdlBody">'+loadingCard()+'</div>'+
+    '<div class="inline-actions" style="margin-top:14px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="rdlClose">Close</button><button class="btn btn-primary btn-sm" id="rdlSave">Save deadlines</button></div></div>';
+  document.body.appendChild(ov);
+  function shut(){ if(ov.parentNode){ document.body.removeChild(ov); } }
+  $('rdlClose').addEventListener('click', shut);
+  function notInstalled(){
+    $('rdlBody').innerHTML='<div class="msg err" style="display:block;">Reading deadlines are not installed yet. Run <b>fin-backend.sql</b> in the Supabase SQL editor, then reopen this window.</div>';
+    var sv=$('rdlSave'); if(sv){ sv.disabled=true; }
+  }
+  sb.from('fin_reading_deadlines').select('chapter,opens_at,closes_at').eq('course_id',State.teachCourseId).then(function(res){
+    if(res && res.error){ notInstalled(); return; }
+    var have={}; ((res && res.data) ? res.data : []).forEach(function(r){ have[r.chapter]={opens:r.opens_at, closes:r.closes_at}; });
+    var rowsHtml='';
+    CHAPTERS.forEach(function(c){
+      var h=have[c.n]||{};
+      rowsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;"><label style="flex:1 1 150px;font-size:13px;">Ch '+c.n+' · '+esc(c.title)+'</label>'+
+        '<span style="font-size:11px;color:var(--text-subtle);">opens</span><input type="datetime-local" data-rdl-open="'+c.n+'" value="'+dtLocalValue(h.opens)+'" style="font-size:12.5px;padding:4px 7px;">'+
+        '<span style="font-size:11px;color:var(--text-subtle);">closes</span><input type="datetime-local" data-rdl-ch="'+c.n+'" value="'+dtLocalValue(h.closes)+'" style="font-size:12.5px;padding:4px 7px;"></div>';
+    });
+    $('rdlBody').innerHTML=rowsHtml;
+  }, function(){ notInstalled(); });
+  $('rdlSave').addEventListener('click', function(){
+    var inputs=ov.querySelectorAll('[data-rdl-ch]');
+    if(!inputs || inputs.length===0){ shut(); return; }
+    var ups=[], dels=[];
+    Array.prototype.forEach.call(inputs, function(inp){
+      var ch=parseInt(inp.getAttribute('data-rdl-ch'),10);
+      var v=inp.value;
+      var openInp=ov.querySelector('[data-rdl-open="'+ch+'"]');
+      var ovv=openInp?openInp.value:'';
+      if(v){ ups.push({ course_id:State.teachCourseId, chapter:ch, opens_at:(ovv?new Date(ovv).toISOString():null), closes_at:new Date(v).toISOString(), updated_at:new Date().toISOString() }); }
+      else { dels.push(ch); }
+    });
+    var btn=$('rdlSave'); btn.disabled=true; btn.textContent='Saving…';
+    var work=[];
+    if(ups.length){ work.push(sb.from('fin_reading_deadlines').upsert(ups, { onConflict:'course_id,chapter' })); }
+    if(dels.length){ work.push(sb.from('fin_reading_deadlines').delete().eq('course_id',State.teachCourseId).in('chapter',dels)); }
+    Promise.all(work).then(function(rs){
+      var err=null; rs.forEach(function(r){ if(r && r.error){ err=r.error.message; } });
+      if(err){ btn.disabled=false; btn.textContent='Save deadlines'; alert('Could not save: '+err); return; }
+      shut();
+    }, function(e){ btn.disabled=false; btn.textContent='Save deadlines'; alert('Could not save: '+String(e && e.message ? e.message : e)); });
   });
 }
 
