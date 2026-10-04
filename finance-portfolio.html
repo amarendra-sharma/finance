@@ -118,6 +118,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='portfolio';</script>
+<script src="fin-gate.js"></script>
 <script>
 (function(){
   var $=function(s){return document.getElementById(s);};
@@ -220,7 +222,9 @@
       $('scoreOut').innerHTML='Your Sharpe: <b style="color:#38BDF8;">'+sh.toFixed(2)+'</b> vs the best achievable <b style="color:#FBBF24;">'+best.sh.toFixed(2)+'</b>.<br>'+
         '<div style="margin-top:6px;">'+(frac>0.97?'<b style="color:#5EEAD4;">Excellent — right on the tangency portfolio.</b>':frac>0.85?'Close. Nudge toward the yellow point on the frontier.':'Room to improve — more diversification usually lifts the Sharpe ratio.')+'</div>'+
         '<div style="margin-top:6px;font-family:JetBrains Mono,monospace;color:#5EEAD4;">Score: '+Math.round(frac*100)+' / 100</div>';
-      window._finResult={ score:frac, outcome:(frac>0.9?'win':'completed'), detail:{ sharpe:+sh.toFixed(3), bestSharpe:+best.sh.toFixed(3), ret:+(r*100).toFixed(2), vol:+(v*100).toFixed(2), weights:norm(W).map(function(x){return +(x*100).toFixed(1);}) } };
+      window._finResult={ score:frac, outcome:(frac>0.9?'win':'completed'), detail:{ sharpe:+sh.toFixed(3), bestSharpe:+best.sh.toFixed(3), ret:+(r*100).toFixed(2), vol:+(v*100).toFixed(2), weights:norm(W).map(function(x){return +(x*100).toFixed(1);}),
+      explain:'Your score is your portfolio\u2019s risk-adjusted return (Sharpe ratio) relative to the best achievable (tangency) portfolio: your Sharpe \u00f7 best Sharpe.',
+      breakdown:[{label:'Your Sharpe',value:sh.toFixed(2)},{label:'Best achievable Sharpe',value:best.sh.toFixed(2)},{label:'Return',value:(r*100).toFixed(1)+'%'},{label:'Volatility (risk)',value:(v*100).toFixed(1)+'%'},{label:'Score = yours \u00f7 best',value:Math.round(frac*100)+'%'}] } };
     }
     draw();
   }

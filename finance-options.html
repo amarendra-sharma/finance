@@ -127,6 +127,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='options';</script>
+<script src="fin-gate.js"></script>
 <script>
 (function(){
   var $=function(s){return document.getElementById(s);};
@@ -263,7 +265,9 @@
       '<div style="margin-top:6px;color:rgba(234,242,255,.55);">'+(profitable?'Your structure paid off for this view.':'This outcome hurt your structure — try a shape whose profit zone covers where you expected the stock to go.')+'</div>'+
       '<div style="margin-top:8px;font-family:JetBrains Mono,monospace;color:#5EEAD4;">+'+pts+' points</div>';
     if(round<CH.length-1)$('next').style.display=''; else $('finish').style.display='';
-    window._finResult={ score:Math.max(0,Math.min(1,score/(CH.length*100))), outcome:(pl>0?'win':'loss'), detail:{round:round+1,score:score,lastPL:Math.round(pl)} };
+    window._finResult={ score:Math.max(0,Math.min(1,score/(CH.length*100))), outcome:(pl>0?'win':'loss'), detail:{round:round+1,score:score,lastPL:Math.round(pl),
+      explain:'Each round awards points for ending profitable and for matching the right option structure to the view. Your grade is total points \u00f7 the maximum.',
+      breakdown:[{label:'Rounds played',value:(round+1)+' / '+CH.length},{label:'Total points',value:score+' / '+(CH.length*100)},{label:'Last round P/L',value:money(pl)},{label:'Score',value:Math.round(Math.max(0,Math.min(1,score/(CH.length*100)))*100)+'%'}] } };
   });
   $('next').addEventListener('click',function(){ round++; loadRound(); window.scrollTo({top:0,behavior:'smooth'}); });
   $('finish').addEventListener('click',function(){ if(window.FINProgress&&window.FINProgress.reportArenaNow){window.FINProgress.reportArenaNow();} $('finish').style.display='none'; $('savedNote').style.display=''; });

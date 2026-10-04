@@ -123,6 +123,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='market-floor';</script>
+<script src="fin-gate.js"></script>
 <script>
 (function(){
   var $=function(s){return document.getElementById(s);};
@@ -212,7 +214,9 @@
       '<div style="margin-top:8px;">You: <b style="color:#5EEAD4;">'+money(you)+'</b> ('+(youRet>=0?'+':'')+youRet.toFixed(1)+'%) &nbsp;·&nbsp; Buy &amp; hold: <b style="color:#FBBF24;">'+money(bh)+'</b> ('+(bhRet>=0?'+':'')+bhRet.toFixed(1)+'%).</div>'+
       '<div style="margin-top:8px;color:rgba(234,242,255,.6);">You traded <b>'+trades+'</b> times, paying about <b>'+costDrag.toFixed(2)+'%</b> in fees. '+(beat?'Nicely done — but notice how much the fees ate into your edge.':'This is the efficient-markets lesson: reacting to news that everyone already sees rarely beats simply holding, and every trade leaks money to costs.')+'</div>';
     var score=Math.max(0,Math.min(1, 0.5 + diff/40)); // beating by ~20% => ~1.0
-    window._finResult={ score:score, outcome:(beat?'win':'loss'), detail:{ youReturn:+youRet.toFixed(1), bhReturn:+bhRet.toFixed(1), trades:trades, finalValue:Math.round(you) } };
+    window._finResult={ score:score, outcome:(beat?'win':'loss'), detail:{ youReturn:+youRet.toFixed(1), bhReturn:+bhRet.toFixed(1), trades:trades, finalValue:Math.round(you),
+      explain:'You are graded against buy-and-hold: matching the market scores about 50%, beating it by ~20% reaches ~100%. Every trade leaks fees that count against you.',
+      breakdown:[{label:'Your return',value:youRet.toFixed(1)+'%'},{label:'Buy & hold return',value:bhRet.toFixed(1)+'%'},{label:'You beat the market by',value:diff.toFixed(1)+'%'},{label:'Trades (fees \u2248'+costDrag.toFixed(2)+'%)',value:trades},{label:'Score',value:Math.round(score*100)+'%'}] } };
   }
 
   $('save').addEventListener('click',function(){ if(window.FINProgress&&window.FINProgress.reportArenaNow){window.FINProgress.reportArenaNow();} $('savedNote').style.display=''; });

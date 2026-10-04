@@ -152,6 +152,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='dcf';</script>
+<script src="fin-gate.js"></script>
 <script>
 (function(){
   var $=function(s){return document.getElementById(s);};
@@ -246,7 +248,9 @@
     if(round<COMPANIES.length-1){ $('next').style.display=''; } else { $('finish').style.display=''; }
     // update running result for the auto-reporter
     window._finResult={ score:Math.max(0,Math.min(1, score/(COMPANIES.length*100))), outcome: (correct> COMPANIES.length/2?'win':'completed'),
-      detail:{ round:round+1, score:score, correctCalls:correct } };
+      detail:{ round:round+1, score:score, correctCalls:correct,
+      explain:'Each company is worth up to 100 points: 60 for the right over/under-valued call, up to 40 for how close your DCF value was to fair value. Your grade is total points \u00f7 the maximum.',
+      breakdown:[{label:'Correct calls',value:correct+' / '+COMPANIES.length},{label:'Total points',value:score+' / '+(COMPANIES.length*100)},{label:'Score',value:Math.round(Math.max(0,Math.min(1,score/(COMPANIES.length*100)))*100)+'%'}] } };
   });
 
   $('next').addEventListener('click',function(){ round++; loadCompany(); window.scrollTo({top:0,behavior:'smooth'}); });

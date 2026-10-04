@@ -157,6 +157,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='retirement';</script>
+<script src="fin-gate.js"></script>
 <script>
 (function(){
   var $=function(s){return document.getElementById(s);};
@@ -283,7 +285,9 @@
     // score for progress
     var score=Math.max(0,Math.min(1, final/P.goal));
     window._finResult={ score:score, outcome: reached?'reached':'short',
-      detail:{ final:Math.round(final), contributed:Math.round(contrib+P.pv), growth:Math.round(intr), startAge:P.age, retireAge:P.ret, monthly:P.pmt, expReturn:P.mu, goal:P.goal, realValue:Math.round(real) } };
+      detail:{ final:Math.round(final), contributed:Math.round(contrib+P.pv), growth:Math.round(intr), startAge:P.age, retireAge:P.ret, monthly:P.pmt, expReturn:P.mu, goal:P.goal, realValue:Math.round(real),
+      explain:'Your score is how close your nest egg came to the goal: final balance \u00f7 goal (capped at 100%).',
+      breakdown:[{label:'Final balance',value:fmt(final)},{label:'Goal',value:fmt(P.goal)},{label:'You contributed',value:fmt(contrib+P.pv)},{label:'Growth (interest on interest)',value:fmt(intr)},{label:'Score = final \u00f7 goal',value:Math.round(score*100)+'%'}] } };
     $('save').style.display='';
   }
 

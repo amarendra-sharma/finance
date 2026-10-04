@@ -2040,7 +2040,7 @@ function openArenaAttempts(courseId, studentId, studentName){
           '<td style="font-weight:700;color:'+col+';">'+(p===null?'\u2014':(p+'%'))+'</td>'+
           '<td style="font-size:12.5px;color:var(--text-muted);">'+esc(a.outcome||'\u2014')+'</td>'+
           '<td style="font-size:12px;color:var(--text-muted);">'+(a.played_at?esc(new Date(a.played_at).toLocaleString()):'\u2014')+'</td>'+
-          '<td><button class="btn btn-danger btn-sm" data-void="'+esc(a.attempt_id)+'" data-vslug="'+esc(a.arena_slug||'')+'" data-vno="'+a.attempt_no+'">Void</button></td>'+
+          '<td><button class="btn btn-ghost btn-sm" data-why="'+esc(a.attempt_id)+'" data-wslug="'+esc(a.arena_slug||'')+'">Why</button> <button class="btn btn-danger btn-sm" data-void="'+esc(a.attempt_id)+'" data-vslug="'+esc(a.arena_slug||'')+'" data-vno="'+a.attempt_no+'">Void</button></td>'+
         '</tr>';
       });
       h+='</tbody></table></div>';
@@ -2054,6 +2054,18 @@ function openArenaAttempts(courseId, studentId, studentName){
             if(rr && rr.error){ btn.disabled=false; btn.textContent='Void'; alert('Failed: '+rr.error.message); return; }
             load();
           }, function(e){ btn.disabled=false; btn.textContent='Void'; alert('Failed: '+String(e&&e.message?e.message:e)); });
+        });
+      });
+      Array.prototype.forEach.call(ov.querySelectorAll('[data-why]'), function(wb){
+        wb.addEventListener('click', function(){
+          var aid=wb.getAttribute('data-why'), slug=wb.getAttribute('data-wslug');
+          sb.from('fin_arena_results').select('details,score,outcome').eq('id',aid).maybeSingle().then(function(rr){
+            var d=(rr&&rr.data)?rr.data:null;
+            var m=document.createElement('div'); m.className='modal-overlay';
+            m.innerHTML='<div class="modal" style="max-width:520px;"><h3 style="margin-bottom:8px;">'+esc(slug)+' \u2014 how it was graded</h3><div>'+(d?arenaGradeBreakdown(d.details,d.score):'<div class="card empty">No detail recorded for this attempt.</div>')+'</div><div class="inline-actions" style="margin-top:12px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="whyClose">Close</button></div></div>';
+            document.body.appendChild(m);
+            $('whyClose').addEventListener('click', function(){ if(m.parentNode){ document.body.removeChild(m); } });
+          });
         });
       });
     }, function(){
@@ -2373,9 +2385,10 @@ function renderAssignments(host){
     '<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">Students submit a written response and/or a link to their work. You grade with a score and feedback. <strong>You can attach files (PDFs, datasets) after you click Create</strong> &mdash; the file area opens automatically below.</p>'+
     '<div class="field"><label for="asgTitle">Title</label><input id="asgTitle" placeholder="e.g. Problem Set 2: Nash equilibria"></div>'+
     '<div class="field"><label for="asgInstr">Instructions</label><textarea id="asgInstr" rows="3" placeholder="What students need to do\u2026"></textarea></div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'+
       '<div class="field"><label for="asgPoints">Points</label><input id="asgPoints" type="number" min="0" value="100"></div>'+
-      '<div class="field"><label for="asgDue">Due (optional)</label><input id="asgDue" type="datetime-local"></div>'+
+      '<div class="field"><label for="asgOpens">Opens (optional)</label><input id="asgOpens" type="datetime-local"></div>'+
+      '<div class="field"><label for="asgDue">Closes / due</label><input id="asgDue" type="datetime-local"></div>'+
     '</div>'+
     '<div id="asgMsg" class="msg" role="status" aria-live="polite"></div>'+
     '<button class="btn btn-primary btn-sm" id="asgCreate">Create &amp; publish</button></div>'+
@@ -2384,13 +2397,14 @@ function renderAssignments(host){
     var title=$('asgTitle').value.trim(), instr=$('asgInstr').value.trim();
     var pts=parseInt($('asgPoints').value,10); if(isNaN(pts)||pts<0){ pts=100; }
     var due=$('asgDue').value ? new Date($('asgDue').value).toISOString() : null;
+    var opens=$('asgOpens').value ? new Date($('asgOpens').value).toISOString() : null;
     var e=$('asgMsg');
     if(!title){ e.className='msg err'; e.textContent='Enter a title.'; $('asgTitle').focus(); return; }
     $('asgCreate').disabled=true;
-    sb.from('fin_assignments').insert({ course_id:State.teachCourseId, title:title, instructions:instr, points:pts, due_at:due, created_by:State.user.id, is_published:true }).select().then(function(r){
+    sb.from('fin_assignments').insert({ course_id:State.teachCourseId, title:title, instructions:instr, points:pts, due_at:due, opens_at:opens, closes_at:due, created_by:State.user.id, is_published:true }).select().then(function(r){
       $('asgCreate').disabled=false;
       if(r.error){ e.className='msg err'; e.textContent=r.error.message; return; }
-      $('asgTitle').value=''; $('asgInstr').value=''; $('asgDue').value=''; e.className='msg ok'; e.textContent='Assignment published. Attach files below (optional).';
+      $('asgTitle').value=''; $('asgInstr').value=''; $('asgDue').value=''; if($('asgOpens')){ $('asgOpens').value=''; } e.className='msg ok'; e.textContent='Assignment published. Attach files below (optional).';
       var newId = (r.data && r.data[0]) ? r.data[0].id : null;
       loadAssignmentsList(newId);
     });
@@ -2541,12 +2555,97 @@ function openSubmissions(asgId, title, points){
   });
 }
 
+function openArenaDeadlines(){
+  if(!State.teachCourseId){ alert('Select a course first.'); return; }
+  var ov=document.createElement('div'); ov.className='modal-overlay';
+  ov.innerHTML='<div class="modal" style="max-width:600px;"><h3 style="margin-bottom:6px;">Arena deadlines</h3>'+
+    '<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">Set an optional <b>opens</b> time and a <b>closes</b> time for each arena. Before it opens, students can’t play; after it closes, they can’t play but can review their results. Leave both blank for no window (always open).</p>'+
+    '<div id="adlBody">'+loadingCard()+'</div>'+
+    '<div class="inline-actions" style="margin-top:14px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="adlClose">Close</button><button class="btn btn-primary btn-sm" id="adlSave">Save deadlines</button></div></div>';
+  document.body.appendChild(ov);
+  function shut(){ if(ov.parentNode){ document.body.removeChild(ov); } }
+  $('adlClose').addEventListener('click', shut);
+  sb.from('fin_arena_deadlines').select('arena_slug,opens_at,closes_at').eq('course_id',State.teachCourseId).then(function(res){
+    if(res && res.error){ $('adlBody').innerHTML='<div class="msg err" style="display:block;">Arena deadlines are not installed yet. Run fin-backend.sql / fin-deadlines.sql, then reopen.</div>'; var sv=$('adlSave'); if(sv){ sv.disabled=true; } return; }
+    var have={}; ((res&&res.data)||[]).forEach(function(r){ have[r.arena_slug]={opens:r.opens_at,closes:r.closes_at}; });
+    var rowsHtml='';
+    ARENA_SLUGS.forEach(function(slug){
+      var h=have[slug]||{};
+      rowsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;"><label style="flex:1 1 140px;font-size:13px;">'+esc(ARENA_TITLE[slug]||slug)+'</label>'+
+        '<span style="font-size:11px;color:var(--text-subtle);">opens</span><input type="datetime-local" data-adl-open="'+esc(slug)+'" value="'+dtLocalValue(h.opens)+'" style="font-size:12.5px;padding:4px 7px;">'+
+        '<span style="font-size:11px;color:var(--text-subtle);">closes</span><input type="datetime-local" data-adl-close="'+esc(slug)+'" value="'+dtLocalValue(h.closes)+'" style="font-size:12.5px;padding:4px 7px;"></div>';
+    });
+    $('adlBody').innerHTML=rowsHtml;
+  }, function(){ $('adlBody').innerHTML='<div class="msg err" style="display:block;">Could not load arena deadlines.</div>'; });
+  $('adlSave').addEventListener('click', function(){
+    var closeInputs=ov.querySelectorAll('[data-adl-close]'); var ups=[], dels=[];
+    Array.prototype.forEach.call(closeInputs, function(ci){
+      var slug=ci.getAttribute('data-adl-close'); var cv=ci.value;
+      var oi=ov.querySelector('[data-adl-open="'+slug+'"]'); var ovv=oi?oi.value:'';
+      if(cv || ovv){ ups.push({ course_id:State.teachCourseId, arena_slug:slug, opens_at:(ovv?new Date(ovv).toISOString():null), closes_at:(cv?new Date(cv).toISOString():null), updated_at:new Date().toISOString() }); }
+      else { dels.push(slug); }
+    });
+    var btn=$('adlSave'); btn.disabled=true; btn.textContent='Saving…';
+    var work=[];
+    if(ups.length){ work.push(sb.from('fin_arena_deadlines').upsert(ups,{onConflict:'course_id,arena_slug'})); }
+    if(dels.length){ work.push(sb.from('fin_arena_deadlines').delete().eq('course_id',State.teachCourseId).in('arena_slug',dels)); }
+    Promise.all(work).then(function(rs){
+      var err=null; rs.forEach(function(r){ if(r&&r.error){ err=r.error.message; } });
+      if(err){ btn.disabled=false; btn.textContent='Save deadlines'; alert('Could not save: '+err); return; }
+      shut();
+    }, function(e){ btn.disabled=false; btn.textContent='Save deadlines'; alert('Could not save: '+String(e&&e.message?e.message:e)); });
+  });
+}
+
+function arenaGradeBreakdown(details, score){
+  if(details && (details.breakdown || details.explain)){
+    var h='<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;"><div style="font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:4px;">How this was graded</div>';
+    if(details.explain){ h+='<div style="font-size:12.5px;color:var(--text-muted);margin-bottom:6px;">'+esc(details.explain)+'</div>'; }
+    if(details.breakdown && details.breakdown.length){
+      h+='<table style="width:100%;font-size:12.5px;border-collapse:collapse;">';
+      details.breakdown.forEach(function(b){
+        h+='<tr><td style="padding:3px 0;color:var(--text-muted);">'+esc(b.label||'')+(b.weight?(' <span style="color:var(--text-subtle);">('+esc(String(b.weight))+')</span>'):'')+'</td><td style="padding:3px 0;text-align:right;color:var(--text-bright);">'+esc(String(b.value!==undefined?b.value:''))+'</td></tr>';
+      });
+      h+='</table>';
+    }
+    return h+'</div>';
+  }
+  var pct=(score!==null&&score!==undefined)?Math.round(Number(score)*100):null;
+  return '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;font-size:12px;color:var(--text-subtle);">Graded on your in-arena performance'+(pct!==null?(', scored '+pct+'% of the maximum'):'')+'. This feeds your arena grade component (the average of your attempts).</div>';
+}
+
+function openArenaReview(slug){
+  var uid = State.user ? State.user.id : null;
+  var courseId = State.payCourseId || State.selfCourseId;
+  var ov=document.createElement('div'); ov.className='modal-overlay';
+  ov.innerHTML='<div class="modal" style="max-width:600px;"><h3 style="margin-bottom:8px;">'+esc(ARENA_TITLE[slug]||slug)+' — your results</h3><div id="arvBody">'+loadingCard()+'</div><div class="inline-actions" style="margin-top:14px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="arvClose">Close</button></div></div>';
+  document.body.appendChild(ov);
+  $('arvClose').addEventListener('click', function(){ if(ov.parentNode){ document.body.removeChild(ov); } });
+  if(!uid){ $('arvBody').innerHTML='<div class="card empty">Sign in to see your results.</div>'; return; }
+  var q=sb.from('fin_arena_results').select('score,outcome,details,played_at').eq('student_id',uid).eq('arena_slug',slug).order('played_at',{ascending:false});
+  if(courseId){ q=q.eq('course_id',courseId); }
+  q.then(function(res){
+    var rows=(res&&res.data)?res.data:[];
+    if(rows.length===0){ $('arvBody').innerHTML='<div class="card empty">You didn’t play this arena before it closed, so there is nothing to review.</div>'; return; }
+    var html='<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">This arena is closed. Here are your recorded attempts and how each was graded.</p>';
+    rows.forEach(function(r,i){
+      var pct=(r.score!==null&&r.score!==undefined)?(Math.round(Number(r.score)*100)+'%'):'—';
+      html+='<div class="card" style="margin-bottom:10px;background:var(--bg2);">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:14px;color:var(--text-bright);">Attempt '+(rows.length-i)+(r.outcome?(' · '+esc(r.outcome)):'')+'</div><div style="font-size:15px;font-weight:600;color:var(--green);">'+pct+'</div></div>'+
+        '<div style="font-size:11px;color:var(--text-subtle);margin-top:2px;">'+(r.played_at?new Date(r.played_at).toLocaleString():'')+'</div>'+
+        arenaGradeBreakdown(r.details, r.score)+'</div>';
+    });
+    $('arvBody').innerHTML=html;
+  });
+}
+
 function renderExams(host){
   if(!needCourse(host)){ return; }
-  host.innerHTML='<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn btn-primary" id="newExamBtn">+ Assemble exam</button><button class="btn btn-ghost" id="libBtn">\uD83D\uDCDA Use a ready-made exam</button><button class="btn btn-ghost" id="quizDlBtn">\u23F0 Quiz deadlines</button></div><div id="examList">'+loadingCard()+'</div>';
+  host.innerHTML='<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn btn-primary" id="newExamBtn">+ Assemble exam</button><button class="btn btn-ghost" id="libBtn">\uD83D\uDCDA Use a ready-made exam</button><button class="btn btn-ghost" id="quizDlBtn">\u23F0 Quiz deadlines</button><button class="btn btn-ghost" id="arenaDlBtn">\u23F0 Arena deadlines</button></div><div id="examList">'+loadingCard()+'</div>';
   $('newExamBtn').addEventListener('click', function(){ openAssembler(); });
   $('libBtn').addEventListener('click', function(){ openExamLibrary(); });
   $('quizDlBtn').addEventListener('click', function(){ openQuizDeadlines(); });
+  if($('arenaDlBtn')){ $('arenaDlBtn').addEventListener('click', function(){ openArenaDeadlines(); }); }
   loadExams();
 }
 
@@ -4257,6 +4356,7 @@ function renderArenas() {
   // Count this student's attempts per arena so we can enforce the 2-attempt cap
   // and show remaining attempts. (Guests / not-signed-in: no cap shown.)
   var countBy = {};
+  var winBy = {};
   function paint(){
     g.innerHTML = '';
     Object.keys(ARENA_TITLE).forEach(function(slug) {
@@ -4264,22 +4364,35 @@ function renderArenas() {
       var locked = arenaLocked(slug);
       var used = countBy[slug] ? countBy[slug] : 0;
       var capped = used >= ARENA_MAX_ATTEMPTS;
+      var win = winBy[slug] || {};
+      var openMs = win.opens ? new Date(win.opens).getTime() : null;
+      var closeMs = win.closes ? new Date(win.closes).getTime() : null;
+      var beforeOpen = (openMs !== null && Date.now() < openMs);
+      var afterClose = (closeMs !== null && Date.now() > closeMs);
       var div = document.createElement('div');
       div.className = 'card launch';
       var pill;
       if (!file) { pill = '<div class="pill soon">Coming soon</div>'; }
       else if (locked) { pill = '<div class="pill soon">🔒 Subscribe to unlock</div>'; }
+      else if (beforeOpen) { pill = '<div class="pill soon">Opens ' + new Date(openMs).toLocaleString() + '</div>'; }
+      else if (afterClose) { pill = '<div class="pill soon">Closed · Review ↗</div>'; }
       else if (capped) { pill = '<div class="pill soon">Attempts used (' + used + '/' + ARENA_MAX_ATTEMPTS + ')</div>'; }
       else { pill = '<div class="pill">Play → ' + (uid ? '(' + (ARENA_MAX_ATTEMPTS - used) + ' left)' : '') + '</div>'; }
       div.innerHTML =
         '<div class="c-eyebrow">Arena' + (FREE_ARENAS[slug] ? ' · Free' : '') + '</div>' +
         '<div class="c-title">' + esc(ARENA_TITLE[slug]) + '</div>' +
         '<div class="c-meta mono">' + esc(slug) + '</div>' + pill;
-      if (file && !locked && !capped) {
-        div.addEventListener('click', function() { window.open(file, '_blank'); });
-      } else if (file && locked) {
+      if (file && locked) {
         div.style.opacity = '.7';
         div.addEventListener('click', function() { openSubscribePrompt(ARENA_TITLE[slug] + ' arena'); });
+      } else if (file && beforeOpen) {
+        div.style.opacity = '.6'; div.style.cursor = 'default';
+        div.addEventListener('click', function() { alert('The ' + ARENA_TITLE[slug] + ' arena opens ' + new Date(openMs).toLocaleString() + '.'); });
+      } else if (file && afterClose) {
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', function() { openArenaReview(slug); });
+      } else if (file && !locked && !capped) {
+        div.addEventListener('click', function() { window.open(file, '_blank'); });
       } else if (file && capped) {
         div.style.opacity = '.6'; div.style.cursor = 'default';
         div.addEventListener('click', function() { alert('You have used both graded attempts for the ' + ARENA_TITLE[slug] + ' arena. Your grade uses the average of your two attempts.'); });
@@ -4290,6 +4403,20 @@ function renderArenas() {
     });
   }
   if (uid) {
+    if (courseId) {
+      Promise.all([
+        sb.from('fin_arena_deadlines').select('arena_slug,opens_at,closes_at').eq('course_id', courseId),
+        sb.from('fin_arena_deadline_overrides').select('arena_slug,opens_at,closes_at').eq('course_id', courseId).eq('student_id', uid)
+      ]).then(function(dr){
+        var ovr = {}; ((dr[1] && dr[1].data) || []).forEach(function(o){ ovr[o.arena_slug] = o; });
+        ((dr[0] && dr[0].data) || []).forEach(function(d){
+          var o = ovr[d.arena_slug] || {};
+          winBy[d.arena_slug] = { opens: (o.opens_at || d.opens_at), closes: (o.closes_at || d.closes_at) };
+        });
+        Object.keys(ovr).forEach(function(slug){ if(!winBy[slug]){ winBy[slug] = { opens: ovr[slug].opens_at, closes: ovr[slug].closes_at }; } });
+        paint();
+      });
+    }
     var q = sb.from('fin_arena_results').select('arena_slug').eq('student_id', uid);
     if (courseId) { q = q.eq('course_id', courseId); }
     q.then(function(res){
@@ -5119,16 +5246,25 @@ function loadMyAssignments(){
     if(ids.length===0){ host.innerHTML='<div class="card empty">You are not enrolled in a course with assignments yet.</div>'; return; }
     Promise.all([
       sb.from('fin_assignments').select('*').in('course_id',ids).eq('is_published',true).order('created_at',{ascending:false}),
-      sb.from('fin_submissions').select('*').eq('student_id',State.user.id)
+      sb.from('fin_submissions').select('*').eq('student_id',State.user.id),
+      sb.from('fin_assignment_overrides').select('assignment_id,opens_at,closes_at').eq('student_id',State.user.id)
     ]).then(function(res){
       var asgs=res[0].data?res[0].data:[];
       var subs=res[1].data?res[1].data:[];
       var subBy={}; subs.forEach(function(s){ subBy[s.assignment_id]=s; });
+      var asgOvr={}; ((res[2]&&res[2].data)||[]).forEach(function(o){ asgOvr[o.assignment_id]=o; });
       if(asgs.length===0){ host.innerHTML='<div class="card empty">No assignments posted yet.</div>'; return; }
       var html='';
       asgs.forEach(function(a){
         var s=subBy[a.id];
-        var due=a.due_at?('Due '+new Date(a.due_at).toLocaleString()):'No due date';
+        var ov=asgOvr[a.id]||{};
+        var opensD=(ov.opens_at?new Date(ov.opens_at):(a.opens_at?new Date(a.opens_at):null)); var opensMs=opensD?opensD.getTime():null;
+        var closeRaw=ov.closes_at||a.closes_at||a.due_at||null; var closeMs=closeRaw?new Date(closeRaw).getTime():null;
+        var nowMs=Date.now();
+        var beforeOpen=(opensMs!==null && nowMs<opensMs);
+        var afterClose=(closeMs!==null && nowMs>closeMs);
+        var due = beforeOpen ? ('Opens '+new Date(opensMs).toLocaleString())
+                 : (closeMs!==null ? ((afterClose?'Closed ':'Due ')+new Date(closeMs).toLocaleString()) : 'No due date');
         var graded = s && s.score!==null && s.score!==undefined;
         html+='<div class="card" style="margin-bottom:12px;">'+
           '<div style="font-size:16px;font-weight:600;color:var(--text-bright);">'+esc(a.title)+'</div>'+
@@ -5143,6 +5279,18 @@ function loadMyAssignments(){
             '<div style="font-size:12.5px;color:var(--text-muted);margin-top:4px;white-space:pre-wrap;">'+esc(s.text_response||'')+'</div>'+
             (s.link_url?'<div style="margin-top:4px;"><a href="'+esc(s.link_url)+'" target="_blank" rel="noopener">'+esc(s.link_url)+'</a></div>':'')+
           '</div>';
+        } else if(beforeOpen){
+          html+='<div class="msg" style="display:block;background:var(--bg2);border:1px solid var(--border);">This assignment opens '+new Date(opensMs).toLocaleString()+'. You can submit once it opens.</div>';
+        } else if(afterClose){
+          if(s){
+            html+='<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;">'+
+              '<div style="font-size:12px;color:var(--text-subtle);">Closed '+new Date(closeMs).toLocaleString()+' \u00b7 your submission (awaiting grade):</div>'+
+              '<div style="font-size:12.5px;color:var(--text-muted);margin-top:4px;white-space:pre-wrap;">'+esc(s.text_response||'')+'</div>'+
+              (s.link_url?'<div style="margin-top:4px;"><a href="'+esc(s.link_url)+'" target="_blank" rel="noopener">'+esc(s.link_url)+'</a></div>':'')+
+            '</div>';
+          } else {
+            html+='<div class="msg err" style="display:block;">This assignment closed '+new Date(closeMs).toLocaleString()+' and you did not submit. It can no longer be submitted.</div>';
+          }
         } else {
           var submittedNote = s ? '<div class="msg ok" role="status">Submitted '+(s.submitted_at?new Date(s.submitted_at).toLocaleString():'')+'. You can resubmit until it is graded.</div>' : '';
           html+=submittedNote+
