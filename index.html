@@ -3389,7 +3389,7 @@ function openExamEditor(examId){
     host.innerHTML=html;
     Array.prototype.forEach.call(host.querySelectorAll('[data-rm]'), function(b){ b.addEventListener('click', function(){
       var id=b.getAttribute('data-rm');
-      EDIT_IDS=EDIT_IDS.filter(function(x){ return x!==id; });
+      EDIT_IDS=EDIT_IDS.filter(function(x){ return String(x)!==String(id); });
       renderQList();
     }); });
     updateCounts();
@@ -3412,7 +3412,7 @@ function openExamEditor(examId){
       var html='';
       items.forEach(function(it){
         bank[it.id]=it;
-        var inExam = EDIT_IDS.indexOf(it.id)>=0;
+        var inExam = EDIT_IDS.map(String).indexOf(String(it.id))>=0;
         var tb = it.item_type==='free_response'?'<span class="tag amber">written</span>':(it.item_type==='multiple_choice'?'<span class="tag violet">MC</span>':'<span class="tag dim">numeric</span>');
         html+='<div class="item-pick" style="display:flex;gap:10px;align-items:flex-start;"><div style="flex:1;"><div class="ip-prompt">'+esc(it.prompt)+'</div>'+
           '<div class="ip-meta">'+esc(it.id)+' \u00b7 Ch'+it.chapter+' \u00b7 '+esc(it.difficulty)+' \u00b7 '+(it.points||1)+'pt '+tb+'</div></div>'+
@@ -3420,8 +3420,8 @@ function openExamEditor(examId){
       });
       $('edBankList').innerHTML=html||'<div class="card empty">No items.</div>';
       Array.prototype.forEach.call($('edBankList').querySelectorAll('[data-add]'), function(b){ b.addEventListener('click', function(){
-        var id=b.getAttribute('data-add');
-        if(EDIT_IDS.indexOf(id)<0){ EDIT_IDS.push(id); }
+        var id=b.getAttribute('data-add'); var nid=/^[0-9]+$/.test(id)?parseInt(id,10):id;
+        if(EDIT_IDS.map(String).indexOf(String(nid))<0){ EDIT_IDS.push(nid); }
         renderQList(); fillBank();
       }); });
     });
@@ -3452,7 +3452,7 @@ function openExamEditor(examId){
     if(df){ q=q.eq('difficulty',df); }
     q.then(function(res){
       if(res.error){ msg.style.color='var(--danger,#e5484d)'; msg.textContent=res.error.message; return; }
-      var pool=(res.data||[]).filter(function(it){ return EDIT_IDS.indexOf(it.id)<0; });
+      var pool=(res.data||[]).filter(function(it){ var ids=EDIT_IDS.map(String); return ids.indexOf(String(it.id))<0; });
       for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
       var take=pool.slice(0,n);
       take.forEach(function(it){ bank[it.id]=it; EDIT_IDS.push(it.id); });
