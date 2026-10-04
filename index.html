@@ -2553,7 +2553,7 @@ function openQuizDeadlines(){
   if(!State.teachCourseId){ alert('Select a course first.'); return; }
   var ov=document.createElement('div'); ov.className='modal-overlay';
   ov.innerHTML='<div class="modal" style="max-width:560px;"><h3 style="margin-bottom:6px;">Graded-quiz deadlines</h3>'+
-    '<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">Set a close date and time for each chapter\u2019s graded quiz. After the deadline the quiz can no longer be taken, and students can review the questions they missed. Leave a chapter blank for no deadline (quiz stays open; no review).</p>'+
+    '<p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">Set an optional <b>opens</b> time and a <b>closes</b> time for each chapter\u2019s graded quiz. Before it opens, students can\u2019t start it; after it closes, it can\u2019t be taken and students can review the questions they missed. Leave <b>closes</b> blank for no deadline (quiz stays open; no review).</p>'+
     '<div id="qdlBody">'+loadingCard()+'</div>'+
     '<div class="inline-actions" style="margin-top:14px;justify-content:flex-end;"><button class="btn btn-ghost btn-sm" id="qdlClose">Close</button><button class="btn btn-primary btn-sm" id="qdlSave">Save deadlines</button></div></div>';
   document.body.appendChild(ov);
@@ -2565,18 +2565,15 @@ function openQuizDeadlines(){
     var sv=$('qdlSave'); if(sv){ sv.disabled=true; }
   }
 
-  sb.from('fin_quiz_deadlines').select('chapter,closes_at').eq('course_id',State.teachCourseId).then(function(res){
+  sb.from('fin_quiz_deadlines').select('chapter,opens_at,closes_at').eq('course_id',State.teachCourseId).then(function(res){
     if(res && res.error){ notInstalled(); return; }
-    var have={}; ((res && res.data) ? res.data : []).forEach(function(r){ have[r.chapter]=r.closes_at; });
+    var have={}; ((res && res.data) ? res.data : []).forEach(function(r){ have[r.chapter]={opens:r.opens_at, closes:r.closes_at}; });
     var rowsHtml='';
     STUDENT_CHAPTERS.forEach(function(c){
-      var val='';
-      if(have[c.n]){
-        var d=new Date(have[c.n]); var pad=function(x){return (x<10?'0':'')+x;};
-        val=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
-      }
-      rowsHtml+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><label style="flex:1;font-size:13px;">Ch '+c.n+' \u00b7 '+esc(c.title)+'</label>'+
-        '<input type="datetime-local" data-qdl-ch="'+c.n+'" value="'+val+'" style="font-size:13px;padding:5px 8px;"></div>';
+      var h=have[c.n]||{};
+      rowsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;"><label style="flex:1 1 150px;font-size:13px;">Ch '+c.n+' \u00b7 '+esc(c.title)+'</label>'+
+        '<span style="font-size:11px;color:var(--text-subtle);">opens</span><input type="datetime-local" data-qdl-open="'+c.n+'" value="'+dtLocalValue(h.opens)+'" style="font-size:12.5px;padding:4px 7px;">'+
+        '<span style="font-size:11px;color:var(--text-subtle);">closes</span><input type="datetime-local" data-qdl-ch="'+c.n+'" value="'+dtLocalValue(h.closes)+'" style="font-size:12.5px;padding:4px 7px;"></div>';
     });
     $('qdlBody').innerHTML=rowsHtml;
   }, function(){ notInstalled(); });
@@ -2588,7 +2585,9 @@ function openQuizDeadlines(){
     Array.prototype.forEach.call(inputs, function(inp){
       var ch=parseInt(inp.getAttribute('data-qdl-ch'),10);
       var v=inp.value;
-      if(v){ ups.push({ course_id:State.teachCourseId, chapter:ch, closes_at:new Date(v).toISOString(), updated_at:new Date().toISOString() }); }
+      var openInp=ov.querySelector('[data-qdl-open="'+ch+'"]');
+      var ovv=openInp?openInp.value:'';
+      if(v){ ups.push({ course_id:State.teachCourseId, chapter:ch, opens_at:(ovv?new Date(ovv).toISOString():null), closes_at:new Date(v).toISOString(), updated_at:new Date().toISOString() }); }
       else { dels.push(ch); }
     });
     var btn=$('qdlSave'); btn.disabled=true; btn.textContent='Saving\u2026';
@@ -4487,12 +4486,14 @@ function startGradedQuiz(chapter) {
   // quiz can therefore never be blocked by this feature being half-deployed.
   var proceed = function (closesAt) { startGradedQuizConfirmed(chapter, closesAt); };
   try {
-    sb.from('fin_quiz_deadlines').select('closes_at')
+    var opensAt = null;
+    sb.from('fin_quiz_deadlines').select('opens_at,closes_at')
       .eq('course_id', courseId).eq('chapter', chapter).maybeSingle()
       .then(function (dl) {
         var closesAt = null;
-        if (dl && !dl.error && dl.data && dl.data.closes_at) {
-          closesAt = new Date(dl.data.closes_at).getTime();
+        if (dl && !dl.error && dl.data) {
+          if (dl.data.closes_at) { closesAt = new Date(dl.data.closes_at).getTime(); }
+          if (dl.data.opens_at)  { opensAt  = new Date(dl.data.opens_at).getTime(); }
         }
         // A per-student reschedule replaces the class deadline for this student.
         // Fails open: no table or no row leaves the class deadline in place.
@@ -4508,6 +4509,10 @@ function startGradedQuiz(chapter) {
       }, function () { proceed(null); });
 
     function afterDeadline(closesAt) {
+      if (opensAt !== null && Date.now() < opensAt) {
+        area.innerHTML = errCard('The Chapter ' + chapter + ' quiz opens on ' + new Date(opensAt).toLocaleString() + '. It can\u2019t be started before then.');
+        return;
+      }
       if (closesAt !== null && Date.now() > closesAt) {
         area.innerHTML = errCard('The Chapter ' + chapter + ' quiz closed on ' + new Date(closesAt).toLocaleString() + '. It can no longer be taken. You can review the questions you missed using "Review missed questions".');
         return;
