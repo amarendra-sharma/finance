@@ -1457,7 +1457,7 @@ function openRescheduleList(courseId){
       var overdue = when && when.getTime() < Date.now();
       h+='<tr>'+
         '<th scope="row" style="font-weight:400;font-size:12.5px;">'+esc(o.email||o.student_id||'')+'</th>'+
-        '<td style="font-size:12.5px;">'+(o.kind==='exam'?'<span class="tag violet">exam</span> ':'<span class="tag">quiz</span> ')+esc(o.label||'')+'</td>'+
+        '<td style="font-size:12.5px;">'+(function(k){var m={exam:'<span class="tag violet">exam</span> ',quiz:'<span class="tag">quiz</span> ',arena:'<span class="tag" style="background:#1D4ED84D;color:#93C5FD;">arena</span> ',assignment:'<span class="tag" style="background:#9745064D;color:#FCD34D;">assignment</span> ',reading:'<span class="tag" style="background:#0659694D;color:#6EE7B7;">reading</span> '};return m[k]||'<span class="tag">'+esc(k||'')+'</span> ';})(o.kind)+esc(o.label||'')+'</td>'+
         '<td style="font-size:12.5px;'+(overdue?'color:#FB7185;':'')+'">'+(when?esc(when.toLocaleString())+(overdue?' (passed)':''):'\u2014')+'</td>'+
         '<td style="font-size:12.5px;">'+((o.extra_attempts&&Number(o.extra_attempts)>0)?('+'+o.extra_attempts):'\u2014')+'</td>'+
         '<td style="font-size:12px;color:var(--text-muted);">'+esc(o.reason||'')+'</td>'+
@@ -1584,7 +1584,114 @@ function openReschedule(courseId, studentId, studentName){
         '<button class="btn btn-primary btn-sm" id="rsQzSave">Apply</button>'+
         '<span style="font-size:11.5px;" id="rsQzMsg"></span>'+
       '</div>';
+    h+='<div style="font-size:12px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px;">Arenas</div><div id="rsArenaBox">'+loadingCard()+'</div>';
+    h+='<div style="font-size:12px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px;">Assignments</div><div id="rsAsgBox">'+loadingCard()+'</div>';
+    h+='<div style="font-size:12px;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px;">Readings</div><div id="rsReadBox">'+loadingCard()+'</div>';
     $('rsBody').innerHTML=h;
+
+    // ---- Extended reschedule: arenas, assignments, readings (per student) ----
+    function rsRenderRows(box, rows, rpcName, buildArgs, reloadFn){
+      if(!box){ return; }
+      var h2='';
+      rows.forEach(function(row){
+        var o=row.overrideClose;
+        var set=o?('<div style="font-size:12px;color:#34D399;margin-top:4px;">✓ Set for this student: due '+esc(new Date(o).toLocaleString())+'</div>')
+                 :('<div style="font-size:12px;color:var(--text-subtle);margin-top:4px;">No change — follows the class deadline.</div>');
+        h2+='<div style="margin-bottom:8px;padding:9px 11px;border-radius:8px;background:var(--bg2);">'+
+          '<div style="font-size:13px;color:var(--text-bright);">'+esc(row.title)+'<span style="font-size:11px;color:var(--text-subtle);">'+esc(row.base)+'</span></div>'+set+
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;">'+
+            '<label style="font-size:11.5px;color:var(--text-muted);">New deadline</label>'+
+            '<input type="datetime-local" data-rs-when="'+esc(row.key)+'" value="'+(o?dtLocalValue(o):'')+'" style="font-size:12.5px;padding:4px 7px;">'+
+            '<button class="btn btn-primary btn-sm" data-rs-save="'+esc(row.key)+'">Apply</button>'+
+            (o?('<button class="btn btn-ghost btn-sm" data-rs-clear="'+esc(row.key)+'">Clear</button>'):'')+
+            '<span style="font-size:11.5px;" data-rs-msg="'+esc(row.key)+'"></span>'+
+          '</div></div>';
+      });
+      box.innerHTML=h2||'<div style="font-size:12.5px;color:var(--text-subtle);">Nothing to reschedule here.</div>';
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs-save]'), function(btn){
+        btn.addEventListener('click', function(){
+          var key=btn.getAttribute('data-rs-save');
+          var whenEl=box.querySelector('[data-rs-when="'+key+'"]');
+          var msg=box.querySelector('[data-rs-msg="'+key+'"]');
+          var when=whenEl?whenEl.value:'';
+          btn.disabled=true; msg.style.color='var(--text-muted)'; msg.textContent='Saving…';
+          sb.rpc(rpcName, buildArgs(key, when?new Date(when).toISOString():null)).then(function(r){
+            btn.disabled=false;
+            if(r && r.error){ msg.style.color='#FB7185'; msg.textContent=String(r.error.message||'').indexOf('function')>=0?'Run fin-reschedule-extra.sql first.':'Failed'; return; }
+            reloadFn();
+          }, function(){ btn.disabled=false; msg.style.color='#FB7185'; msg.textContent='Failed'; });
+        });
+      });
+      Array.prototype.forEach.call(box.querySelectorAll('[data-rs-clear]'), function(btn){
+        btn.addEventListener('click', function(){
+          var key=btn.getAttribute('data-rs-clear');
+          sb.rpc(rpcName, buildArgs(key, null)).then(function(){ reloadFn(); }, function(){});
+        });
+      });
+    }
+
+    function loadArenaResched(){
+      var box=$('rsArenaBox'); if(!box){ return; }
+      Promise.all([
+        sb.from('fin_arena_deadlines').select('arena_slug,closes_at').eq('course_id',courseId),
+        sb.from('fin_arena_deadline_overrides').select('arena_slug,closes_at').eq('course_id',courseId).eq('student_id',studentId)
+      ]).then(function(res){
+        var dl={}, ovm={};
+        if(res[0] && !res[0].error && res[0].data){ res[0].data.forEach(function(r){ dl[r.arena_slug]=r.closes_at; }); }
+        if(res[1] && !res[1].error && res[1].data){ res[1].data.forEach(function(r){ ovm[r.arena_slug]=r.closes_at; }); }
+        var rows=ARENA_SLUGS.map(function(slug){
+          return { key:slug, title:(ARENA_TITLE[slug]||slug),
+                   base: dl[slug]?(' · class deadline '+new Date(dl[slug]).toLocaleString()):' · no class deadline',
+                   overrideClose: ovm[slug]||null };
+        });
+        rsRenderRows(box, rows, 'fin_set_arena_override',
+          function(key, iso){ return { p_course_id:courseId, p_arena_slug:key, p_student_id:studentId, p_closes_at:iso, p_reason:'Instructor reschedule' }; },
+          loadArenaResched);
+      }, function(){ box.innerHTML='<div class="msg err" style="display:block;">Could not load arenas.</div>'; });
+    }
+
+    function loadAsgResched(){
+      var box=$('rsAsgBox'); if(!box){ return; }
+      Promise.all([
+        sb.from('fin_assignments').select('id,title,closes_at,due_at').eq('course_id',courseId),
+        sb.from('fin_assignment_overrides').select('assignment_id,closes_at').eq('student_id',studentId)
+      ]).then(function(res){
+        var asg=(res[0] && !res[0].error && res[0].data)?res[0].data:[];
+        var ovm={}; if(res[1] && !res[1].error && res[1].data){ res[1].data.forEach(function(r){ ovm[r.assignment_id]=r.closes_at; }); }
+        if(asg.length===0){ box.innerHTML='<div style="font-size:12.5px;color:var(--text-subtle);">No assignments in this course.</div>'; return; }
+        var rows=asg.map(function(a){
+          var cc=a.closes_at||a.due_at;
+          return { key:a.id, title:a.title,
+                   base: cc?(' · class deadline '+new Date(cc).toLocaleString()):' · no class deadline',
+                   overrideClose: ovm[a.id]||null };
+        });
+        rsRenderRows(box, rows, 'fin_set_assignment_override',
+          function(key, iso){ return { p_assignment_id:key, p_student_id:studentId, p_closes_at:iso, p_reason:'Instructor reschedule' }; },
+          loadAsgResched);
+      }, function(){ box.innerHTML='<div class="msg err" style="display:block;">Could not load assignments.</div>'; });
+    }
+
+    function loadReadResched(){
+      var box=$('rsReadBox'); if(!box){ return; }
+      Promise.all([
+        sb.from('fin_reading_deadlines').select('chapter,closes_at').eq('course_id',courseId),
+        sb.from('fin_reading_deadline_overrides').select('chapter,closes_at').eq('course_id',courseId).eq('student_id',studentId)
+      ]).then(function(res){
+        var dl={}, ovm={};
+        if(res[0] && !res[0].error && res[0].data){ res[0].data.forEach(function(r){ dl[r.chapter]=r.closes_at; }); }
+        if(res[1] && !res[1].error && res[1].data){ res[1].data.forEach(function(r){ ovm[r.chapter]=r.closes_at; }); }
+        var rows=CHAPTERS.map(function(c){
+          return { key:String(c.n), title:('Chapter '+c.n+' — '+c.title),
+                   base: dl[c.n]?(' · class deadline '+new Date(dl[c.n]).toLocaleString()):' · no class deadline',
+                   overrideClose: ovm[c.n]||null };
+        });
+        rsRenderRows(box, rows, 'fin_set_reading_override',
+          function(key, iso){ return { p_course_id:courseId, p_chapter:parseInt(key,10), p_student_id:studentId, p_closes_at:iso, p_reason:'Instructor reschedule' }; },
+          loadReadResched);
+      }, function(){ box.innerHTML='<div class="msg err" style="display:block;">Could not load readings.</div>'; });
+    }
+    loadArenaResched(); loadAsgResched(); loadReadResched();
+
 
     // Reopen only the blank answers from an interrupted sitting.
     Array.prototype.forEach.call(ov.querySelectorAll('[data-ex-finish]'), function(btn){
