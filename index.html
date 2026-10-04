@@ -577,7 +577,7 @@ function doAuth(){
       var jc = $('authJoinCode') ? $('authJoinCode').value.trim() : '';
       if(jc){ meta = { join_code: jc }; }
     }
-    sb.auth.signUp({email:email,password:pw,options:{data:meta}}).then(function(res){
+    sb.auth.signUp({email:email,password:pw,options:{data:meta, emailRedirectTo: window.location.origin + window.location.pathname}}).then(function(res){
       $('authSubmit').disabled=false;
       if(res.error){ setAuthMsg(res.error.message,'err'); return; }
       if(res.data && res.data.session){ onSignedIn(res.data.session.user); }
@@ -1853,7 +1853,7 @@ function openRegradeNumeric(courseId, gradebookHost){
   }
 
   function run(dry){
-    return sb.functions.invoke('grade-attempt', { body: { action:'regrade_numeric', course_id: courseId, dry_run: dry } });
+    return sb.functions.invoke('fin-grade-attempt', { body: { action:'regrade_numeric', course_id: courseId, dry_run: dry } });
   }
 
   // Step 1: dry run, so nothing changes until the numbers are on screen.
@@ -2998,7 +2998,7 @@ function wireGradingToolbar(){
     $('finAll').addEventListener('click', function(){
       if(!window.confirm('Finalize all answers that have an AI suggestion, accepting the AI score? You can still re-grade individuals afterward.')){ return; }
       $('finAll').disabled=true; $('finAll').textContent='Finalizing\u2026';
-      sb.functions.invoke('ai-grade',{ body:{ action:'finalize_all', course_id:State.teachCourseId } }).then(function(fn){
+      sb.functions.invoke('fin-ai-grade',{ body:{ action:'finalize_all', course_id:State.teachCourseId } }).then(function(fn){
         if(fn.error || (fn.data && fn.data.error)){ $('finAll').disabled=false; $('finAll').textContent='Finalize all reviewed'; alert((fn.data&&fn.data.error)?fn.data.error:(fn.error?fn.error.message:'Failed')); return; }
         loadPendingWritten();
       });
@@ -3088,7 +3088,7 @@ function legacyLoadPendingWritten(){
             if($('finAll')){ $('finAll').addEventListener('click', function(){
               if(!confirm('Finalize all answers that have an AI suggestion, accepting the AI score? You can still re-grade individuals afterward.')){ return; }
               $('finAll').disabled=true; $('finAll').textContent='Finalizing\u2026';
-              sb.functions.invoke('ai-grade',{ body:{ action:'finalize_all', course_id:State.teachCourseId } }).then(function(fn){
+              sb.functions.invoke('fin-ai-grade',{ body:{ action:'finalize_all', course_id:State.teachCourseId } }).then(function(fn){
                 if(fn.error || (fn.data && fn.data.error)){ $('finAll').disabled=false; $('finAll').textContent='Finalize all reviewed'; alert((fn.data&&fn.data.error)?fn.data.error:(fn.error?fn.error.message:'Failed')); return; }
                 loadPendingWritten();
               });
@@ -3138,7 +3138,7 @@ function runAIGrade(attemptId, continuing){
     if(rt){ rt.addEventListener('click', function(){ runAIGrade(null); }); }
     loadPendingWritten();
   }, 100000);
-  sb.functions.invoke('ai-grade',{ body:payload }).then(function(fn){
+  sb.functions.invoke('fin-ai-grade',{ body:payload }).then(function(fn){
     if(settled){ return; }
     settled=true; clearTimeout(watchdog);
     if(fn.error || (fn.data && fn.data.error)){
@@ -3238,7 +3238,7 @@ function finalizeGrade(attemptId){
   if(!sc || sc.value===''){ alert('Enter a score before finalizing.'); return; }
   var card=$('gradingBody').querySelector('[data-attempt="'+attemptId+'"]');
   if(card){ card.style.opacity='0.5'; }
-  sb.functions.invoke('ai-grade',{ body:{ action:'finalize', attempt_id:attemptId, points:parseFloat(sc.value), feedback:(fb?fb.value:'') } }).then(function(fn){
+  sb.functions.invoke('fin-ai-grade',{ body:{ action:'finalize', attempt_id:attemptId, points:parseFloat(sc.value), feedback:(fb?fb.value:'') } }).then(function(fn){
     if(fn.error || (fn.data && fn.data.error)){
       if(card){ card.style.opacity='1'; }
       alert((fn.data&&fn.data.error)?fn.data.error:(fn.error?fn.error.message:'Finalize failed'));
@@ -4129,7 +4129,7 @@ function maybeCreateProfRequest() {
     }).then(function(ins){
       if (ins.error) { return; }
       // best-effort email notification (works only if the Edge Function + key are set up)
-      sb.functions.invoke('notify-prof-request', { body: { email: u.email, institution: inst, note: note } }).then(function(){}, function(){});
+      sb.functions.invoke('fin-notify-prof-request', { body: { email: u.email, institution: inst, note: note } }).then(function(){}, function(){});
     });
   });
 }
@@ -4568,7 +4568,7 @@ function startGradedQuizConfirmed(chapter, closesAt) {
       var failed = false;
       picks.forEach(function(p){
         chain = chain.then(function(){
-          return sb.functions.invoke('grade-attempt', { body: { action:'issue', item_id:p.id, course_id:courseId } }).then(function(fn){
+          return sb.functions.invoke('fin-grade-attempt', { body: { action:'issue', item_id:p.id, course_id:courseId } }).then(function(fn){
             if (fn.error || !fn.data || fn.data.error) { failed = true; return; }
             issued.push({ attempt_id:fn.data.attempt_id, item_type:fn.data.item_type, prompt:fn.data.prompt, options:fn.data.options, points:fn.data.points, figure:fn.data.figure });
           });
@@ -4659,7 +4659,7 @@ function submitGradedQuiz() {
     possible += (it.points ? Number(it.points) : 1);
     chain = chain.then(function(){
       var submitted = (QuizState.answers[i] !== undefined) ? QuizState.answers[i] : '-999999';
-      return sb.functions.invoke('grade-attempt', { body: { action:'grade', attempt_id: it.attempt_id, submitted_value: submitted } }).then(function(fn){
+      return sb.functions.invoke('fin-grade-attempt', { body: { action:'grade', attempt_id: it.attempt_id, submitted_value: submitted } }).then(function(fn){
         if (fn.data && fn.data.points_earned) { earned += Number(fn.data.points_earned); }
       });
     });
@@ -4737,7 +4737,7 @@ function loadNewQuestion() {
       if (!res.data || res.data.length === 0) { area.innerHTML = errCard('No items found for this chapter.'); return; }
       var pick = res.data[Math.floor(Math.random() * res.data.length)];
       // 2) ask the Edge Function to ISSUE a per-student instance
-      sb.functions.invoke('grade-attempt', {
+      sb.functions.invoke('fin-grade-attempt', {
         body: { action: 'issue', item_id: pick.id, course_id: State.selfCourseId }
       }).then(function(fn) {
         if (fn.error) { area.innerHTML = errCard('issue failed: ' + fn.error.message); return; }
@@ -4908,7 +4908,7 @@ function submitAnswer() {
     submitted = v;
   }
   $('submitAnsBtn').disabled = true;
-  sb.functions.invoke('grade-attempt', {
+  sb.functions.invoke('fin-grade-attempt', {
     body: { action: 'grade', attempt_id: item.attempt_id, submitted_value: submitted }
   }).then(function(fn) {
     var fb = $('qFeedback');
@@ -5572,7 +5572,7 @@ function resumeExam(exam, accom){
   var host=$('myExamsBody');
   ExamState = { exam:exam, items:[], answers:{}, idx:0, courseId:exam.course_id, submitting:false, finished:false, timer:null, deadline:null, _consented:true, _resume:true };
   host.innerHTML='<div class="card"><span class="spinner"></span> &nbsp;Loading your remaining questions\u2026</div>';
-  sb.functions.invoke('grade-attempt',{ body:{ action:'resume', exam_id:exam.id } }).then(function(fn){
+  sb.functions.invoke('fin-grade-attempt',{ body:{ action:'resume', exam_id:exam.id } }).then(function(fn){
     if(fn.error || (fn.data && fn.data.error)){
       host.innerHTML=errCard('Could not load your remaining questions: '+((fn.data&&fn.data.error)?fn.data.error:(fn.error?fn.error.message:'unknown'))+'. Please tell your instructor.');
       return;
@@ -5628,7 +5628,7 @@ function reallyStartExam(exam, accom) {
     var failed = false;
     ids.forEach(function(itemId) {
       chain = chain.then(function() {
-        return sb.functions.invoke('grade-attempt', { body: { action:'issue', item_id:itemId, course_id:exam.course_id, exam_id:exam.id } }).then(function(fn) {
+        return sb.functions.invoke('fin-grade-attempt', { body: { action:'issue', item_id:itemId, course_id:exam.course_id, exam_id:exam.id } }).then(function(fn) {
           if (fn.error) { failed = true; return; }
           if (fn.data && fn.data.error) { failed = true; ExamState.issueError = fn.data.error; return; }
           if (fn.data && fn.data.attempt_id) {
@@ -5789,7 +5789,7 @@ function gradeExam(auto) {
       } else {
         if (submitted === undefined || submitted === '') { submitted = '__BLANK__'; }
       }
-      return sb.functions.invoke('grade-attempt', { body: { action:'grade', attempt_id: it.attempt_id, submitted_value: submitted } }).then(function(fn) {
+      return sb.functions.invoke('fin-grade-attempt', { body: { action:'grade', attempt_id: it.attempt_id, submitted_value: submitted } }).then(function(fn) {
         if (isFree) { pendingCount++; return; }
         if (fn.data && fn.data.is_correct) { correct++; earned += (fn.data.points_earned ? Number(fn.data.points_earned) : 0); }
       });
@@ -6195,7 +6195,7 @@ function runDiagnostics() {
     if (r.error || !r.data || r.data.length === 0) { p('5. Grader test — skipped (no numeric item found)', 'dim'); return null; }
     var itemId = r.data[0].id;
     p('5. Grader — issuing item ' + esc(itemId) + ' …', 'dim');
-    return sb.functions.invoke('grade-attempt', { body: { action:'issue', item_id: itemId, course_id: State.selfCourseId } })
+    return sb.functions.invoke('fin-grade-attempt', { body: { action:'issue', item_id: itemId, course_id: State.selfCourseId } })
       .then(function(fn) {
         if (fn.error || !fn.data || fn.data.error) {
           p('   issue FAILED: ' + esc(fn.error ? fn.error.message : (fn.data ? fn.data.error : '?')), 'fail'); return;
@@ -6203,7 +6203,7 @@ function runDiagnostics() {
         p('   issued attempt ' + esc(fn.data.attempt_id) + '  ✓', 'pass');
         p('   prompt: ' + esc(fn.data.prompt), 'dim');
         // submit a deliberately wrong answer to confirm grading runs
-        return sb.functions.invoke('grade-attempt', { body: { action:'grade', attempt_id: fn.data.attempt_id, submitted_value: '-999999' } })
+        return sb.functions.invoke('fin-grade-attempt', { body: { action:'grade', attempt_id: fn.data.attempt_id, submitted_value: '-999999' } })
           .then(function(g) {
             if (g.error || !g.data) { p('   grade FAILED: ' + esc(g.error ? g.error.message : '?'), 'fail'); return; }
             p('   graded wrong answer -> is_correct=' + g.data.is_correct + '  ✓ (grader live)', 'pass');
