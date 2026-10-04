@@ -236,7 +236,7 @@
 <div id="authScreen" class="auth-wrap">
   <div class="auth-card">
     <div class="brand"><a href="https://macronations.com" target="_blank" rel="noopener" title="MacroNations portal" style="display:flex;align-items:center;gap:12px;text-decoration:none;"><span style="width:42px;height:42px;display:inline-block;"><svg viewBox="0 0 36 36" width="42" height="42" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MacroNations logo"><defs><clipPath id="nsc2"><path d="M18 1.5 L32 6 L32 21 Q32 32 18 35.5 Q4 32 4 21 L4 6 Z"/></clipPath></defs><path d="M18 1.5 L32 6 L32 21 Q32 32 18 35.5 Q4 32 4 21 L4 6 Z" fill="#0D1F3C"/><rect x="4" y="9" width="28" height="6" fill="#1A3260" clip-path="url(#nsc2)"/><path d="M18 1.5 L32 6 L32 21 Q32 32 18 35.5 Q4 32 4 21 L4 6 Z" fill="none" stroke="#FFD700" stroke-width="1.5"/><text x="18" y="16" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" font-weight="700" fill="#FFD700" letter-spacing="2">MN</text><line x1="8" y1="18" x2="28" y2="18" stroke="#FFD700" stroke-width="0.8"/><rect x="6.5" y="27.5" width="2.5" height="4.5" fill="#60A5FA" clip-path="url(#nsc2)"/><rect x="10" y="25.5" width="2.5" height="6.5" fill="#60A5FA" clip-path="url(#nsc2)"/><rect x="13.5" y="23.5" width="2.5" height="8.5" fill="#60A5FA" clip-path="url(#nsc2)"/><rect x="17" y="21.5" width="2.5" height="10.5" fill="#60A5FA" clip-path="url(#nsc2)"/><rect x="20.5" y="19.5" width="2.5" height="12.5" fill="#60A5FA" clip-path="url(#nsc2)"/><polyline points="7.75,27 11.25,25 14.75,22.8 18.25,20.5 21.75,18.5" fill="none" stroke="#00FF88" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#nsc2)"/></svg></span><span class="brand-name">Finance</span></a></div>
-    <div class="auth-sub">Sign in to your game-theory workspace — or create an account to get started.</div>
+    <div class="auth-sub">Sign in to your finance workspace — or create an account to get started.</div>
     <div id="authMsg" class="msg"></div>
     <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@university.edu"></div>
     <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="********"></div>
@@ -261,7 +261,7 @@
     <div class="auth-toggle" id="authToggle">No account yet? <b>Create one</b></div>
     <div style="text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
       <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:8px;">Just want to look around?</div>
-      <button class="btn btn-ghost btn-sm" id="guestBrowseBtn">Browse free chapters &amp; arenas \u2014 no account needed</button>
+      <button class="btn btn-ghost btn-sm" id="guestBrowseBtn">Browse free chapters &amp; arenas — no account needed</button>
     </div>
   </div>
 </div>
@@ -3364,8 +3364,8 @@ function openExamEditor(examId){
     $('edBody').innerHTML=html;
     renderQList();
     $('edCancel').addEventListener('click', close);
-    $('edAddToggle').addEventListener('click', function(){ var p=$('edAddPanel'); if(p.style.display==='none'){ p.style.display='block'; loadAddBank(); } else { p.style.display='none'; } });
-    $('edRandToggle').addEventListener('click', function(){ var p=$('edRandPanel'); if(p.style.display==='none'){ p.style.display='block'; loadRandPanel(); } else { p.style.display='none'; } });
+    $('edAddToggle').addEventListener('click', function(){ var p=$('edAddPanel'); if(p.style.display==='none'){ p.style.display='block'; loadAddBank(); try{ p.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(_){} } else { p.style.display='none'; } });
+    $('edRandToggle').addEventListener('click', function(){ var p=$('edRandPanel'); if(p.style.display==='none'){ p.style.display='block'; loadRandPanel(); try{ p.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(_){} } else { p.style.display='none'; } });
     $('edSave').addEventListener('click', save);
   }
 
