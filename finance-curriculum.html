@@ -2090,98 +2090,76 @@
         <div class="chapter-meta">Chapter 2 &middot; Foundations</div>
         <h1 class="chapter-title">The Time Value of Money</h1>
         <div class="chapter-stats">
-          <div class="stat-item">&#128214; 18 min read</div>
+          <div class="stat-item">&#128214; 28 min read</div>
           <div class="stat-item">&#129518; 1 live spreadsheet</div>
-          <div class="stat-item">&#9998; 4 exercises + quiz</div>
+          <div class="stat-item">&#9998; 6 exercises + quiz</div>
         </div>
 
-        <p class="lead">In Chapter 1 we said a dollar today is worth more than a dollar tomorrow. This chapter
-        turns that instinct into a tool sharp enough to compare any two streams of cash, arriving at any times,
-        on a single common ruler: their value <em>today</em>. Master this one move &mdash; discounting &mdash;
-        and you can value a bond, a business, a mortgage, or a lottery jackpot. Everything after this chapter is
-        an application of it.</p>
+        <p class="lead">Chapter 1 established that a dollar today is worth more than a dollar tomorrow. This chapter turns that instinct into a precise tool &mdash; one sharp enough to compare any two streams of cash, arriving at any dates, on a single common ruler: their value <em>today</em>. One operation, called discounting, underlies the entire method, and once it is mastered it will value a bond, a business, a mortgage, or a lottery prize. Every chapter that follows is an application of it.</p>
 
         <div class="story">
-          <p class="story-first">You win the lottery. The clerk offers a choice: $1,000,000 in cash right now,
-          or $50,000 a year for the next 30 years &mdash; $1,500,000 in total. The second pile is half a
-          million dollars bigger. Most people take it. Most people are wrong, and by the end of this chapter you
-          will be able to say exactly why, and by how much.</p>
-          <p>The trick is that the $1.5M is an illusion of addition: it sums dollars that arrive in different
-          years as if they were the same thing. They are not. A dollar arriving in year 30 is worth far less to
-          you today than a dollar in your hand now, because the dollar in hand can be invested and grow for 30
-          years. To compare the two offers honestly, we must drag every future payment back to the present &mdash;
-          and once we do, the &ldquo;bigger&rdquo; pile often shrinks below the cash.</p>
+          <p class="story-first">You win a lottery, and the clerk offers a choice: $1,000,000 in cash now, or $50,000 a year for thirty years &mdash; $1,500,000 in total. The second amount is half a million dollars larger, and most people take it. Most people are mistaken, and by the end of this chapter the reason, and the exact magnitude of the error, will be clear.</p>
+          <p>The $1.5 million is an illusion of addition: it sums dollars that arrive in different years as though they were the same quantity. They are not. A dollar arriving in year thirty is worth far less today than a dollar in hand, because the dollar in hand can be invested and allowed to grow for thirty years. To compare the two offers honestly, every future payment must be brought back to the present &mdash; and once that is done, the larger pile frequently falls below the cash.</p>
         </div>
 
         <h2 class="section-title">Pushing money forward: future value</h2>
 
-        <p>Start with the easy direction. Put <span class="ktx">$PV$</span> dollars in an account earning
-        <span class="ktx">$r$</span> per year. After one year you have <span class="ktx">$PV(1+r)$</span>. Leave it
-        another year and that whole balance grows again, so you have <span class="ktx">$PV(1+r)^2$</span> &mdash;
-        the interest earned in year 1 itself earns interest in year 2. After <span class="ktx">$n$</span> years:</p>
+        <p>Begin with the straightforward direction. Place <span class="ktx">$PV$</span> dollars in an account earning <span class="ktx">$r$</span> per year. After one year the balance is <span class="ktx">$PV(1+r)$</span>. Leave it a second year and the entire balance grows again, to <span class="ktx">$PV(1+r)^2$</span>: the interest earned in the first year itself earns interest in the second. This process &mdash; earning interest on previously earned interest &mdash; is called <strong>compounding</strong>, and it is developed fully in Chapter 3. After <span class="ktx">$n$</span> years the balance is:</p>
 
         <div class="math-callout">
           <div class="math-label">Future value of a single amount</div>
           <em>FV = PV &times; (1 + r)<sup>n</sup></em> &nbsp;&nbsp;<span class="math-comment">// each year multiplies the whole balance by (1+r)</span>
         </div>
 
-        <p>The exponent is where the magic hides. Growth is not linear (add <span class="ktx">$r$</span> each
-        year) but exponential (multiply by <span class="ktx">$1+r$</span> each year), and over decades the
-        difference is enormous. Chapter 3 is devoted to it. Here we need the reverse direction.</p>
+        <p>The exponent is the source of the effect. Growth is not linear &mdash; adding <span class="ktx">$r$</span> each year &mdash; but exponential, multiplying by <span class="ktx">$1+r$</span> each year, and over decades the distinction is large. A single $1,000 deposit at 7 percent becomes $1,967 after ten years and $7,612 after thirty; the second thirty-year figure is nearly four times the ten-year one, though the time is only three times as long. Chapter 3 examines this growth in detail. The present chapter needs the reverse direction.</p>
 
         <h2 class="section-title">Pulling money back: present value</h2>
 
-        <p>Now flip the question. Someone promises you a fixed amount <span class="ktx">$FV$</span> at a future
-        date. What is that promise worth to you <em>today</em>? It must be the amount that, invested now at rate
-        <span class="ktx">$r$</span>, would grow into exactly <span class="ktx">$FV$</span> by then. Solve the
-        future&#8209;value formula for <span class="ktx">$PV$</span>:</p>
+        <p>Now reverse the question. Suppose a fixed amount <span class="ktx">$FV$</span> is promised at a future date. What is that promise worth <em>today</em>? It must be the amount that, invested now at rate <span class="ktx">$r$</span>, would grow into exactly <span class="ktx">$FV$</span> by the promised date. Solving the future-value relation for <span class="ktx">$PV$</span> gives:</p>
 
         <div class="math-callout">
           <div class="math-label">Present value of a single future amount</div>
           <em>PV = FV / (1 + r)<sup>n</sup></em> &nbsp;&nbsp;<span class="math-comment">// divide out the growth the money would have earned</span>
         </div>
 
-        <p>This operation &mdash; converting a future dollar into its worth today &mdash; is called
-        <strong>discounting</strong>, and <span class="ktx">$r$</span> in this role is the <strong>discount
-        rate</strong>. The factor <span class="ktx">$1/(1+r)^n$</span> is the <strong>discount factor</strong>;
-        it is always less than one for positive rates, which is just the mathematics saying &ldquo;future money
-        is worth less.&rdquo; The farther away the cash flow (larger <span class="ktx">$n$</span>) or the higher
-        the rate, the smaller the discount factor, and the less a future dollar is worth now.</p>
+        <p>This operation &mdash; converting a future dollar into its worth today &mdash; is called <strong>discounting</strong>, and <span class="ktx">$r$</span> in this role is the <strong>discount rate</strong>. The factor <span class="ktx">$1/(1+r)^n$</span> is the <strong>discount factor</strong>; for any positive rate it is less than one, which is the mathematics stating that future money is worth less. The farther away the cash flow (larger <span class="ktx">$n$</span>) or the higher the rate, the smaller the discount factor, and the less a future dollar is worth now. The graph makes the decay concrete: it plots the present value of a single future dollar against the number of years until it arrives, at two discount rates.</p>
+
+        <svg viewBox="0 0 588 250" width="100%" style="max-width:588px;display:block;margin:10px auto;font-family:'JetBrains Mono',monospace;"><rect x="0" y="0" width="588" height="250" rx="10" fill="rgba(255,255,255,0.015)"/><line x1="58" y1="210.0" x2="560" y2="210.0" stroke="rgba(234,242,255,0.09)" stroke-width="1"/><text x="52" y="213.0" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="end">0</text><line x1="58" y1="162.0" x2="560" y2="162.0" stroke="rgba(234,242,255,0.09)" stroke-width="1"/><text x="52" y="165.0" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="end">0.25</text><line x1="58" y1="114.0" x2="560" y2="114.0" stroke="rgba(234,242,255,0.09)" stroke-width="1"/><text x="52" y="117.0" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="end">0.5</text><line x1="58" y1="66.0" x2="560" y2="66.0" stroke="rgba(234,242,255,0.09)" stroke-width="1"/><text x="52" y="69.0" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="end">0.75</text><line x1="58" y1="18.0" x2="560" y2="18.0" stroke="rgba(234,242,255,0.09)" stroke-width="1"/><text x="52" y="21.0" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="end">1</text><text x="58.0" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">0</text><text x="141.7" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">5</text><text x="225.3" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">10</text><text x="309.0" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">15</text><text x="392.7" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">20</text><text x="476.3" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">25</text><text x="560.0" y="224" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">30</text><line x1="58" y1="210" x2="560" y2="210" stroke="rgba(234,242,255,0.3)" stroke-width="1"/><line x1="58" y1="18" x2="58" y2="210" stroke="rgba(234,242,255,0.3)" stroke-width="1"/><polyline points="58.0,18.0 74.7,25.4 91.5,32.5 108.2,39.3 124.9,45.9 141.7,52.2 158.4,58.3 175.1,64.1 191.9,69.7 208.6,75.1 225.3,80.3 242.1,85.3 258.8,90.1 275.5,94.7 292.3,99.1 309.0,103.4 325.7,107.5 342.5,111.4 359.2,115.2 375.9,118.9 392.7,122.4 409.4,125.7 426.1,129.0 442.9,132.1 459.6,135.1 476.3,138.0 493.1,140.7 509.8,143.4 526.5,146.0 543.3,148.4 560.0,150.8" fill="none" stroke="#2DD4BF" stroke-width="2.6" stroke-linejoin="round"/><polyline points="58.0,18.0 74.7,35.5 91.5,51.3 108.2,65.7 124.9,78.9 141.7,90.8 158.4,101.6 175.1,111.5 191.9,120.4 208.6,128.6 225.3,136.0 242.1,142.7 258.8,148.8 275.5,154.4 292.3,159.4 309.0,164.0 325.7,168.2 342.5,172.0 359.2,175.5 375.9,178.6 392.7,181.5 409.4,184.1 426.1,186.4 442.9,188.6 459.6,190.5 476.3,192.3 493.1,193.9 509.8,195.4 526.5,196.7 543.3,197.9 560.0,199.0" fill="none" stroke="#FBBF24" stroke-width="2.6" stroke-linejoin="round"/><line x1="410" y1="26" x2="430" y2="26" stroke="#2DD4BF" stroke-width="3"/><text x="436" y="29.5" fill="rgba(234,242,255,0.75)" font-size="10.5">4% discount rate</text><line x1="410" y1="43" x2="430" y2="43" stroke="#FBBF24" stroke-width="3"/><text x="436" y="46.5" fill="rgba(234,242,255,0.75)" font-size="10.5">10% discount rate</text><text x="309" y="244" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle">Years until the dollar arrives (n)</text><text x="13" y="114" fill="rgba(234,242,255,0.5)" font-size="10" text-anchor="middle" transform="rotate(-90 13 114)">Value today of $1 (discount factor)</text></svg>
+
+        <p>Two features deserve attention. First, every curve begins at one, because a dollar available today is worth exactly a dollar. Second, the decline is steeper and deeper at the higher rate: at 10 percent, a dollar arriving in thirty years is worth about six cents today, whereas at 4 percent it is worth about thirty cents. The discount rate governs how severely the future is penalised.</p>
 
         <div class="definition">
           <div class="def-label">Definition</div>
           <div class="def-term">Present value (PV)</div>
-          <p style="margin-bottom:0;">The value <em>today</em> of a cash flow (or a whole stream of cash flows)
-          that will be received in the future, obtained by discounting each future amount at the appropriate
-          rate. Present value is the universal common denominator of finance: it lets us add and compare cash
-          flows that arrive at different times.</p>
+          <p style="margin-bottom:0;">The value <em>today</em> of a cash flow, or of a whole stream of cash flows, to be received in the future, obtained by discounting each future amount at the appropriate rate. Present value is the universal common denominator of finance: it allows cash flows that arrive at different times to be added and compared.</p>
         </div>
 
         <div class="example">
           <div class="example-label">Worked example</div>
           <div class="example-title">A promise three years out</div>
-          <p>A trustworthy borrower will pay you $5,000 in exactly 3 years. Comparable safe investments earn 6%.
-          What is the promise worth today?</p>
+          <p>A creditworthy borrower will pay $5,000 in exactly three years. Comparable safe investments earn 6 percent. What is the promise worth today?</p>
           <p><code>PV = 5000 / (1.06)<sup>3</sup> = 5000 / 1.1910 = $4,198.10</code></p>
-          <p style="margin-bottom:0;">So you should be willing to pay up to $4,198.10 for this promise, and no
-          more &mdash; because $4,198.10 invested at 6% grows to exactly $5,000 in three years. If someone
-          offers to sell you the promise for $3,900, take it: you are paying less than it is worth.</p>
+          <p style="margin-bottom:0;">One should be willing to pay up to $4,198.10 for this promise and no more, because $4,198.10 invested at 6 percent grows into exactly $5,000 in three years. A seller offering the promise for $3,900 is offering it below its value, and it should be bought.</p>
         </div>
 
-        <h2 class="section-title">Valuing a whole stream: PV is additive</h2>
+        <h2 class="section-title">Valuing a whole stream: present value is additive</h2>
 
-        <p>Real investments rarely pay once. A bond pays interest every year and principal at the end; a business
-        throws off cash for decades. The key fact that makes these tractable is beautifully simple:
-        <strong>present values add up</strong>. The value today of a stream of cash flows is just the sum of the
-        present values of its individual pieces. If a project pays <span class="ktx">$C_1, C_2, \dots, C_n$</span>
-        at the end of years <span class="ktx">$1$</span> through <span class="ktx">$n$</span>:</p>
+        <p>Real investments rarely pay only once. A bond pays interest each year and principal at maturity; a company generates cash for decades. The property that makes such streams tractable is that <strong>present values add</strong>: the value today of a stream of cash flows is the sum of the present values of its individual payments. If a project pays <span class="ktx">$C_1, C_2, \dots, C_n$</span> at the ends of years <span class="ktx">$1$</span> through <span class="ktx">$n$</span>, then:</p>
 
         <div class="math-display">PV = C<sub>1</sub>/(1+r) + C<sub>2</sub>/(1+r)<sup>2</sup> + &hellip; + C<sub>n</sub>/(1+r)<sup>n</sup></div>
 
-        <p>Each term drags one future payment back to today; the sum is what the whole stream is worth now. This
-        single equation, in one form or another, is behind every valuation in this book. The live sheet below is
-        exactly that formula &mdash; enter up to five yearly cash flows and a discount rate, and watch each one
-        shrink as it is pulled back to the present.</p>
+        <p>Each term brings one future payment back to today; their sum is the value of the whole stream now. This single equation, in one form or another, lies behind every valuation in this book.</p>
+
+        <div class="example">
+          <div class="example-label">Worked example</div>
+          <div class="example-title">Three years of a company&rsquo;s cash</div>
+          <p>Northwind Components, the firm used throughout this book, is expected to generate free cash flow of $120m, $130m, and $140m over the next three years. At a discount rate of 9 percent, what is that three-year stream worth today?</p>
+          <p><code>PV = 120/1.09 + 130/1.09<sup>2</sup> + 140/1.09<sup>3</sup></code></p>
+          <p><code>= 110.09 + 109.42 + 108.11 = $327.62m</code></p>
+          <p style="margin-bottom:0;">Note that the $140m in year three, though the largest payment, contributes the least in present value, because it is discounted over the most years. Timing matters as much as magnitude &mdash; the principle that an entire valuation chapter (Chapter 6) later rests upon.</p>
+        </div>
+
+        <p>The live sheet below is precisely this calculation. Enter a project&rsquo;s cost today and up to five annual cash flows, and it discounts each flow, sums them, and subtracts the cost to produce net present value. Raising the discount rate shows distant cash flows shrinking away.</p>
 
         <div class="fin-sheet" data-sheet="pv2">
           <div class="fin-sheet-head">
@@ -2192,10 +2170,7 @@
             </div>
           </div>
           <div class="fin-sheet-body">
-            <div class="fin-sheet-note">Enter a project's cost today and its cash flows for the next five years.
-            The sheet discounts each flow, sums them into a present value, and subtracts the cost to get
-            <strong>net present value</strong> &mdash; the number Chapter 7 shows is the right basis for every
-            investment decision. Raise the discount rate and watch distant cash flows melt away.</div>
+            <div class="fin-sheet-note">Enter a project's cost today and its cash flows for the next five years. The sheet discounts each flow, sums them into a present value, and subtracts the cost to give <strong>net present value</strong> &mdash; the figure Chapter 7 establishes as the correct basis for an investment decision. Raise the discount rate and watch distant cash flows diminish.</div>
             <div class="fs-grid">
               <div class="fs-field"><label>Cost today (year 0)</label><div class="fs-input-wrap"><span class="fs-prefix">$</span><input class="fs-cell pad-l" type="number" data-cell="c0" value="12000" step="500"></div></div>
               <div class="fs-field"><label>Discount rate (r)</label><div class="fs-input-wrap"><input class="fs-cell pad-r" type="number" data-cell="r" value="8" step="0.5"><span class="fs-suffix">% / yr</span></div><input class="fs-range" type="range" data-range="r" min="0" max="20" step="0.5" value="8"></div>
@@ -2220,8 +2195,8 @@
           <div class="cc-question">You are discounting a cash flow that arrives in year 10. You raise the discount rate from 5% to 9%. What happens to its present value?</div>
           <div class="cc-options">
             <button class="cc-option" data-correct="false" data-explain="A higher discount rate makes the denominator (1+r)^n larger, which lowers present value, not raises it.">A. It rises</button>
-            <button class="cc-option" data-correct="true" data-explain="Correct. A higher r enlarges (1+r)^10, so the discount factor shrinks and the present value falls — and because the exponent is 10, the effect is large. Distant cash flows are the most sensitive to the discount rate.">B. It falls, and sharply because n = 10 is large</button>
-            <button class="cc-option" data-correct="false" data-explain="It does change — present value depends on the discount rate. Only a cash flow at time 0 is unaffected by discounting.">C. It stays the same</button>
+            <button class="cc-option" data-correct="true" data-explain="Correct. A higher r enlarges (1+r)^10, so the discount factor shrinks and the present value falls &mdash; and because the exponent is 10, the effect is large. Distant cash flows are the most sensitive to the discount rate.">B. It falls, and sharply because n = 10 is large</button>
+            <button class="cc-option" data-correct="false" data-explain="It does change &mdash; present value depends on the discount rate. Only a cash flow at time 0 is unaffected by discounting.">C. It stays the same</button>
             <button class="cc-option" data-correct="false" data-explain="The direction is not ambiguous: for a positive cash flow, higher r always means lower PV.">D. It could rise or fall</button>
           </div>
           <div class="cc-feedback"></div>
@@ -2229,52 +2204,56 @@
 
         <h2 class="section-title">Where does the discount rate come from?</h2>
 
-        <p>The formula needs a number for <span class="ktx">$r$</span>, and choosing it well is most of the art
-        of valuation. The discount rate is fundamentally an <strong>opportunity cost</strong>: the return you
-        could earn on your next&#8209;best alternative investment of similar risk. If safe government bonds yield
-        4%, then a safe future cash flow should be discounted at 4% &mdash; because 4% is what you give up by
-        tying your money in this promise instead.</p>
+        <p>The formula requires a value for <span class="ktx">$r$</span>, and choosing it well is most of the craft of valuation. The discount rate is fundamentally an <strong>opportunity cost</strong>: the return available on the next-best alternative investment of comparable risk. If safe government bonds yield 4 percent, a safe future cash flow should be discounted at 4 percent, because 4 percent is what is given up by committing money to this promise instead.</p>
 
-        <p>Risk raises it. A cash flow you are unsure of should be discounted at a higher rate than a certain one,
-        because your next&#8209;best alternative of <em>comparable risk</em> earns more (recall the risk premium
-        from Chapter 1). A risky corporate cash flow might be discounted at 10% while a Treasury payment is
-        discounted at 4%. So the discount rate quietly encodes <em>both</em> forces of finance at once: the pure
-        time value (the safe rate) plus a premium for the risk. Chapters 8 and 9 build the machinery that pins
-        down the right premium; for now, hold the intuition: <em>riskier future cash is discounted harder.</em></p>
+        <p>Risk raises the rate. A cash flow that is uncertain should be discounted at a higher rate than a certain one, because the next-best alternative <em>of comparable risk</em> earns more &mdash; the risk premium introduced in Chapter 1. A risky corporate cash flow might be discounted at 10 percent while a Treasury payment is discounted at 4 percent. The discount rate therefore encodes both forces of finance at once: the pure time value, captured by the safe rate, and a premium for bearing risk. Chapters 8 and 9 construct the machinery that determines the appropriate premium; for the present, the intuition suffices: riskier future cash is discounted more heavily.</p>
+
+        <h2 class="section-title">Nominal and real rates: the role of inflation</h2>
+
+        <p>A quoted interest rate usually measures growth in dollars, not in purchasing power. The <strong>nominal rate</strong> is the stated rate &mdash; the percentage by which a dollar balance grows. <strong>Inflation</strong> is the rate at which the general price level rises, eroding what each dollar buys. The <strong>real rate</strong> is the growth in purchasing power that remains once inflation is removed. If a savings account pays a nominal 8 percent while prices rise 3 percent, the balance buys only about 5 percent more goods at year end; the real return is roughly 5 percent.</p>
+
+        <div class="math-callout">
+          <div class="math-label">Real and nominal rates (the Fisher relation)</div>
+          <em>(1 + r<sub>real</sub>) = (1 + r<sub>nominal</sub>) / (1 + inflation)</em> &nbsp;&nbsp;<span class="math-comment">// approximately, r_real &asymp; r_nominal &minus; inflation</span>
+        </div>
+
+        <p>The exact calculation for the example is <span class="ktx">$1.08/1.03 - 1 = 4.85\%$</span>, close to the 5 percent the approximation gives. The practical rule that governs every valuation is one of consistency: discount <em>nominal</em> cash flows (actual future dollars) at a <em>nominal</em> rate, and <em>real</em> cash flows (expressed in today&rsquo;s purchasing power) at a <em>real</em> rate. Mixing the two &mdash; discounting inflated future dollars at a real rate, for instance &mdash; is a common and material error.</p>
 
         <div class="key-idea">
           <div class="ki-label">The master recipe</div>
-          <p>To value <em>anything</em>: (1) forecast its future cash flows, (2) choose a discount rate that
-          reflects their risk, (3) discount each flow back to today, and (4) add them up. Every valuation in this
-          book &mdash; bonds, stocks, whole companies, your own degree &mdash; is a special case of these four
-          steps. The differences are only in how you forecast the cash flows and pick the rate.</p>
+          <p>To value anything: (1) forecast its future cash flows, (2) choose a discount rate that reflects their risk, (3) discount each flow back to today, and (4) add the results. Every valuation in this book &mdash; bonds, stocks, whole companies, a university degree &mdash; is a special case of these four steps. The chapters differ only in how the cash flows are forecast and how the rate is chosen.</p>
         </div>
 
-        <h2 class="section-title">From present value to a decision: NPV</h2>
+        <h2 class="section-title">From present value to a decision: net present value</h2>
 
-        <p>Present value tells you what a stream of future cash is worth. To decide whether to <em>buy</em> it,
-        compare that worth to the price. The difference is <strong>net present value</strong>:</p>
+        <p>Present value states what a stream of future cash is worth. To decide whether to <em>acquire</em> it, that worth is compared with the price. The difference is <strong>net present value</strong>:</p>
 
-        <div class="math-display">NPV = (PV of everything it pays you) &minus; (what it costs today)</div>
+        <div class="math-display">NPV = (PV of everything it pays) &minus; (what it costs today)</div>
 
-        <p>If NPV is positive, the thing is worth more than it costs &mdash; accept it. If negative, reject it.
-        That is the entire logic of the investment decision, and the live sheet above computes it for you.
-        Chapter 7 makes NPV the centerpiece of corporate finance; you have just met it three chapters early,
-        because it falls straight out of discounting.</p>
+        <p>A positive NPV means the asset is worth more than it costs, and it should be accepted; a negative NPV means the reverse. This is the entire logic of the investment decision, and the live sheet computes it directly. Chapter 7 makes net present value the centrepiece of corporate finance; it appears here, several chapters early, because it follows immediately from discounting.</p>
 
-        <p>And the lottery? Discount the 30 annual $50,000 payments at a modest 6% and their present value is
-        about $688,000 &mdash; well under the $1,000,000 cash. The &ldquo;bigger&rdquo; $1.5M pile is worth
-        less today than the smaller cash offer. Take the million. (You now have the tools to check this yourself;
-        Exercise 2.4 walks you through it.)</p>
+        <p>And the lottery. Discounting the thirty annual payments of $50,000 at a modest 6 percent gives a present value of about $688,000 &mdash; well below the $1,000,000 cash. The larger $1.5 million total is worth less today than the smaller immediate offer. The cash should be taken. Exercise 2.4 develops this result in full.</p>
 
         <div class="concept-check" data-quiz-id="cc2-2">
           <div class="cc-label">&#9889; Concept check</div>
           <div class="cc-question">A project costs $10,000 today and the present value of all its future cash flows is $9,300. Its NPV is:</div>
           <div class="cc-options">
-            <button class="cc-option" data-correct="false" data-explain="NPV isn't the sum; it is the PV of inflows minus the cost. Here that is 9,300 − 10,000.">A. +$19,300 &mdash; accept</button>
-            <button class="cc-option" data-correct="true" data-explain="Correct. NPV = 9,300 − 10,000 = −$700. It costs more than it is worth, so reject it. A negative NPV means the price exceeds the value of what you get.">B. &minus;$700 &mdash; reject</button>
+            <button class="cc-option" data-correct="false" data-explain="NPV is not the sum; it is the PV of inflows minus the cost. Here that is 9,300 &minus; 10,000.">A. +$19,300 &mdash; accept</button>
+            <button class="cc-option" data-correct="true" data-explain="Correct. NPV = 9,300 &minus; 10,000 = &minus;$700. It costs more than it is worth, so reject it. A negative NPV means the price exceeds the value of what you receive.">B. &minus;$700 &mdash; reject</button>
             <button class="cc-option" data-correct="false" data-explain="A $9,300 value for a $10,000 cost is a loss in today's dollars, not a break-even.">C. $0 &mdash; break&#8209;even</button>
-            <button class="cc-option" data-correct="false" data-explain="NPV is well-defined here: PV of inflows minus cost = −$700.">D. Can't tell without the discount rate</button>
+            <button class="cc-option" data-correct="false" data-explain="NPV is well-defined here: PV of inflows minus cost = &minus;$700.">D. Can't tell without the discount rate</button>
+          </div>
+          <div class="cc-feedback"></div>
+        </div>
+
+        <div class="concept-check" data-quiz-id="cc2-3">
+          <div class="cc-label">&#9889; Concept check</div>
+          <div class="cc-question">A bank account pays a nominal 5% while inflation runs at 5%. In real terms, your purchasing power over the year has:</div>
+          <div class="cc-options">
+            <button class="cc-option" data-correct="true" data-explain="Correct. With the nominal rate equal to inflation, the real rate is approximately zero: the balance grows in dollars but buys no more goods than before.">A. Stayed roughly flat &mdash; the real return is about zero</button>
+            <button class="cc-option" data-correct="false" data-explain="The 5% is nominal growth in dollars; inflation of 5% offsets it, leaving no real gain.">B. Risen about 5%</button>
+            <button class="cc-option" data-correct="false" data-explain="Purchasing power has not fallen 5%; the nominal interest offsets inflation, leaving it roughly unchanged.">C. Fallen about 5%</button>
+            <button class="cc-option" data-correct="false" data-explain="The real rate is determinable here: nominal minus inflation is approximately zero.">D. Cannot be determined</button>
           </div>
           <div class="cc-feedback"></div>
         </div>
@@ -2297,40 +2276,52 @@
             <div class="ex-prompt"><p>A project pays $1,000 at the end of year 1 and $2,000 at the end of year 2. The discount rate is 10%. What is the present value of the stream?</p></div>
             <button class="ex-solution-toggle">Show solution &#9662;</button>
             <div class="ex-solution"><div class="sol-label">Solution</div>
-              <p>Discount each flow and add (PV is additive):</p>
+              <p>Discount each flow and add, since present values are additive:</p>
               <p><code>PV = 1000/1.10 + 2000/1.10<sup>2</sup> = 909.09 + 1652.89 = $2,561.98</code>.</p>
-              <p style="margin-bottom:0;">Notice the year&#8209;2 flow, though twice as large, is discounted twice, so it is not simply worth twice the year&#8209;1 flow. Timing matters as much as size.</p></div>
+              <p style="margin-bottom:0;">The year-2 flow, though twice as large, is discounted twice, so it is not worth simply twice the year-1 flow. Timing matters as much as size.</p></div>
           </div>
 
           <div class="exercise">
             <div class="ex-num">Exercise 2.3 <span class="ex-difficulty medium">Medium</span></div>
-            <div class="ex-prompt"><p>An investment costs $5,000 today and returns $2,000, $2,500, and $2,000 at the ends of years 1, 2, and 3. At a 9% discount rate, what is its NPV? Should you take it?</p></div>
+            <div class="ex-prompt"><p>An investment costs $5,000 today and returns $2,000, $2,500, and $2,000 at the ends of years 1, 2, and 3. At a 9% discount rate, what is its NPV? Should it be accepted?</p></div>
             <button class="ex-solution-toggle">Show solution &#9662;</button>
             <div class="ex-solution"><div class="sol-label">Solution</div>
               <p><code>PV = 2000/1.09 + 2500/1.09<sup>2</sup> + 2000/1.09<sup>3</sup></code></p>
               <p><code>= 1834.86 + 2104.20 + 1544.37 = $5,483.43</code></p>
-              <p style="margin-bottom:0;"><code>NPV = 5483.43 &minus; 5000 = +$483.43</code>. Positive, so <strong>accept</strong> &mdash; the investment is worth about $483 more than it costs, in today's dollars. Check it in the live sheet above with these numbers.</p></div>
+              <p style="margin-bottom:0;"><code>NPV = 5483.43 &minus; 5000 = +$483.43</code>. Positive, so <strong>accept</strong>: the investment is worth about $483 more than it costs in today&rsquo;s dollars. The same figures can be entered in the live sheet above.</p></div>
           </div>
 
           <div class="exercise">
             <div class="ex-num">Exercise 2.4 <span class="ex-difficulty hard">Hard</span></div>
-            <div class="ex-prompt"><p>Return to the lottery. Approximate the present value of $50,000 per year for 30 years at 6% by reasoning about it, then explain in words why the answer is so far below the $1,500,000 headline total. (You may use that the PV of $1 per year for 30 years at 6% is about 13.76.)</p></div>
+            <div class="ex-prompt"><p>Return to the lottery. Approximate the present value of $50,000 per year for 30 years at 6%, then explain why it falls so far below the $1,500,000 headline total. (Use that the present value of $1 per year for 30 years at 6% is about 13.76.)</p></div>
             <button class="ex-solution-toggle">Show solution &#9662;</button>
             <div class="ex-solution"><div class="sol-label">Solution</div>
-              <p><code>PV &asymp; 50,000 &times; 13.76 = $688,000</code> &mdash; below the $1,000,000 cash offer, so the cash wins.</p>
-              <p style="margin-bottom:0;">The headline $1.5M adds 30 payments as if a dollar in year 30 equals a dollar today. But the year&#8209;30 payment is discounted by 1.06<sup>30</sup> &asymp; 5.74, so it is worth only about $8,700 today, not $50,000. Averaged across all 30 years, each $50,000 payment is worth well under half its face value in present terms. Summing face values ignores the time value of money &mdash; exactly the error this chapter exists to cure. (The factor 13.76 is an <em>annuity factor</em>, the shortcut we build in Chapter 4.)</p></div>
+              <p><code>PV &asymp; 50,000 &times; 13.76 = $688,000</code> &mdash; below the $1,000,000 cash offer, so the cash is preferable.</p>
+              <p style="margin-bottom:0;">The headline $1.5m adds thirty payments as though a dollar in year 30 equalled a dollar today. But the year-30 payment is discounted by 1.06<sup>30</sup> &asymp; 5.74, making it worth only about $8,700 today, not $50,000. Averaged across the thirty years, each $50,000 payment is worth well under half its face value in present terms. Summing face values ignores the time value of money &mdash; precisely the error this chapter addresses. The factor 13.76 is an <em>annuity factor</em>, the shortcut developed in Chapter 4.)</p></div>
+          </div>
+
+          <div class="exercise">
+            <div class="ex-num">Exercise 2.5 <span class="ex-difficulty medium">Medium</span></div>
+            <div class="ex-prompt"><p>A bond will pay $10,000 in ten years. (a) At a 4% discount rate, what is it worth today? (b) At 10%? (c) Using the discount-factor graph&rsquo;s logic, explain why the two answers differ by so much.</p></div>
+            <button class="ex-solution-toggle">Show solution &#9662;</button>
+            <div class="ex-solution"><div class="sol-label">Solution</div>
+              <p>(a) <code>10,000 / 1.04<sup>10</sup> = 10,000 / 1.4802 = $6,755.64</code>. (b) <code>10,000 / 1.10<sup>10</sup> = 10,000 / 2.5937 = $3,855.43</code>.</p>
+              <p style="margin-bottom:0;">(c) The discount factor compounds the rate over ten years, so a higher rate is magnified by the exponent: 1.10<sup>10</sup> is far larger than 1.04<sup>10</sup>. The ten-year point on the graph sits much lower for the 10% curve than for the 4% curve, which is why the same future payment is worth almost $2,900 less at the higher rate.</p></div>
+          </div>
+
+          <div class="exercise">
+            <div class="ex-num">Exercise 2.6 <span class="ex-difficulty hard">Hard</span></div>
+            <div class="ex-prompt"><p>An investment is expected to return a nominal 7% next year, while inflation is expected to be 4%. (a) Estimate the real return with the approximation and compute it exactly. (b) Why does a saver ultimately care about the real figure rather than the nominal one?</p></div>
+            <button class="ex-solution-toggle">Show solution &#9662;</button>
+            <div class="ex-solution"><div class="sol-label">Solution</div>
+              <p>(a) Approximation: <code>7% &minus; 4% = 3%</code>. Exact: <code>1.07/1.04 &minus; 1 = 2.88%</code>.</p>
+              <p style="margin-bottom:0;">(b) A saver invests in order to consume later, and consumption depends on purchasing power, not on the dollar count. A nominal 7% that is entirely consumed by inflation leaves the saver no better able to buy goods; only the real return &mdash; here about 2.9% &mdash; measures the genuine gain. This is also why nominal cash flows must be discounted at a nominal rate and real cash flows at a real rate.</p></div>
           </div>
         </div>
 
         <div class="history-box">
           <div class="history-label">Where this came from</div>
-          <p style="margin-bottom:0;">Discounting is old arithmetic put to new use. Leonardo of Pisa
-          (&ldquo;Fibonacci&rdquo;), in <em>Liber Abaci</em> (1202), worked present&#8209;value problems to compare
-          business deals across time. But the idea became the organizing principle of finance only in 1930, when
-          Yale economist <strong>Irving Fisher</strong>, in <em>The Theory of Interest</em>, argued that the value
-          of any asset is the present value of the income it will produce &mdash; and that investment decisions
-          should be made by comparing present values. Every valuation model in this book is a descendant of that
-          claim.</p>
+          <p style="margin-bottom:0;">Discounting is old arithmetic put to new use. Leonardo of Pisa (&ldquo;Fibonacci&rdquo;), in <em>Liber Abaci</em> (1202), worked present-value problems to compare business deals across time. The idea became the organising principle of finance only in 1930, when the Yale economist <strong>Irving Fisher</strong>, in <em>The Theory of Interest</em>, argued that the value of any asset is the present value of the income it will produce, and that investment decisions should be made by comparing present values. He also formalised the relation between nominal and real rates that still bears his name. Every valuation model in this book descends from these claims.</p>
         </div>
 
         <div class="bibliography">
@@ -2343,19 +2334,19 @@
 
         <div class="chapter-quiz" id="quiz-2">
           <div class="quiz-header"><div class="quiz-icon">&#128202;</div><div class="quiz-title-stack"><div class="qts-eyebrow">End&#8209;of&#8209;chapter quiz</div><div class="qts-title">Test your understanding</div></div></div>
-          <div class="quiz-meta">5 questions &middot; pass threshold 70% &middot; earn the chapter badge</div>
+          <div class="quiz-meta">7 questions &middot; pass threshold 70% &middot; earn the chapter badge</div>
           <div class="quiz-questions" id="quiz-2-body">
 
             <div class="quiz-question" data-q="1"><div class="q-num">Question 1</div><div class="q-text">&ldquo;Discounting&rdquo; a future cash flow means:</div>
               <button class="cc-option" data-correct="false" data-explain="Reducing a price is a different sense of the word. In finance, discounting converts a future amount to its value today.">A. Lowering its price to make a sale</button>
-              <button class="cc-option" data-correct="true" data-explain="Yes. Discounting divides by (1+r)^n to find what a future cash flow is worth today.">B. Converting it to its value today by dividing by (1+r)ⁿ</button>
-              <button class="cc-option" data-correct="false" data-explain="That's compounding (future value) — the opposite operation.">C. Growing it forward to a future date</button>
+              <button class="cc-option" data-correct="true" data-explain="Yes. Discounting divides by (1+r)^n to find what a future cash flow is worth today.">B. Converting it to its value today by dividing by (1+r)&#8319;</button>
+              <button class="cc-option" data-correct="false" data-explain="That is compounding (future value) &mdash; the opposite operation.">C. Growing it forward to a future date</button>
               <button class="cc-option" data-correct="false" data-explain="Discounting has nothing to do with ignoring cash flows; it re-times them to the present.">D. Ignoring cash flows that are too far away</button>
               <div class="cc-feedback"></div></div>
 
             <div class="quiz-question" data-q="2"><div class="q-num">Question 2</div><div class="q-text">At a 10% discount rate, what is $1,100 received one year from now worth today?</div>
               <button class="cc-option" data-correct="true" data-explain="PV = 1100/1.10 = 1,000. That $1,000 invested at 10% grows back into $1,100.">A. $1,000</button>
-              <button class="cc-option" data-correct="false" data-explain="$1,210 is 1100 × 1.10 — compounding forward, not discounting back.">B. $1,210</button>
+              <button class="cc-option" data-correct="false" data-explain="$1,210 is 1100 &times; 1.10 &mdash; compounding forward, not discounting back.">B. $1,210</button>
               <button class="cc-option" data-correct="false" data-explain="$1,100 ignores the time value of money for the one-year wait.">C. $1,100</button>
               <button class="cc-option" data-correct="false" data-explain="Too low; the one-year discount at 10% is modest. Compute 1100/1.10.">D. $900</button>
               <div class="cc-feedback"></div></div>
@@ -2363,26 +2354,40 @@
             <div class="quiz-question" data-q="3"><div class="q-num">Question 3</div><div class="q-text">Two cash flows are equal in size. One arrives in year 2, the other in year 8. Discounted at the same positive rate, which has the larger present value?</div>
               <button class="cc-option" data-correct="true" data-explain="Correct. The nearer flow (year 2) is discounted by a smaller factor, so it has the larger present value. Sooner is worth more.">A. The year&#8209;2 flow</button>
               <button class="cc-option" data-correct="false" data-explain="The year-8 flow is discounted over more years, shrinking it more. It has the smaller PV.">B. The year&#8209;8 flow</button>
-              <button class="cc-option" data-correct="false" data-explain="They are not equal in present value — timing changes value even when face amounts match.">C. They are equal</button>
+              <button class="cc-option" data-correct="false" data-explain="They are not equal in present value &mdash; timing changes value even when face amounts match.">C. They are equal</button>
               <button class="cc-option" data-correct="false" data-explain="It is determinable: the earlier flow always has the higher present value at a positive rate.">D. Impossible to say</button>
               <div class="cc-feedback"></div></div>
 
             <div class="quiz-question" data-q="4"><div class="q-num">Question 4</div><div class="q-text">The discount rate you should use to value a cash flow is best described as:</div>
-              <button class="cc-option" data-correct="false" data-explain="Inflation matters, but the discount rate is broader: it is the opportunity cost of capital for that risk, which includes a real return and a risk premium, not just inflation.">A. Always the inflation rate</button>
-              <button class="cc-option" data-correct="true" data-explain="Yes. The discount rate is the return available on your next-best alternative of comparable risk — an opportunity cost that rises with risk.">B. The return on your next&#8209;best alternative of similar risk (opportunity cost)</button>
-              <button class="cc-option" data-correct="false" data-explain="Zero would mean money has no time value; then PV would equal face value, which contradicts the whole chapter.">C. Always zero for safe cash flows</button>
+              <button class="cc-option" data-correct="false" data-explain="Inflation matters, but the discount rate is broader: it is the opportunity cost of capital for that risk, including a real return and a risk premium, not only inflation.">A. Always the inflation rate</button>
+              <button class="cc-option" data-correct="true" data-explain="Yes. The discount rate is the return available on the next-best alternative of comparable risk &mdash; an opportunity cost that rises with risk.">B. The return on the next&#8209;best alternative of similar risk (opportunity cost)</button>
+              <button class="cc-option" data-correct="false" data-explain="Zero would mean money has no time value; then PV would equal face value, contradicting the chapter.">C. Always zero for safe cash flows</button>
               <button class="cc-option" data-correct="false" data-explain="The bank's fee is unrelated to the opportunity cost of capital used in discounting.">D. Whatever fee your bank charges</button>
               <div class="cc-feedback"></div></div>
 
             <div class="quiz-question" data-q="5"><div class="q-num">Question 5</div><div class="q-text">A project's future cash flows have a present value of $8,000. It costs $8,000 today. Its NPV is $0. What does that tell you?</div>
-              <button class="cc-option" data-correct="false" data-explain="A zero NPV is not a loss; you exactly earn your required return (the discount rate). You are made no worse off.">A. The project loses money</button>
-              <button class="cc-option" data-correct="true" data-explain="Correct. NPV = 0 means the project earns exactly the discount rate — your required return of comparable risk — no more, no less. It is a break-even in value terms.">B. The project earns exactly the required return &mdash; a break&#8209;even in value</button>
-              <button class="cc-option" data-correct="false" data-explain="A zero NPV doesn't mean the cash flows are zero; they're worth $8,000 in present value, exactly offsetting the cost.">C. The project produces no cash</button>
+              <button class="cc-option" data-correct="false" data-explain="A zero NPV is not a loss; you exactly earn your required return (the discount rate), so you are made no worse off.">A. The project loses money</button>
+              <button class="cc-option" data-correct="true" data-explain="Correct. NPV = 0 means the project earns exactly the discount rate &mdash; the required return of comparable risk &mdash; no more and no less. It is a break-even in value terms.">B. The project earns exactly the required return &mdash; a break&#8209;even in value</button>
+              <button class="cc-option" data-correct="false" data-explain="A zero NPV does not mean the cash flows are zero; they are worth $8,000 in present value, exactly offsetting the cost.">C. The project produces no cash</button>
               <button class="cc-option" data-correct="false" data-explain="NPV already incorporates the discount rate; the result is a clear break-even, not indeterminate.">D. Nothing can be concluded</button>
               <div class="cc-feedback"></div></div>
 
+            <div class="quiz-question" data-q="6"><div class="q-num">Question 6</div><div class="q-text">An account pays a nominal 6% while inflation is 4%. The approximate real rate of return is:</div>
+              <button class="cc-option" data-correct="true" data-explain="Yes &mdash; real rate &asymp; nominal &minus; inflation = 6% &minus; 4% = about 2% (exactly 1.06/1.04 &minus; 1 = 1.92%).">A. About 2%</button>
+              <button class="cc-option" data-correct="false" data-explain="10% adds the two rates; the real rate subtracts inflation from the nominal rate.">B. About 10%</button>
+              <button class="cc-option" data-correct="false" data-explain="6% is the nominal rate; the real rate removes the 4% inflation.">C. About 6%</button>
+              <button class="cc-option" data-correct="false" data-explain="The real rate is positive here: the nominal rate exceeds inflation.">D. About &minus;4%</button>
+              <div class="cc-feedback"></div></div>
+
+            <div class="quiz-question" data-q="7"><div class="q-num">Question 7</div><div class="q-text">Because present values are additive, the value today of a stream of cash flows equals:</div>
+              <button class="cc-option" data-correct="true" data-explain="Yes &mdash; discount each individual cash flow to today and sum the results.">A. The sum of the present values of the individual cash flows</button>
+              <button class="cc-option" data-correct="false" data-explain="Summing the undiscounted amounts ignores timing &mdash; precisely the lottery error.">B. The simple sum of the undiscounted cash flows</button>
+              <button class="cc-option" data-correct="false" data-explain="Only the final cash flow understates the value of a multi-period stream.">C. The present value of the final cash flow only</button>
+              <button class="cc-option" data-correct="false" data-explain="The largest flow alone is not the value of the whole stream; every flow contributes its present value.">D. The present value of the largest cash flow only</button>
+              <div class="cc-feedback"></div></div>
+
           </div>
-          <div class="quiz-actions"><button class="btn-primary" id="quiz-2-submit">Submit answers</button><button class="btn-ghost" id="quiz-2-reset">Reset</button><span class="text-[12px]" style="color: var(--text-muted);" id="quiz-2-progress">0 of 5 answered</span></div>
+          <div class="quiz-actions"><button class="btn-primary" id="quiz-2-submit">Submit answers</button><button class="btn-ghost" id="quiz-2-reset">Reset</button><span class="text-[12px]" style="color: var(--text-muted);" id="quiz-2-progress">0 of 7 answered</span></div>
           <div id="quiz-2-result"></div>
         </div>
 
@@ -3979,6 +3984,8 @@
           <div class="def-term">Call &amp; put options</div>
           <p style="margin-bottom:0;">A <strong>call</strong> is the right, not the obligation, to <em>buy</em> at the strike price; its value rises with the underlying. A <strong>put</strong> is the right to <em>sell</em> at the strike; its value rises as the underlying falls. The buyer pays a premium at the outset. The buyer&rsquo;s maximum loss is that premium, while the potential gain is large. The <strong>seller</strong> (writer) receives the premium and assumes the corresponding obligation, with the risk profile reversed.</p>
         </div>
+
+        <p>Two further terms recur throughout. To be <strong>long</strong> an instrument is to own it &mdash; to have bought it and to gain when its value rises; to be <strong>short</strong> is to have sold it, taking on the opposite exposure. The buyer of a call thus holds a <em>long call</em> and the buyer of a put a <em>long put</em>, while the party who sells an option, collecting the premium and assuming the obligation, is said to <strong>write</strong> it, or to be <em>short</em> the option.</p>
 
         <p>An option is described by its <strong>moneyness</strong>. A call is <strong>in the money</strong> when the share price exceeds the strike, <strong>at the money</strong> when the two coincide, and <strong>out of the money</strong> when the share trades below the strike; for a put the conditions are reversed. With Northwind at $28, a call struck at $25 is in the money, a call struck at $28 is at the money, and a call struck at $32 is out of the money.</p>
 
