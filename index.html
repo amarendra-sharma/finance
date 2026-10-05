@@ -462,11 +462,12 @@ var STUDENT_CHAPTERS = [
 var ARENA_FILE = {
   'retirement':'finance-retirement.html','dcf':'finance-dcf.html',
   'portfolio':'finance-portfolio.html','options':'finance-options.html',
-  'market-floor':'finance-market-floor.html'
+  'market-floor':'finance-market-floor.html',
+  'statements':'finance-statements.html'
 };
 // Canonical list of graded arenas (the denominator for the arena grade component).
 // Unplayed arenas contribute 0, so partial completion earns partial credit.
-var ARENA_SLUGS = ['retirement','dcf','portfolio','options','market-floor'];
+var ARENA_SLUGS = ['statements','retirement','dcf','portfolio','options','market-floor'];
 var ARENA_MAX_ATTEMPTS = 2;   // only the first N attempts per arena count toward the grade
 
 // Performance-based arena score for the grade. Given all of a student's arena
@@ -511,6 +512,7 @@ function computeArenaScore(rows, requiredN){
   return sum / N;   // divide by requiredN; unplayed/beyond-N already excluded
 }
 var ARENA_TITLE = {
+  'statements':'Financial Statements Lab',
   'retirement':'Compounding Lab','dcf':'Valuation Arena','portfolio':'Portfolio Builder',
   'options':'Options Lab','market-floor':'Trading Floor'
 };

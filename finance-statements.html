@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Financial Statements Lab — MacroNations Finance</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Instrument Serif','serif'] }
+  } } };
+</script>
+<style>
+  html,body{background:#070C16;}
+  body{font-family:'Inter',system-ui,sans-serif;color:#EAF2FF;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  ::selection{background:rgba(37,99,235,.35);color:#fff;}
+  .arena-bg{position:fixed;inset:0;z-index:-2;background:#060A12;overflow:hidden;}
+  .arena-bg::before{content:'';position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,#1D4ED8 0%,transparent 65%);filter:blur(140px);opacity:.30;top:-25vw;left:40%;}
+  .arena-bg::after{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,#0EA5A5 0%,transparent 65%);filter:blur(150px);opacity:.16;bottom:-20vw;left:-10vw;}
+  ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:5px;}
+  .card{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08);border-radius:18px;backdrop-filter:blur(12px);}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:11px;transition:transform .14s,box-shadow .25s,background .15s;}
+  .btn-primary{background:linear-gradient(135deg,#2563EB,#38BDF8);color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.55),inset 0 1px 0 rgba(255,255,255,.2);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#EAF2FF;border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{background:rgba(255,255,255,.09);}
+  .pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(234,242,255,.75);}
+  .glow-dot{width:8px;height:8px;border-radius:50%;background:#2DD4BF;box-shadow:0 0 10px #2DD4BF;display:inline-block;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .reveal{animation:rin .4s cubic-bezier(.16,1,.3,1);}
+  @keyframes rin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  a.backlink{color:rgba(234,242,255,.6);text-decoration:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+  a.backlink:hover{color:#fff;background:rgba(255,255,255,.08);}
+  .teach{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.22);border-radius:12px;padding:13px 15px;font-size:13.5px;line-height:1.6;color:rgba(234,242,255,.82);}
+  .teach b{color:#BAE6FD;}
+  .chip{border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:9px;padding:6px 10px;cursor:pointer;font-weight:600;font-size:12.5px;transition:all .12s;color:rgba(234,242,255,.8);}
+  .chip:hover{background:rgba(255,255,255,.07);}
+  .chip.sel{border-color:#38BDF8;background:rgba(56,189,248,.16);color:#BAE6FD;}
+  .chip.ok{border-color:#34D399;background:rgba(52,211,153,.16);color:#A7F3D0;}
+  .chip.bad{border-color:#FB7185;background:rgba(251,113,133,.14);color:#FDA4AF;}
+  .numin{width:120px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.14);border-radius:9px;padding:7px 10px;color:#5EEAD4;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;text-align:right;}
+  .numin:focus{outline:none;border-color:#38BDF8;}
+  .numin.ok{border-color:#34D399;color:#A7F3D0;}
+  .numin.bad{border-color:#FB7185;color:#FDA4AF;}
+  table.stmt{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+  table.stmt td{padding:5px 9px;border-bottom:1px solid rgba(255,255,255,.06);}
+  table.stmt td:last-child{text-align:right;}
+  .muted{color:rgba(234,242,255,.55);}
+  .seg{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;}
+  .seg > i{display:block;height:100%;background:linear-gradient(90deg,#2563EB,#2DD4BF);transition:width .4s;}
+  .vbtn{border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:11px;padding:11px 12px;cursor:pointer;font-weight:600;font-size:13.5px;transition:all .14s;text-align:left;}
+  .vbtn:hover{background:rgba(255,255,255,.07);}
+  .vbtn.sel{border-color:#38BDF8;background:rgba(56,189,248,.14);color:#BAE6FD;}
+  .vbtn.ok{border-color:#34D399;background:rgba(52,211,153,.14);}
+  .vbtn.bad{border-color:#FB7185;background:rgba(251,113,133,.12);}
+</style>
+</head>
+<body>
+<div class="arena-bg"></div>
+<div class="max-w-4xl mx-auto px-5 py-6">
+
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <a href="finance-curriculum.html#chapter-6" class="backlink inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]">&larr; Back to book</a>
+      <span class="pill" style="border-color:rgba(45,212,191,.4);color:#5EEAD4;">MacroNations &middot; Finance</span>
+    </div>
+    <div class="text-[12px]" style="color:rgba(234,242,255,.5);"><span class="glow-dot"></span> &nbsp;Financial Statements Lab &middot; <span id="stageLbl">Stage 1 of 5</span></div>
+  </div>
+
+  <div class="mb-5">
+    <div style="font-family:'Instrument Serif',serif;font-size:42px;line-height:1.05;">The Financial Statements Lab</div>
+    <div class="mt-2 text-[15px] max-w-2xl" style="color:rgba(234,242,255,.72);line-height:1.6;">Five short exercises on one company, <b>Northwind Components</b> &mdash; the same firm from Chapter&nbsp;6. Each stage explains the idea, then asks you to apply it. You classify accounts, assemble the income statement, balance the balance sheet, trace the cash, and connect the three statements. Points accrue as you go.</div>
+  </div>
+
+  <div class="seg mb-5"><i id="bar" style="width:0%"></i></div>
+
+  <div id="stageHost"></div>
+
+  <!-- scoreboard -->
+  <div class="card p-5 mt-5">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-6">
+        <div><div class="text-[10px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Points</div><div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#5EEAD4;" id="pts">0</div></div>
+        <div><div class="text-[10px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Possible so far</div><div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;" id="poss">0</div></div>
+        <div><div class="text-[10px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Score</div><div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#FBBF24;" id="pct">&mdash;</div></div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="btn btn-primary px-5 py-3 text-[14px]" id="finish" style="display:none;">&#10003; Finish &amp; save score</button>
+      </div>
+    </div>
+    <div id="finishNote" class="text-[12px] mt-2" style="display:none;color:#5EEAD4;">Saved to your progress. You can revisit any time to improve your score.</div>
+  </div>
+
+  <div class="mt-6 text-[12px] text-center" style="color:rgba(234,242,255,.4);">A teaching model built on one illustrative company. The relationships you practise here &mdash; profit versus cash, the balance-sheet identity, and how the three statements link &mdash; are exactly those used in professional analysis.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='statements';</script>
+<script src="fin-gate.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.getElementById(s);};
+  var earned=0, possible=0, stage=0;
+  var TOTAL_STAGES=5;
+
+  function setScore(){
+    $('pts').textContent=earned;
+    $('poss').textContent=possible;
+    $('pct').textContent = possible>0 ? Math.round(earned/possible*100)+'%' : '—';
+    $('bar').style.width = Math.round(stage/TOTAL_STAGES*100)+'%';
+    var sc = possible>0 ? earned/possible : 0;
+    window._finResult = {
+      score: Math.max(0, Math.min(1, sc)),
+      outcome: (stage>=TOTAL_STAGES ? (sc>=0.7?'win':'completed') : 'completed'),
+      detail: {
+        stagesDone: stage, pointsEarned: earned, pointsPossible: possible,
+        explain: 'The lab has five graded stages on Northwind Components (classify accounts, build the income statement, balance the balance sheet, trace cash by the indirect method, and connect the statements). Your grade is total points earned divided by total points available across the stages you completed.',
+        breakdown: window._bd.concat([{label:'Total', value:earned+' / '+possible+(possible>0?('  ('+Math.round(earned/possible*100)+'%)'):'')}])
+      }
+    };
+  }
+  window._bd=[];
+  function record(label, got, max){ earned+=got; possible+=max; window._bd.push({label:label, value:got+' / '+max}); }
+
+  function nextBtn(label, fn){
+    return '<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="adv">'+label+'</button>';
+  }
+  function bindAdv(fn){ var b=$('adv'); if(b) b.addEventListener('click',fn); }
+
+  // ---------- STAGE 1: classify accounts ----------
+  var S1_ITEMS=[
+    {a:'Revenue (sales)', s:'IS', why:'Revenue is the top line of the income statement.'},
+    {a:'Cost of goods sold', s:'IS', why:'An expense on the income statement, subtracted from revenue to reach gross profit.'},
+    {a:'Interest expense', s:'IS', why:'The cost of debt appears on the income statement, below operating income.'},
+    {a:'Inventory', s:'BS', why:'Inventory is a current asset held on the balance sheet until it is sold.'},
+    {a:'Accounts payable', s:'BS', why:'Money owed to suppliers is a current liability on the balance sheet.'},
+    {a:'Long-term debt', s:'BS', why:'Borrowings due beyond one year are a liability on the balance sheet.'},
+    {a:'Dividends paid', s:'CFS', why:'Dividends are not an expense. They appear under financing activities on the cash-flow statement and reduce retained earnings on the balance sheet.'},
+    {a:'Net cash from operating activities', s:'CFS', why:'This is the headline subtotal of the cash-flow statement.'}
+  ];
+  var S1_LABELS={IS:'Income statement', BS:'Balance sheet', CFS:'Cash-flow statement'};
+  function stage1(){
+    stage=0; // will mark done on check
+    var h='<div class="card p-5 reveal">'
+      +'<div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#38BDF8;">Stage 1 &middot; Where does each account belong?</div>'
+      +'<div class="teach mb-4">A company reports in three statements. The <b>income statement</b> measures profit over a period (revenue minus expenses). The <b>balance sheet</b> is a snapshot of what the firm owns and owes on one day (assets = liabilities + equity). The <b>cash-flow statement</b> tracks the actual cash that moved. Assign each account to the statement it belongs to.</div>'
+      +'<div id="s1rows"></div>'
+      +'<div id="s1fb" class="mt-3 text-[13px]"></div>'
+      +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="s1check">Check answers</button>'
+      +'</div>';
+    $('stageHost').innerHTML=h;
+    var rows='';
+    S1_ITEMS.forEach(function(it,i){
+      rows+='<div class="flex items-center justify-between gap-3 py-2" style="border-bottom:1px solid rgba(255,255,255,.06);">'
+        +'<div class="text-[13.5px]" style="color:rgba(234,242,255,.9);">'+it.a+'</div>'
+        +'<div class="flex gap-2" data-row="'+i+'">'
+        +'<div class="chip" data-pick="IS">IS</div><div class="chip" data-pick="BS">BS</div><div class="chip" data-pick="CFS">CFS</div>'
+        +'</div></div>';
+    });
+    $('s1rows').innerHTML=rows;
+    var picks={};
+    Array.prototype.forEach.call(document.querySelectorAll('#s1rows [data-row]'),function(grp){
+      var i=grp.getAttribute('data-row');
+      grp.querySelectorAll('.chip').forEach(function(ch){
+        ch.addEventListener('click',function(){
+          if(grp.getAttribute('data-locked'))return;
+          grp.querySelectorAll('.chip').forEach(function(x){x.classList.remove('sel');});
+          ch.classList.add('sel'); picks[i]=ch.getAttribute('data-pick');
+        });
+      });
+    });
+    $('s1check').addEventListener('click',function(){
+      var got=0, max=S1_ITEMS.length;
+      var fb='';
+      Array.prototype.forEach.call(document.querySelectorAll('#s1rows [data-row]'),function(grp){
+        var i=grp.getAttribute('data-row'); grp.setAttribute('data-locked','1');
+        var correct=S1_ITEMS[i].s, pick=picks[i];
+        grp.querySelectorAll('.chip').forEach(function(ch){
+          var v=ch.getAttribute('data-pick');
+          ch.classList.remove('sel');
+          if(v===correct) ch.classList.add('ok');
+          else if(v===pick) ch.classList.add('bad');
+        });
+        if(pick===correct) got++;
+        else fb+='<div style="margin-top:4px;color:rgba(234,242,255,.7);"><b style="color:#FDA4AF;">'+S1_ITEMS[i].a+'</b> &rarr; '+S1_LABELS[correct]+'. '+S1_ITEMS[i].why+'</div>';
+      });
+      record('Stage 1 · Classify', got*5, max*5);
+      stage=1; setScore();
+      $('s1check').style.display='none';
+      $('s1fb').innerHTML='<div class="reveal"><b style="color:'+(got===max?'#5EEAD4':'#FBBF24')+';">'+got+' of '+max+' correct.</b>'+(fb?('<div class="mt-2">'+fb+'</div>'):' Every account placed correctly.')+'</div>'
+        +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="adv">Continue &rarr;</button>';
+      bindAdv(stage2);
+    });
+  }
+
+  // ---------- STAGE 2: build the income statement ----------
+  function stage2(){
+    var h='<div class="card p-5 reveal">'
+      +'<div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#38BDF8;">Stage 2 &middot; Build the income statement</div>'
+      +'<div class="teach mb-4">The income statement runs top to bottom. Start with <b>revenue</b>, subtract <b>cost of goods sold</b> to get <b>gross profit</b>; subtract <b>operating expenses</b> to get <b>operating income (EBIT)</b>; subtract <b>interest</b> and <b>tax</b> to get <b>net income</b>. Fill in the three subtotals for Northwind (all figures in $ millions).</div>'
+      +'<table class="stmt">'
+      +'<tr><td>Revenue</td><td>1,200</td></tr>'
+      +'<tr><td>Cost of goods sold</td><td>(780)</td></tr>'
+      +'<tr><td><b>Gross profit</b></td><td><input class="numin" id="q_gp" inputmode="numeric"></td></tr>'
+      +'<tr><td>Operating expenses</td><td>(250)</td></tr>'
+      +'<tr><td><b>Operating income (EBIT)</b></td><td><input class="numin" id="q_ebit" inputmode="numeric"></td></tr>'
+      +'<tr><td>Interest expense</td><td>(30)</td></tr>'
+      +'<tr><td>Taxes</td><td>(35)</td></tr>'
+      +'<tr><td><b>Net income</b></td><td><input class="numin" id="q_ni" inputmode="numeric"></td></tr>'
+      +'</table>'
+      +'<div id="s2fb" class="mt-3 text-[13px]"></div>'
+      +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="s2check">Check answers</button>'
+      +'</div>';
+    $('stageHost').innerHTML=h;
+    var targets=[['q_gp',420,'Gross profit = 1,200 &minus; 780 = 420.'],['q_ebit',170,'Operating income = 420 &minus; 250 = 170.'],['q_ni',105,'Net income = 170 &minus; 30 &minus; 35 = 105.']];
+    $('s2check').addEventListener('click',function(){
+      var got=0, fb='';
+      targets.forEach(function(t){
+        var el=$(t[0]); var v=parseFloat((el.value||'').replace(/[,\s]/g,''));
+        if(v===t[1]){ el.classList.add('ok'); got++; }
+        else { el.classList.add('bad'); fb+='<div style="margin-top:4px;color:rgba(234,242,255,.7);">'+t[2]+'</div>'; }
+        el.disabled=true;
+      });
+      record('Stage 2 · Income statement', got*7, targets.length*7);
+      stage=2; setScore();
+      $('s2check').style.display='none';
+      $('s2fb').innerHTML='<div class="reveal"><b style="color:'+(got===targets.length?'#5EEAD4':'#FBBF24')+';">'+got+' of '+targets.length+' correct.</b>'+fb+'</div>'
+        +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="adv">Continue &rarr;</button>';
+      bindAdv(stage3);
+    });
+  }
+
+  // ---------- STAGE 3: balance the balance sheet ----------
+  function stage3(){
+    var h='<div class="card p-5 reveal">'
+      +'<div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#38BDF8;">Stage 3 &middot; Balance the balance sheet</div>'
+      +'<div class="teach mb-4">The balance sheet obeys one identity: <b>assets = liabilities + shareholders&rsquo; equity</b>. Everything the firm owns is financed either by a creditor or by its owners. Add up Northwind&rsquo;s assets and liabilities, then use the identity to find equity as the residual.</div>'
+      +'<div class="grid sm:grid-cols-2 gap-4">'
+      +'<div><div class="text-[11px] uppercase tracking-wider muted mb-1">Assets</div><table class="stmt">'
+        +'<tr><td>Cash</td><td>90</td></tr><tr><td>Accounts receivable</td><td>150</td></tr>'
+        +'<tr><td>Inventory</td><td>160</td></tr><tr><td>PP&amp;E and other (net)</td><td>600</td></tr>'
+        +'<tr><td><b>Total assets</b></td><td><input class="numin" id="q_ta" inputmode="numeric"></td></tr></table></div>'
+      +'<div><div class="text-[11px] uppercase tracking-wider muted mb-1">Liabilities &amp; equity</div><table class="stmt">'
+        +'<tr><td>Accounts payable</td><td>120</td></tr><tr><td>Short-term debt</td><td>80</td></tr>'
+        +'<tr><td>Long-term debt</td><td>300</td></tr><tr><td><b>Total liabilities</b></td><td>500</td></tr>'
+        +'<tr><td><b>Shareholders&rsquo; equity</b></td><td><input class="numin" id="q_eq" inputmode="numeric"></td></tr></table></div>'
+      +'</div>'
+      +'<div id="s3fb" class="mt-3 text-[13px]"></div>'
+      +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="s3check">Check answers</button>'
+      +'</div>';
+    $('stageHost').innerHTML=h;
+    var targets=[['q_ta',1000,'Total assets = 90 + 150 + 160 + 600 = 1,000.'],['q_eq',500,'Equity = total assets &minus; total liabilities = 1,000 &minus; 500 = 500. It is the residual claim of the owners.']];
+    $('s3check').addEventListener('click',function(){
+      var got=0, fb='';
+      targets.forEach(function(t){
+        var el=$(t[0]); var v=parseFloat((el.value||'').replace(/[,\s]/g,''));
+        if(v===t[1]){ el.classList.add('ok'); got++; } else { el.classList.add('bad'); fb+='<div style="margin-top:4px;color:rgba(234,242,255,.7);">'+t[2]+'</div>'; }
+        el.disabled=true;
+      });
+      record('Stage 3 · Balance sheet', got*7, targets.length*7);
+      stage=3; setScore();
+      $('s3check').style.display='none';
+      $('s3fb').innerHTML='<div class="reveal"><b style="color:'+(got===targets.length?'#5EEAD4':'#FBBF24')+';">'+got+' of '+targets.length+' correct.</b>'+fb+'</div>'
+        +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="adv">Continue &rarr;</button>';
+      bindAdv(stage4);
+    });
+  }
+
+  // ---------- STAGE 4: trace the cash (indirect method) ----------
+  function stage4(){
+    var h='<div class="card p-5 reveal">'
+      +'<div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#38BDF8;">Stage 4 &middot; Trace the cash</div>'
+      +'<div class="teach mb-4">Profit is not cash. The <b>indirect method</b> starts from net income and adjusts it back to cash. Add back <b>depreciation</b> (an expense that moved no cash). Then adjust for working capital: a rise in <b>receivables</b> or <b>inventory</b> <i>uses</i> cash (subtract it); a rise in <b>payables</b> is a <i>source</i> of cash (add it). Compute cash from operations, then the year&rsquo;s change in cash.</div>'
+      +'<table class="stmt">'
+      +'<tr><td>Net income</td><td>105</td></tr>'
+      +'<tr><td>+ Depreciation</td><td>60</td></tr>'
+      +'<tr><td>&minus; Increase in receivables</td><td>(10)</td></tr>'
+      +'<tr><td>&minus; Increase in inventory</td><td>(20)</td></tr>'
+      +'<tr><td>+ Increase in payables</td><td>15</td></tr>'
+      +'<tr><td><b>Cash from operating activities</b></td><td><input class="numin" id="q_cfo" inputmode="numeric"></td></tr>'
+      +'<tr><td>Cash used in investing (capital spending)</td><td>(90)</td></tr>'
+      +'<tr><td>Cash used in financing (dividends)</td><td>(42)</td></tr>'
+      +'<tr><td>Beginning cash</td><td>72</td></tr>'
+      +'<tr><td><b>Ending cash</b></td><td><input class="numin" id="q_endcash" inputmode="numeric"></td></tr>'
+      +'</table>'
+      +'<div id="s4fb" class="mt-3 text-[13px]"></div>'
+      +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="s4check">Check answers</button>'
+      +'</div>';
+    $('stageHost').innerHTML=h;
+    var targets=[
+      ['q_cfo',150,'Cash from operations = 105 + 60 &minus; 10 &minus; 20 + 15 = 150. Note it exceeds net income of 105, mainly because of the depreciation add-back.'],
+      ['q_endcash',90,'Change in cash = 150 &minus; 90 &minus; 42 = 18; ending cash = 72 + 18 = 90 &mdash; which matches the cash line on the balance sheet in Stage 3.']
+    ];
+    $('s4check').addEventListener('click',function(){
+      var got=0, fb='';
+      targets.forEach(function(t){
+        var el=$(t[0]); var v=parseFloat((el.value||'').replace(/[,\s]/g,''));
+        if(v===t[1]){ el.classList.add('ok'); got++; } else { el.classList.add('bad'); fb+='<div style="margin-top:4px;color:rgba(234,242,255,.7);">'+t[2]+'</div>'; }
+        el.disabled=true;
+      });
+      record('Stage 4 · Cash flow', got*8, targets.length*8);
+      stage=4; setScore();
+      $('s4check').style.display='none';
+      $('s4fb').innerHTML='<div class="reveal"><b style="color:'+(got===targets.length?'#5EEAD4':'#FBBF24')+';">'+got+' of '+targets.length+' correct.</b>'+fb+'</div>'
+        +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="adv">Continue &rarr;</button>';
+      bindAdv(stage5);
+    });
+  }
+
+  // ---------- STAGE 5: connect the statements ----------
+  var S5=[
+    {q:'Northwind makes a $100 sale on credit (the customer will pay next quarter). What happens immediately?',
+     opts:[
+      {t:'Revenue rises $100 and receivables rise $100, but cash is unchanged', ok:true},
+      {t:'Cash rises $100 right away', ok:false},
+      {t:'Nothing changes until the customer pays', ok:false},
+      {t:'Only the balance sheet changes; the income statement is untouched', ok:false}],
+     why:'A credit sale is recognised as revenue at once (raising net income) and creates an account receivable. No cash arrives until the customer pays, which is exactly why profit and operating cash differ.'},
+    {q:'Net income links the three statements by:',
+     opts:[
+      {t:'Increasing retained earnings (equity) on the balance sheet and starting the indirect cash-flow statement', ok:true},
+      {t:'Appearing only on the income statement and nowhere else', ok:false},
+      {t:'Being equal to the change in cash for the year', ok:false},
+      {t:'Reducing total assets directly', ok:false}],
+     why:'Net income flows into equity through retained earnings, and it is the first line of the indirect cash-flow statement, from which the working-capital and non-cash adjustments are made.'},
+    {q:'Northwind buys equipment for $90 in cash. The effect this year is:',
+     opts:[
+      {t:'Cash falls $90 (investing) and PP&E rises on the balance sheet; the income statement is unaffected except for later depreciation', ok:true},
+      {t:'A $90 expense on the income statement this year', ok:false},
+      {t:'No effect on any statement until the equipment is sold', ok:false},
+      {t:'Equity falls $90 immediately', ok:false}],
+     why:'Capital spending is an investing cash outflow and converts cash into a long-lived asset. It does not hit the income statement at purchase; its cost reaches the income statement gradually as depreciation.'}
+  ];
+  function stage5(){
+    var h='<div class="card p-5 reveal">'
+      +'<div class="text-[11px] uppercase tracking-wider font-semibold mb-2" style="color:#38BDF8;">Stage 5 &middot; Connect the three statements</div>'
+      +'<div class="teach mb-4">The statements are not separate reports; they interlock. Net income feeds equity and opens the cash-flow statement; a sale can move the income statement and balance sheet without moving cash; an investment moves cash and the balance sheet without touching this year&rsquo;s profit. Answer each question, then check.</div>'
+      +'<div id="s5rows"></div>'
+      +'<div id="s5fb" class="mt-3 text-[13px]"></div>'
+      +'<button class="btn btn-primary px-5 py-2.5 text-[13.5px] mt-4" id="s5check" disabled>Check answers</button>'
+      +'</div>';
+    $('stageHost').innerHTML=h;
+    var rows='';
+    S5.forEach(function(item,qi){
+      rows+='<div class="mb-4" data-q="'+qi+'"><div class="text-[14px] mb-2" style="color:rgba(234,242,255,.92);">'+(qi+1)+'. '+item.q+'</div><div class="flex flex-col gap-2">';
+      item.opts.forEach(function(o,oi){ rows+='<div class="vbtn" data-opt="'+oi+'">'+o.t+'</div>'; });
+      rows+='</div></div>';
+    });
+    $('s5rows').innerHTML=rows;
+    var chosen={};
+    function maybeEnable(){ if(Object.keys(chosen).length===S5.length) $('s5check').disabled=false; }
+    Array.prototype.forEach.call(document.querySelectorAll('#s5rows [data-q]'),function(grp){
+      var qi=grp.getAttribute('data-q');
+      grp.querySelectorAll('.vbtn').forEach(function(b){
+        b.addEventListener('click',function(){
+          if(grp.getAttribute('data-locked'))return;
+          grp.querySelectorAll('.vbtn').forEach(function(x){x.classList.remove('sel');});
+          b.classList.add('sel'); chosen[qi]=parseInt(b.getAttribute('data-opt'),10); maybeEnable();
+        });
+      });
+    });
+    $('s5check').addEventListener('click',function(){
+      var got=0, fb='';
+      Array.prototype.forEach.call(document.querySelectorAll('#s5rows [data-q]'),function(grp){
+        var qi=grp.getAttribute('data-q'); grp.setAttribute('data-locked','1');
+        var item=S5[qi]; var pick=chosen[qi];
+        grp.querySelectorAll('.vbtn').forEach(function(b){
+          var oi=parseInt(b.getAttribute('data-opt'),10); b.classList.remove('sel');
+          if(item.opts[oi].ok) b.classList.add('ok'); else if(oi===pick) b.classList.add('bad');
+        });
+        if(item.opts[pick] && item.opts[pick].ok) got++;
+        else fb+='<div style="margin-top:4px;color:rgba(234,242,255,.7);"><b>Q'+(parseInt(qi,10)+1)+':</b> '+item.why+'</div>';
+      });
+      record('Stage 5 · Linkages', got*7, S5.length*7);
+      stage=5; setScore();
+      $('s5check').style.display='none';
+      $('s5fb').innerHTML='<div class="reveal"><b style="color:'+(got===S5.length?'#5EEAD4':'#FBBF24')+';">'+got+' of '+S5.length+' correct.</b>'+fb+'</div>'
+        +'<div class="mt-4 text-[13.5px]" style="color:rgba(234,242,255,.7);">That is all five stages. Review your score below and save it.</div>';
+      $('finish').style.display='';
+      window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+    });
+  }
+
+  $('finish').addEventListener('click',function(){
+    setScore();
+    if(window.FINProgress && window.FINProgress.reportArenaNow){ window.FINProgress.reportArenaNow(); }
+    $('finish').style.display='none'; $('finishNote').style.display='';
+  });
+
+  if(window.FINProgress && window.FINProgress.initArena){
+    window.FINProgress.initArena({ slug:'statements', getSession:function(){ return window._finResult||null; } });
+  }
+
+  // boot
+  setScore();
+  stage1();
+})();
+</script>
+</body>
+</html>

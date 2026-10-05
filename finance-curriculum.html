@@ -1982,7 +1982,7 @@
             <button class="ex-solution-toggle">Show solution &#9662;</button>
             <div class="ex-solution"><div class="sol-label">Solution</div>
               <p>One path: the retiree buys shares of a <em>venture&#8209;capital or mutual fund</em> (an <strong>intermediary</strong>) through the <strong>market</strong>; the fund uses pooled money to buy the startup&rsquo;s <strong>stock</strong> (the <strong>instrument</strong>), delivering the savings to the firm. Alternatively the retiree buys a bond the startup issues.</p>
-              <p style="margin-bottom:0;">The risk being priced is that the startup fails and the investment is lost. The retiree accepts that risk only in exchange for a <strong>risk premium</strong> &mdash; an expected return above what a safe government bond would pay. The intermediary earns its keep by judging which startups are worth the bet and by pooling many of them so no single failure is ruinous.</p>
+              <p style="margin-bottom:0;">The risk being priced is that the startup fails and the investment is lost. The retiree accepts that risk only in exchange for a <strong>risk premium</strong> &mdash; an expected return above what a safe government bond would pay. The intermediary provides value by assessing which startups merit investment and by pooling many of them so that no single failure is ruinous.</p>
             </div>
           </div>
 
@@ -2933,33 +2933,186 @@
       <div class="reading">
         <div class="chapter-meta">Chapter 6 &middot; Valuing cash flows</div>
         <h1 class="chapter-title">Valuing a Company</h1>
-        <div class="chapter-stats"><div class="stat-item">&#128214; 22 min read</div><div class="stat-item">&#129518; 1 live spreadsheet</div><div class="stat-item">&#127918; 1 arena</div><div class="stat-item">&#9998; 3 exercises + quiz</div></div>
+        <div class="chapter-stats"><div class="stat-item">&#128214; 32 min read</div><div class="stat-item">&#129518; 1 live spreadsheet</div><div class="stat-item">&#127918; 1 arena</div><div class="stat-item">&#9998; 6 exercises + quiz</div></div>
 
-        <p class="lead">A bond tells you its cash flows; a company makes you guess them. That is the whole difficulty &mdash; and the whole art &mdash; of valuing a business. But the machinery is identical to everything before: a company is worth the present value of the cash it will hand its owners over its lifetime. This chapter builds that valuation three ways, from the elegant dividend model to the full discounted-cash-flow engine you will drive in the arena.</p>
+        <p class="lead">A bond tells you its cash flows; a company makes you guess them. That gap is the central difficulty in valuing a business, and the source of its analytical interest. The machinery, though, is the one you already own: a company is worth the present value of the cash it will hand its owners over its lifetime. This chapter introduces the apparatus a professional analyst uses to estimate that figure: the financial statements that record what a firm has done, the ratios that convert those statements into judgment, and three valuation methods that translate the result into a price per share.</p>
 
         <div class="story">
-          <p class="story-first">In 2000, the market valued a profitless pet-supply website at over a billion dollars; a year later it was worthless. In 2004, a search company IPO'd at a price many called insane; two decades on it looks like a bargain. Both prices were bets on future cash flows &mdash; one wrong, one right. Valuation is the discipline of making those bets carefully, with a model instead of a mood. It never removes the uncertainty, but it forces you to say out loud what you are assuming, so you can be wrong for reasons instead of by accident.</p>
+          <p class="story-first">In 2000, the market valued a profitless pet-supply website at more than a billion dollars; eighteen months later it was worth nothing. In 2004, a search company went public at a price many analysts called indefensible; two decades later that price appears, in hindsight, conspicuously low. Both numbers were claims about future cash, and both were produced by serious people using the same tools you are about to learn. The tools did not fail. What separated the two outcomes was the quality of the assumptions fed into them. A valuation model does not remove uncertainty about the future; it forces you to state your assumptions in the open, where they can be examined, defended, and&mdash;when necessary&mdash;proven wrong for a reason rather than by accident.</p>
         </div>
 
         <h2 class="section-title">A share is a claim on future cash</h2>
 
-        <p>Own a share of a company and you own a sliver of every dollar it will ever return to shareholders &mdash; through dividends today, or through the growing value of the business, which eventually becomes cash. So a stock's fundamental value is exactly what Chapter 2 promised: the present value of the future cash flows it delivers to its owner. The three methods below differ only in <em>how they estimate that cash</em> and <em>what rate they discount it at</em>.</p>
+        <p>When you buy a share, you buy a fractional claim on every dollar the company will ever distribute to its owners: dividends paid along the way, plus whatever a buyer will one day pay for the share, which is itself a claim on the dividends still to come. Carried to its conclusion, the terminal sale price drops out of the arithmetic, leaving a precise statement of fundamental value: a stock is worth the present value of the future cash it returns to its owner. This is the principle of Chapter 2 applied to the most difficult asset in the book. The three valuation methods below do not disagree about this principle. They differ only in <em>how they estimate the cash</em> and <em>what rate they discount it at</em>.</p>
+
+        <p>Before any of them can be used, though, you need to read the record of what the company has actually done. That record is the set of financial statements, and learning to read them is a step that introductory treatments often compress. It is treated here deliberately.</p>
+
+        <h2 class="section-title">The three financial statements</h2>
+
+        <p>A public company reports its activity in three linked statements. Each answers a different question, and valuation draws on all three.</p>
+
+        <div class="definition">
+          <div class="def-label">The income statement</div>
+          <div class="def-term">Did the firm earn a profit over the period?</div>
+          <p style="margin-bottom:0;">A flow, measured over a quarter or a year. It begins with <strong>revenue</strong>, subtracts the cost of goods sold to reach <strong>gross profit</strong>, subtracts operating expenses to reach <strong>operating income</strong> (often called EBIT, earnings before interest and taxes), then subtracts interest and taxes to reach <strong>net income</strong>, the &ldquo;bottom line&rdquo; that belongs to shareholders.</p>
+        </div>
+
+        <div class="definition">
+          <div class="def-label">The balance sheet</div>
+          <div class="def-term">What does the firm own and owe at a moment in time?</div>
+          <p style="margin-bottom:0;">A snapshot, taken on the last day of the period. It obeys one identity: <strong>assets = liabilities + shareholders&rsquo; equity</strong>. Everything the firm controls is financed either by someone it owes (a liability) or by its owners (equity). Equity is therefore a residual: what would be left for owners if every asset were sold at its book value and every debt repaid.</p>
+        </div>
+
+        <div class="definition">
+          <div class="def-label">The statement of cash flows</div>
+          <div class="def-term">Where did the actual cash come from and go?</div>
+          <p style="margin-bottom:0;">Net income is an accounting figure, shaped by judgment calls about depreciation, accruals, and timing. The cash-flow statement strips those away and tracks real cash across three activities: operating, investing, and financing. It is the bridge from reported profit to the free cash flow that valuation ultimately runs on.</p>
+        </div>
+
+        <div class="insight">
+          <div class="insight-label">Why profit is not cash</div>
+          <p style="margin-bottom:0;">A firm can report a healthy profit and still be unable to pay its suppliers, because a sale booked on credit raises net income the day it is made but brings in no cash until the customer pays. The reverse happens too: a large upfront investment drains cash without touching that year&rsquo;s profit, because the cost is spread over the asset&rsquo;s life as depreciation. Valuation depends on cash, not accounting profit, and the gap between the two is a frequent source of analytical error.</p>
+        </div>
+
+        <p>Keep one worked company in mind as we go. Northwind Components reports the following for its most recent year (all figures in millions of dollars, except per-share amounts). We will return to it repeatedly.</p>
+
+        <div style="overflow-x:auto;margin:18px 0;">
+        <table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5;">
+          <thead>
+            <tr><th colspan="2" style="text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--text);font-weight:600;">Income statement (for the year)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Revenue</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">1,200</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Cost of goods sold</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">(780)</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:600;">Gross profit</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;">420</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Operating expenses (incl. $60 depreciation)</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">(250)</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:600;">Operating income (EBIT)</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;">170</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Interest expense</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">(30)</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Taxes (25%)</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">(35)</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:700;">Net income</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;">105</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Dividends paid ($0.70/share)</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">42</td></tr>
+          </tbody>
+        </table>
+        <table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5;margin-top:14px;">
+          <thead>
+            <tr><th colspan="2" style="text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--text);font-weight:600;">Balance sheet (year end)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Cash</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">90</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Accounts receivable</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">150</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Inventory</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">160</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:600;">Current assets</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;">400</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Property, plant &amp; equipment and other (net)</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">600</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:700;">Total assets</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;">1,000</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Accounts payable</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">120</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Short-term debt</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">80</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:600;">Current liabilities</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;">200</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text-muted);">Long-term debt</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">300</td></tr>
+            <tr><td style="padding:5px 12px;color:var(--text);font-weight:700;">Shareholders&rsquo; equity</td><td style="padding:5px 12px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;">500</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:12px;color:var(--text-subtle);margin-top:8px;">Market data: share price $28, shares outstanding 60 million, so market capitalization = $1,680m. EBITDA = EBIT + depreciation = 170 + 60 = $230m.</div>
+        </div>
+
+        <div class="arena-cta">
+          <div class="arena-cta-icon">&#128202;</div>
+          <div class="arena-cta-text">
+            <div class="arena-cta-eyebrow">Companion arena</div>
+            <div class="arena-cta-title">The Financial Statements Lab</div>
+            <div class="arena-cta-sub">Work through Northwind&rsquo;s three statements line by line: classify each account, assemble the income statement, balance the balance sheet, trace cash from net income to the year&rsquo;s change in cash, and connect the three. The lab explains each step, then scores your answers.</div>
+          </div>
+          <button class="arena-cta-btn" data-arena="statements">Open the lab &rarr;</button>
+        </div>
+
+        <h2 class="section-title">Financial ratios: turning statements into judgment</h2>
+
+        <p>Raw statement figures are hard to interpret on their own. Is $105m of net income good? The question has no answer until you ask &ldquo;relative to what?&rdquo; &mdash; relative to the revenue that produced it, the assets employed to earn it, or the equity the owners committed. A <strong>financial ratio</strong> is exactly that comparison: one statement figure divided by another, chosen so the result means something. Ratios are the vocabulary analysts use to compare a firm with its own past, with its competitors, and with the price the market is asking. They fall into five families.</p>
+
+        <h3 class="subsection">Profitability: how much of each dollar is kept</h3>
+        <p>Profitability ratios measure how efficiently a firm converts activity into earnings. The <strong>margin</strong> ratios are drawn directly from successive lines of the income statement: gross, operating, and net margin each divide a profit line by revenue. For Northwind, gross margin is <span class="ktx">$420/1{,}200 = 35\%$</span>, operating margin is <span class="ktx">$170/1{,}200 \approx 14.2\%$</span>, and net margin is <span class="ktx">$105/1{,}200 \approx 8.8\%$</span>. Two return ratios go further by comparing profit to the capital used to generate it: <strong>return on assets</strong> (ROA = net income / total assets = <span class="ktx">$105/1{,}000 = 10.5\%$</span>) and <strong>return on equity</strong> (ROE = net income / equity = <span class="ktx">$105/500 = 21\%$</span>).</p>
+
+        <p>The gap between ROA and ROE is not incidental; it reflects the firm&rsquo;s use of leverage, and the <strong>DuPont identity</strong> makes that mechanism explicit by decomposing ROE into three drivers:</p>
+
+        <div class="math-callout">
+          <div class="math-label">The DuPont decomposition of ROE</div>
+          <em>ROE = (Net income / Sales) &times; (Sales / Assets) &times; (Assets / Equity)</em><br>
+          <span class="math-comment">// net margin &times; asset turnover &times; equity multiplier</span>
+        </div>
+
+        <p>For Northwind: <span class="ktx">$0.088 \times 1.20 \times 2.0 = 0.21$</span>, which is the 21% ROE exactly. The decomposition tells you <em>why</em> a firm earns what it earns. A high ROE built on a wide net margin (a luxury brand) differs materially from one built on rapid asset turnover (a discount grocer) or one built on substantial borrowing (the equity multiplier of 2.0 indicates that half of Northwind&rsquo;s assets are debt-financed). Two firms can report an identical 21% ROE while facing entirely different risks, and the DuPont decomposition is the means of distinguishing them.</p>
+
+        <h3 class="subsection">Liquidity: can the firm pay its near-term bills?</h3>
+        <p>Liquidity ratios ask whether short-term assets cover short-term obligations. The <strong>current ratio</strong> is current assets over current liabilities: <span class="ktx">$400/200 = 2.0$</span>, meaning Northwind has two dollars of near-term assets for every dollar of near-term debt. The <strong>quick ratio</strong> (or acid test) strips out inventory, which can be slow to sell: <span class="ktx">$(400-160)/200 = 1.2$</span>. The <strong>cash ratio</strong>, strictest of all, counts only cash: <span class="ktx">$90/200 = 0.45$</span>. A higher ratio indicates greater safety, but a current ratio well above the industry norm may also indicate idle cash or excess inventory that the firm has not deployed productively.</p>
+
+        <h3 class="subsection">Leverage and solvency: how much debt, and can it be serviced?</h3>
+        <p>Where liquidity is about next month, solvency is about survival. The <strong>debt-to-equity ratio</strong> compares borrowed money to owners&rsquo; money; using interest-bearing debt, Northwind&rsquo;s is <span class="ktx">$(80+300)/500 = 0.76$</span>. More revealing is the <strong>interest coverage ratio</strong> (times interest earned), which asks how comfortably operating income covers the interest bill: <span class="ktx">$170/30 \approx 5.7\times$</span>. A coverage of 5.7 means earnings could fall substantially before the firm struggled to pay its lenders; a coverage near 1.0 is a warning. Lenders and credit-rating agencies watch <strong>net debt to EBITDA</strong> closely: here net debt is total debt minus cash, <span class="ktx">$380-90=290$</span>, so net-debt/EBITDA is <span class="ktx">$290/230 \approx 1.3\times$</span>, a conservative figure.</p>
+
+        <h3 class="subsection">Efficiency: how productively are the assets used?</h3>
+        <p>Efficiency (or activity) ratios measure how quickly a firm turns its assets into sales and cash. <strong>Asset turnover</strong> is revenue over assets: <span class="ktx">$1{,}200/1{,}000 = 1.2$</span>, the same figure that appeared in DuPont. Three cycle ratios track working capital. <strong>Days inventory</strong> is <span class="ktx">$365 \div (780/160) \approx 75$</span> days; <strong>days sales outstanding</strong> (how long customers take to pay) is <span class="ktx">$365 \div (1{,}200/150) \approx 46$</span> days; <strong>days payable</strong> (how long the firm takes to pay suppliers) is <span class="ktx">$365 \div (780/120) \approx 56$</span> days. Combine them into the <strong>cash conversion cycle</strong> &mdash; days inventory plus days receivable minus days payable, here <span class="ktx">$75 + 46 - 56 = 65$</span> days &mdash; the number of days the firm&rsquo;s own cash is tied up before a sale finally returns it. A shorter cycle is preferable; a negative cycle, which some large retailers achieve, means that suppliers effectively finance the firm&rsquo;s operations.</p>
+
+        <h3 class="subsection">Valuation multiples: the price the market assigns</h3>
+        <p>The first four families describe the business. The fifth compares the business to its price, and these are the ratios that connect statement analysis to the valuation methods that follow. The <strong>price-to-earnings ratio</strong> is price over earnings per share. Northwind&rsquo;s EPS is <span class="ktx">$105/60 = \$1.75$</span>, so its P/E is <span class="ktx">$28/1.75 = 16$</span>: investors pay $16 for each dollar of current annual earnings. The <strong>price-to-book ratio</strong> compares price to accounting net worth per share (<span class="ktx">$500/60 = \$8.33$</span>), giving <span class="ktx">$28/8.33 \approx 3.4$</span>. The <strong>dividend yield</strong> is dividend per share over price, <span class="ktx">$0.70/28 = 2.5\%$</span>.</p>
+
+        <p>Equity multiples like P/E are distorted by how a firm is financed, because earnings are measured after interest. To compare firms with different debt loads on equal footing, analysts turn to <strong>enterprise value</strong> &mdash; the value of the whole business to all its funders &mdash; defined as market capitalization plus net debt: <span class="ktx">$1{,}680 + 290 = \$1{,}970m$</span>. The headline multiple is <strong>EV/EBITDA</strong>, here <span class="ktx">$1{,}970/230 \approx 8.6\times$</span>, which is capital-structure neutral and therefore the standard tool for comparing acquisition targets.</p>
+
+        <p>The whole dashboard, gathered in one place:</p>
+
+        <div style="overflow-x:auto;margin:18px 0;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;line-height:1.5;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border);">
+              <th style="text-align:left;padding:7px 10px;color:var(--text);font-weight:600;">Ratio</th>
+              <th style="text-align:left;padding:7px 10px;color:var(--text);font-weight:600;">Formula</th>
+              <th style="text-align:right;padding:7px 10px;color:var(--text);font-weight:600;">Northwind</th>
+              <th style="text-align:left;padding:7px 10px;color:var(--text);font-weight:600;">Reads as</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">Net margin</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Net income / Revenue</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">8.8%</td><td style="padding:6px 10px;color:var(--text-muted);">Profit kept per dollar sold</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">ROE</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Net income / Equity</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">21%</td><td style="padding:6px 10px;color:var(--text-muted);">Return on owners&rsquo; capital</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">Current ratio</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Curr. assets / Curr. liab.</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">2.0</td><td style="padding:6px 10px;color:var(--text-muted);">Near-term bills covered twice</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">Interest coverage</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">EBIT / Interest</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">5.7&times;</td><td style="padding:6px 10px;color:var(--text-muted);">Debt comfortably serviced</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">Debt / equity</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Total debt / Equity</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">0.76</td><td style="padding:6px 10px;color:var(--text-muted);">Moderate leverage</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">Asset turnover</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Revenue / Assets</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">1.2&times;</td><td style="padding:6px 10px;color:var(--text-muted);">Sales per dollar of assets</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">Cash conversion cycle</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">DIO + DSO &minus; DPO</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">65 days</td><td style="padding:6px 10px;color:var(--text-muted);">Cash tied up before it returns</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 10px;color:var(--text);">P/E</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Price / EPS</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">16&times;</td><td style="padding:6px 10px;color:var(--text-muted);">Price per dollar of earnings</td></tr>
+            <tr><td style="padding:6px 10px;color:var(--text);">EV / EBITDA</td><td style="padding:6px 10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">Enterprise value / EBITDA</td><td style="padding:6px 10px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">8.6&times;</td><td style="padding:6px 10px;color:var(--text-muted);">Whole-firm price, debt-neutral</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <div class="insight">
+          <div class="insight-label">A ratio is a question, not an answer</div>
+          <p style="margin-bottom:0;">No ratio is meaningful in isolation. A P/E of 16 is cheap for a fast grower and expensive for a shrinking one; a current ratio of 2.0 is prudent for a manufacturer and wastefully high for a supermarket. Ratios become informative only through <em>comparison</em> &mdash; against the same firm over several years (trend), against direct competitors (cross-section), and against the firm&rsquo;s own stated expectations. And because every ratio is built from accounting figures, it inherits every accounting choice: different depreciation schedules or inventory methods can make two identical businesses look different. Ratios should be used to form questions &mdash; why a margin is declining, why a firm trades below its peers &mdash; which the analyst then investigates.</p>
+        </div>
+
+        <div class="concept-check" data-quiz-id="cc6-1">
+          <div class="cc-label">&#9889; Concept check</div>
+          <div class="cc-question">Two companies in the same industry both report an ROE of 20%. Firm X reaches it with a 10% net margin and very little debt; Firm Y reaches it with a 3% net margin and heavy borrowing. Using the DuPont view, which statement is best?</div>
+          <div class="cc-options">
+            <button class="cc-option" data-correct="false" data-explain="Equal ROE does not mean equal quality. DuPont shows the two firms earn the same return through very different mechanisms, with different risks.">A. The two firms are equally attractive, since ROE is identical</button>
+            <button class="cc-option" data-correct="true" data-explain="Correct. Firm Y's ROE leans on the equity multiplier (leverage), which amplifies returns in good years but also losses in bad ones. Same ROE, more fragile. DuPont exposes exactly this difference.">B. Firm Y&rsquo;s ROE depends more on leverage, so its return is more fragile in a downturn</button>
+            <button class="cc-option" data-correct="false" data-explain="A higher margin is generally a sign of pricing power or efficiency, not weakness. Firm X's path to 20% is usually the sturdier one.">C. Firm X is weaker because its margin is doing too much of the work</button>
+            <button class="cc-option" data-correct="false" data-explain="DuPont decomposes ROE precisely to distinguish these cases; it is exactly the tool for the job.">D. DuPont cannot distinguish these cases</button>
+          </div>
+          <div class="cc-feedback"></div>
+        </div>
 
         <h2 class="section-title">Method 1: the dividend discount model</h2>
 
-        <p>If a company pays dividends that grow at a steady rate <span class="ktx">$g$</span> forever, its stock is just a growing perpetuity. Discount that stream at the required return <span class="ktx">$r$</span> and you get the elegant <strong>Gordon growth model</strong>:</p>
+        <p>With the statements read, we can value the cash they imply. The simplest case is a firm that returns cash directly and predictably. If it pays a dividend that grows at a steady rate <span class="ktx">$g$</span> forever, its stock is a growing perpetuity, and the growing-perpetuity formula from Chapter 4 collapses into the elegant <strong>Gordon growth model</strong>:</p>
 
         <div class="math-callout">
           <div class="math-label">Gordon growth (dividend discount) model</div>
           <em>Price = D<sub>1</sub> / (r &minus; g)</em> &nbsp;&nbsp;<span class="math-comment">// D&#8321; = next year's dividend, r = required return, g = growth rate</span>
         </div>
 
-        <p>A stock about to pay a $2 dividend, growing 4% a year, with investors requiring an 9% return, is worth <span class="ktx">$2/(0.09-0.04) = $40$</span>. The formula is only valid when <span class="ktx">$r > g$</span> &mdash; a company cannot grow faster than its discount rate forever, or it would be worth infinity. Try it live:</p>
+        <p>A stock about to pay a $2 dividend, growing 4% a year, held by investors who require a 9% return, is worth <span class="ktx">$2/(0.09-0.04) = \$40$</span>. The formula holds only when <span class="ktx">$r > g$</span>: a company that grew faster than its discount rate forever would be worth infinity, which no company is. The model suits stable, cash-returning businesses &mdash; utilities, mature consumer brands &mdash; and strains badly on young firms that pay nothing. Change the inputs and watch the price move:</p>
 
         <div class="fin-sheet" data-sheet="ddm">
           <div class="fin-sheet-head"><div class="fin-sheet-ic">&#129518;</div><div class="fin-sheet-title"><div class="fs-eyebrow">Live spreadsheet &middot; try it</div><div class="fs-name">Dividend discount model</div></div></div>
           <div class="fin-sheet-body">
-            <div class="fin-sheet-note">Value a dividend-paying stock as a growing perpetuity. Notice how sensitive the price is to the gap between r and g: nudging growth from 4% to 5% when the required return is 6% nearly doubles the value. Small assumption changes, big valuation swings &mdash; the central hazard of valuation.</div>
+            <div class="fin-sheet-note">Value a dividend-paying stock as a growing perpetuity. Notice how sensitive the price is to the gap between r and g: nudging growth from 4% to 5% when the required return is 6% nearly doubles the value. Small assumption changes, large valuation swings &mdash; the central hazard of valuation.</div>
             <div class="fs-grid">
               <div class="fs-field"><label>Next year's dividend (D&#8321;)</label><div class="fs-input-wrap"><span class="fs-prefix">$</span><input class="fs-cell pad-l" type="number" data-cell="d1" value="2" step="0.1"></div></div>
               <div class="fs-field"><label>Dividend growth (g)</label><div class="fs-input-wrap"><input class="fs-cell pad-r" type="number" data-cell="g" value="4" step="0.25"><span class="fs-suffix">%</span></div><input class="fs-range" type="range" data-range="g" min="0" max="8" step="0.25" value="4"></div>
@@ -2975,9 +3128,11 @@
 
         <h2 class="section-title">Method 2: discounted cash flow (DCF)</h2>
 
-        <p>Most interesting companies do not pay steady dividends &mdash; they reinvest to grow. For these, we value the whole business by its <strong>free cash flow</strong> (the cash left after paying expenses and funding growth). A DCF projects free cash flow for several years explicitly, then captures everything after with a <strong>terminal value</strong> (a growing perpetuity), and discounts it all at the company's cost of capital (Chapter 9). Subtract net debt, divide by shares, and you have an intrinsic value per share to compare against the market price.</p>
+        <p>Most interesting companies do not pay steady dividends; they reinvest to grow, and their payout today understates their value. For these we value the whole business by its <strong>free cash flow</strong> &mdash; the cash left after operating costs, taxes, and the investment needed to sustain growth. A DCF has three steps: project free cash flow explicitly for several years, capture everything after the forecast horizon in a single <strong>terminal value</strong> (usually a growing perpetuity), and discount both back at the company&rsquo;s cost of capital, which Chapter 9 derives. Subtract net debt from the resulting enterprise value, divide by shares outstanding, and you have an intrinsic value per share to set against the market price.</p>
 
-        <p>DCF is the workhorse of professional valuation, and it is exactly what you will build in the arena. Its power is also its danger: the terminal value often accounts for most of the total, and it depends on a discount rate and a long-run growth rate you can only estimate. Good analysts run the model across a <em>range</em> of assumptions rather than trusting a single point.</p>
+        <p>A compact illustration makes the shape concrete. Suppose a firm&rsquo;s free cash flow next year is $100m, growing 8% for five years, after which it settles to 3% growth forever; the cost of capital is 10%. The five explicit cash flows are discounted one by one. The terminal value, computed at the end of year five as <span class="ktx">$FCF_6/(r-g) = FCF_6/(0.10-0.03)$</span>, is then itself discounted back five years. In a realistic model that terminal value often accounts for sixty to eighty percent of the total &mdash; which is precisely why DCF demands discipline.</p>
+
+        <p>DCF is the principal tool of professional valuation, and it is the model you will build in the arena. Its power is also its hazard: the answer depends on a discount rate and a long-run growth rate that can only be estimated, and the terminal value magnifies both. A careful analyst never reports a single number; they run the model across a range of assumptions and report a valuation band.</p>
 
         <div class="arena-cta">
           <div class="arena-cta-icon">&#127918;</div>
@@ -2989,83 +3144,118 @@
           <button class="arena-cta-btn" data-arena="dcf">Open the arena &rarr;</button>
         </div>
 
-        <div class="concept-check" data-quiz-id="cc6-1">
-          <div class="cc-label">&#9889; Concept check</div>
-          <div class="cc-question">In the Gordon model, a stock pays a $3 dividend next year, growing 3%, with a required return of 8%. Its value is:</div>
-          <div class="cc-options">
-            <button class="cc-option" data-correct="true" data-explain="Correct. Price = D1/(r−g) = 3/(0.08−0.03) = 3/0.05 = $60.">A. $60</button>
-            <button class="cc-option" data-correct="false" data-explain="$37.50 uses (r+g) in the denominator; the model subtracts growth: r − g.">B. $37.50</button>
-            <button class="cc-option" data-correct="false" data-explain="$100 would need a smaller r−g gap. Recompute 3/(0.08−0.03).">C. $100</button>
-            <button class="cc-option" data-correct="false" data-explain="The model is valid here since r > g, so the value is finite: $60.">D. Infinite</button>
-          </div>
-          <div class="cc-feedback"></div>
-        </div>
-
-        <h2 class="section-title">Method 3: multiples &mdash; the quick comparison</h2>
-
-        <p>Sometimes you want a fast sanity check, not a full model. <strong>Multiples</strong> value a company by comparison: if similar firms trade at 20 times their earnings (a <strong>price-to-earnings</strong> or P/E ratio of 20), and this firm earns $5 per share, a first guess at its value is <span class="ktx">$20 \times $5 = $100$</span>. Multiples are quick and market-based, but they inherit whatever the market is currently feeling about the whole sector &mdash; useful for relative value, dangerous as a sole basis, because &ldquo;everyone else is expensive too&rdquo; is not a reason a stock is cheap.</p>
-
-        <div class="key-idea">
-          <div class="ki-label">The same idea, three lenses</div>
-          <p>Dividends, discounted free cash flow, and multiples are three windows onto one question: what is a claim on this company's future cash worth today? A careful analyst triangulates &mdash; if a DCF, a dividend model, and comparable multiples all point near $80, that is a far stronger conclusion than any one method alone. When they diverge wildly, that disagreement is itself the most useful signal: it tells you exactly which assumption the whole valuation hinges on.</p>
-        </div>
-
         <div class="concept-check" data-quiz-id="cc6-2">
           <div class="cc-label">&#9889; Concept check</div>
           <div class="cc-question">In a DCF valuation of a fast-growing company, the &ldquo;terminal value&rdquo; often makes up most of the total value. Why is that a reason for caution?</div>
           <div class="cc-options">
-            <button class="cc-option" data-correct="false" data-explain="It's not a calculation error; the terminal value is a legitimate part of the model. The caution is about its sensitivity to assumptions.">A. Because it means the DCF was done incorrectly</button>
-            <button class="cc-option" data-correct="true" data-explain="Correct. The terminal value rests on a long-run growth rate and discount rate you can only estimate, so most of the valuation depends on your least certain assumptions — small changes move the answer a lot.">B. Because it rests on long-run assumptions you can't observe, so most of the value depends on your least certain inputs</button>
-            <button class="cc-option" data-correct="false" data-explain="A large terminal value doesn't make a company automatically overvalued — it depends on whether the assumptions are reasonable.">C. Because it always means the stock is overvalued</button>
-            <button class="cc-option" data-correct="false" data-explain="The terminal value is essential for a growing firm; you can't simply drop it.">D. Because terminal value should be ignored</button>
+            <button class="cc-option" data-correct="false" data-explain="It is not a calculation error; the terminal value is a legitimate part of the model. The caution is about its sensitivity to assumptions.">A. Because it means the DCF was done incorrectly</button>
+            <button class="cc-option" data-correct="true" data-explain="Correct. The terminal value rests on a long-run growth rate and discount rate you can only estimate, so most of the valuation depends on your least certain assumptions, and small changes move the answer a great deal.">B. Because it rests on long-run assumptions you can&rsquo;t observe, so most of the value depends on your least certain inputs</button>
+            <button class="cc-option" data-correct="false" data-explain="A large terminal value does not make a company automatically overvalued; it depends on whether the assumptions are reasonable.">C. Because it always means the stock is overvalued</button>
+            <button class="cc-option" data-correct="false" data-explain="The terminal value is essential for a growing firm; you cannot simply drop it.">D. Because terminal value should be ignored</button>
+          </div>
+          <div class="cc-feedback"></div>
+        </div>
+
+        <h2 class="section-title">Method 3: multiples, the quick comparison</h2>
+
+        <p>When a rapid check is wanted rather than a full model, the valuation multiples from the ratio dashboard serve that purpose. <strong>Multiples</strong> value a company by comparison: if similar firms trade at 20 times earnings (a P/E of 20) and this firm earns $5 per share, a first estimate of its value is <span class="ktx">$20 \times 5 = \$100$</span> per share. The same logic runs on EV/EBITDA for the whole firm, on price-to-book for banks, on EV/sales for companies not yet profitable. Multiples are rapid, market-based, and easily communicated, but they embed the market&rsquo;s prevailing sentiment toward the entire sector. &ldquo;Fairly valued relative to other overpriced stocks&rdquo; is a genuine hazard, which is why a multiple serves as a cross-check rather than a conclusion.</p>
+
+        <div class="key-idea">
+          <div class="ki-label">The same idea, three lenses</div>
+          <p>Dividends, discounted free cash flow, and multiples are three windows onto one question: what is a claim on this company&rsquo;s future cash worth today? A careful analyst triangulates. When a DCF, a dividend model, and comparable multiples all cluster near $80, that agreement is far stronger than any single method alone. When they diverge sharply, the disagreement is itself the most useful output, because it points straight to the one assumption the whole valuation turns on.</p>
+        </div>
+
+        <div class="concept-check" data-quiz-id="cc6-3">
+          <div class="cc-label">&#9889; Concept check</div>
+          <div class="cc-question">An analyst wants to compare two firms that are nearly identical except that one carries a great deal of debt and the other almost none. Which multiple is most appropriate for a like-for-like comparison?</div>
+          <div class="cc-options">
+            <button class="cc-option" data-correct="false" data-explain="P/E is measured after interest expense, so it is distorted by how each firm is financed. The debt-heavy firm's P/E is not comparable to the debt-free one's.">A. Price-to-earnings, because it is the most familiar</button>
+            <button class="cc-option" data-correct="true" data-explain="Correct. EV/EBITDA values the whole firm before financing and before interest, so it neutralizes differences in capital structure and allows a clean comparison.">B. EV/EBITDA, because it values the whole firm before financing effects</button>
+            <button class="cc-option" data-correct="false" data-explain="Dividend yield depends on payout policy, which can differ for reasons unrelated to value, and says nothing about leverage comparability.">C. Dividend yield, because both pay dividends</button>
+            <button class="cc-option" data-correct="false" data-explain="The current ratio is a liquidity measure, not a valuation multiple; it does not compare price at all.">D. The current ratio, because it measures financial health</button>
           </div>
           <div class="cc-feedback"></div>
         </div>
 
         <div class="exercises">
           <div class="exercises-header"><div class="exercises-icon">&#9998;</div><div class="exercises-title-stack"><div class="ets-eyebrow">Practice</div><div class="ets-title">Work these by hand</div></div></div>
-          <div class="exercises-meta">Check the dividend problems in the DDM sheet.</div>
-          <div class="exercise"><div class="ex-num">Exercise 6.1 <span class="ex-difficulty easy">Easy</span></div><div class="ex-prompt"><p>A utility pays a $4 dividend next year, expected to grow 2% forever. Investors require 7%. What is a share worth?</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p><code>Price = 4/(0.07−0.02) = 4/0.05 = $80</code>. Stable utilities, with predictable dividends, are the textbook case where the Gordon model works well.</p></div></div>
-          <div class="exercise"><div class="ex-num">Exercise 6.2 <span class="ex-difficulty medium">Medium</span></div><div class="ex-prompt"><p>A firm earns $6 per share. Comparable firms trade at a P/E of 15. (a) Estimate its value by multiples. (b) A skeptic says the whole sector is in a bubble. How does that undercut your estimate?</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>(a) <code>15 × $6 = $90</code>.</p><p style="margin-bottom:0;">(b) Multiples are relative: your $90 assumes the market's 15&times; is a fair price for those earnings. If the whole sector is overpriced, you have simply inherited that overpricing &mdash; &ldquo;fairly valued <em>relative</em> to other overvalued stocks.&rdquo; That is why a DCF, which values the cash flows on their own terms, is a useful cross-check against sector-wide manias.</p></div></div>
-          <div class="exercise"><div class="ex-num">Exercise 6.3 <span class="ex-difficulty hard">Hard</span></div><div class="ex-prompt"><p>Two analysts value the same company. Analyst A assumes 3% terminal growth and a 9% discount rate; Analyst B assumes 5% growth and an 8% discount rate. Explain why their valuations could differ enormously, and what that tells you about DCF.</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>The terminal value scales roughly with 1/(r&minus;g). Analyst A's gap is <code>0.09&minus;0.03 = 0.06</code>; Analyst B's is <code>0.08&minus;0.05 = 0.03</code>. B's terminal value is therefore about <em>twice</em> A's, before any other differences &mdash; and terminal value is usually most of the total, so B's valuation could easily be double A's.</p><p style="margin-bottom:0;">The lesson: DCF is only as good as its assumptions, and the answer is exquisitely sensitive to the terminal-growth and discount-rate inputs. This is not a flaw to hide but a fact to manage &mdash; run the model across a range, and report a valuation <em>band</em>, not a false-precision single number. The arena lets you feel exactly this sensitivity.</p></div></div>
+          <div class="exercises-meta">Use the Northwind statements above for the ratio problems. Try each before revealing the solution.</div>
+
+          <div class="exercise"><div class="ex-num">Exercise 6.1 <span class="ex-difficulty easy">Easy</span></div><div class="ex-prompt"><p>A utility pays a $4 dividend next year, expected to grow 2% forever. Investors require 7%. What is a share worth?</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p><code>Price = 4/(0.07&minus;0.02) = 4/0.05 = $80</code>. Stable utilities, with predictable dividends and low growth, are the textbook case where the Gordon model works well.</p></div></div>
+
+          <div class="exercise"><div class="ex-num">Exercise 6.2 <span class="ex-difficulty easy">Easy</span></div><div class="ex-prompt"><p>Using Northwind&rsquo;s statements, compute (a) gross margin, (b) net margin, and (c) return on equity. State in one sentence what ROE measures that net margin does not.</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>(a) <code>420/1,200 = 35%</code>. (b) <code>105/1,200 = 8.75%</code>. (c) <code>105/500 = 21%</code>.</p><p style="margin-bottom:0;">Net margin measures profit per dollar of <em>sales</em>; ROE measures profit per dollar of <em>owners&rsquo; capital</em>. A firm can have a thin margin but a high ROE if it turns its assets over quickly or uses leverage &mdash; which is exactly what the DuPont identity separates out.</p></div></div>
+
+          <div class="exercise"><div class="ex-num">Exercise 6.3 <span class="ex-difficulty medium">Medium</span></div><div class="ex-prompt"><p>For Northwind, compute the current ratio, the quick ratio, and interest coverage. A competitor reports a current ratio of 1.1 and interest coverage of 2.0&times;. In one short paragraph, compare the two firms&rsquo; short-term and debt-servicing positions.</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>Current ratio <code>400/200 = 2.0</code>; quick ratio <code>(400&minus;160)/200 = 1.2</code>; interest coverage <code>170/30 = 5.7&times;</code>.</p><p style="margin-bottom:0;">Northwind is the sturdier firm on both fronts. Its current and quick ratios show near-term bills are covered with room to spare, while the competitor&rsquo;s 1.1 leaves almost no cushion. More striking is debt service: Northwind&rsquo;s operating income covers interest 5.7 times over, so earnings could fall by more than 80% before interest became a strain, whereas the competitor&rsquo;s 2.0&times; coverage would be threatened by even a moderate downturn. Same industry, very different resilience.</p></div></div>
+
+          <div class="exercise"><div class="ex-num">Exercise 6.4 <span class="ex-difficulty medium">Medium</span></div><div class="ex-prompt"><p>A firm earns $6 per share. Comparable firms trade at a P/E of 15. (a) Estimate its value by multiples. (b) A skeptic says the whole sector is in a bubble. How does that undercut your estimate, and which method would you reach for as a cross-check?</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>(a) <code>15 &times; $6 = $90</code>.</p><p style="margin-bottom:0;">(b) Multiples are relative: the $90 assumes the market&rsquo;s 15&times; is a fair price for those earnings. If the whole sector is overpriced, you have simply imported that overpricing &mdash; the stock is &ldquo;fairly valued relative to other overvalued stocks.&rdquo; A DCF, which values the cash flows on their own terms rather than by comparison, is the natural cross-check against a sector-wide mania.</p></div></div>
+
+          <div class="exercise"><div class="ex-num">Exercise 6.5 <span class="ex-difficulty hard">Hard</span></div><div class="ex-prompt"><p>Decompose Northwind&rsquo;s 21% ROE with the DuPont identity (net margin, asset turnover, equity multiplier). Then explain what would happen to ROE if the firm repaid all its debt with newly issued equity, holding operating performance fixed, and why that does not necessarily make shareholders better off.</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>DuPont: net margin <code>105/1,200 = 8.75%</code>, asset turnover <code>1,200/1,000 = 1.2</code>, equity multiplier <code>1,000/500 = 2.0</code>; product <code>0.0875 &times; 1.2 &times; 2.0 = 21%</code>.</p><p>Repaying all debt with equity removes the interest expense (raising net income toward <code>170 &times; (1&minus;0.25) = $127.5m</code>) but also drives the equity multiplier toward 1.0, because assets would now be financed almost entirely by owners. ROE would fall substantially &mdash; leverage was doing much of the lifting.</p><p style="margin-bottom:0;">A lower ROE here is not a worse outcome. By shedding debt the firm also sheds financial risk: interest no longer has first claim on operating income, and the chance of distress in a downturn falls. The lesson is that ROE can be raised simply by borrowing more, so a high ROE must always be read alongside the leverage that produced it. This is precisely why DuPont, not ROE alone, is the right lens.</p></div></div>
+
+          <div class="exercise"><div class="ex-num">Exercise 6.6 <span class="ex-difficulty hard">Hard</span></div><div class="ex-prompt"><p>Two analysts value the same company. Analyst A assumes 3% terminal growth and a 9% discount rate; Analyst B assumes 5% growth and an 8% discount rate. Explain why their valuations could differ enormously, and what that tells you about how DCF results should be reported.</p></div><button class="ex-solution-toggle">Show solution &#9662;</button><div class="ex-solution"><div class="sol-label">Solution</div><p>The terminal value scales roughly with <code>1/(r&minus;g)</code>. Analyst A&rsquo;s gap is <code>0.09&minus;0.03 = 0.06</code>; Analyst B&rsquo;s is <code>0.08&minus;0.05 = 0.03</code>. B&rsquo;s terminal value is therefore about <em>twice</em> A&rsquo;s before any other difference, and since terminal value is usually most of the total, B&rsquo;s valuation could plausibly be double A&rsquo;s.</p><p style="margin-bottom:0;">The result is exquisitely sensitive to two of the least certain inputs in the whole model. This is not a flaw to conceal but a fact to manage: run the model across a range of discount and growth assumptions and report a valuation <em>band</em>, never a single false-precision figure. The arena is built to let you feel this sensitivity directly.</p></div></div>
+        </div>
+
+        <div class="history-box">
+          <div class="history-label">Where this came from</div>
+          <p style="margin-bottom:0;">Ratio analysis grew out of lending. In the early twentieth century, bankers deciding whether to extend credit developed the current ratio and interest coverage as quick tests of whether a borrower could repay. The DuPont Company&rsquo;s own finance staff built the ROE decomposition in the 1910s to manage a sprawling industrial empire, and it still bears the firm&rsquo;s name. Benjamin Graham and David Dodd turned ratios into a philosophy of investing in <em>Security Analysis</em> (1934), insisting that price be judged against demonstrable value. Discounted cash flow, though its roots reach back to compound-interest tables, became the standard corporate tool only after the mathematics of the cost of capital was worked out in the 1950s and 1960s. Each method answers the same old question &mdash; what is future cash worth now &mdash; with the instruments of its era.</p>
+        </div>
+
+        <div class="bibliography">
+          <div class="bibliography-title">References &amp; further reading</div>
+          <div class="bibliography-note">Accessible starting points for the ideas in this chapter.</div>
+          <div class="bib-entry"><span class="bib-authors">Berk, J., &amp; DeMarzo, P.</span> <span class="bib-year">(2020).</span> <span class="bib-title-italic">Corporate Finance</span> (5th ed.). Pearson.</div>
+          <div class="bib-entry"><span class="bib-authors">Graham, B., &amp; Dodd, D.</span> <span class="bib-year">(1934).</span> <span class="bib-title-italic">Security Analysis</span>. McGraw&#8209;Hill.</div>
+          <div class="bib-entry"><span class="bib-authors">Penman, S.</span> <span class="bib-year">(2013).</span> <span class="bib-title-italic">Financial Statement Analysis and Security Valuation</span> (5th ed.). McGraw&#8209;Hill.</div>
+          <div class="bib-entry"><span class="bib-authors">Damodaran, A.</span> <span class="bib-year">(2012).</span> <span class="bib-title-italic">Investment Valuation</span> (3rd ed.). Wiley.</div>
         </div>
 
         <div class="chapter-quiz" id="quiz-6">
           <div class="quiz-header"><div class="quiz-icon">&#128202;</div><div class="quiz-title-stack"><div class="qts-eyebrow">End&#8209;of&#8209;chapter quiz</div><div class="qts-title">Test your understanding</div></div></div>
-          <div class="quiz-meta">5 questions &middot; pass threshold 70%</div>
+          <div class="quiz-meta">7 questions &middot; pass threshold 70%</div>
           <div class="quiz-questions" id="quiz-6-body">
             <div class="quiz-question" data-q="1"><div class="q-num">Question 1</div><div class="q-text">The fundamental value of a stock is:</div>
-              <button class="cc-option" data-correct="true" data-explain="Yes — the present value of the future cash it will return to shareholders.">A. The present value of the future cash it will return to owners</button>
-              <button class="cc-option" data-correct="false" data-explain="Yesterday's price is a market quote, not a fundamental value.">B. Whatever it traded at yesterday</button>
+              <button class="cc-option" data-correct="true" data-explain="Yes &mdash; the present value of the future cash it will return to shareholders.">A. The present value of the future cash it will return to owners</button>
+              <button class="cc-option" data-correct="false" data-explain="Yesterday&rsquo;s price is a market quote, not a fundamental value.">B. Whatever it traded at yesterday</button>
               <button class="cc-option" data-correct="false" data-explain="Book value (accounting net assets) often differs greatly from the value of future cash flows.">C. The accounting value of its buildings</button>
-              <button class="cc-option" data-correct="false" data-explain="Total revenue isn't value; what matters is cash returned to owners, discounted.">D. Its total annual revenue</button>
+              <button class="cc-option" data-correct="false" data-explain="Total revenue is not value; what matters is cash returned to owners, discounted.">D. Its total annual revenue</button>
               <div class="cc-feedback"></div></div>
-            <div class="quiz-question" data-q="2"><div class="q-num">Question 2</div><div class="q-text">The Gordon growth model, Price = D&#8321;/(r &minus; g), requires that:</div>
-              <button class="cc-option" data-correct="true" data-explain="Yes — r must exceed g, or the value is infinite/undefined.">A. The required return r exceeds the growth rate g</button>
+            <div class="quiz-question" data-q="2"><div class="q-num">Question 2</div><div class="q-text">A company reports strong net income but keeps running short of cash. The most likely explanation is:</div>
+              <button class="cc-option" data-correct="true" data-explain="Correct. Sales booked on credit raise net income immediately but bring no cash until customers pay; heavy investment also drains cash without reducing that year&rsquo;s profit. Profit and cash are not the same.">A. Profit is an accounting figure; sales on credit and heavy investment can raise profit while cash lags</button>
+              <button class="cc-option" data-correct="false" data-explain="A profit always indicates accounting earnings, but it never guarantees cash on hand &mdash; that is the whole point of the cash-flow statement.">B. A reported profit guarantees the cash is in the bank</button>
+              <button class="cc-option" data-correct="false" data-explain="Depreciation is a non-cash expense; it reduces profit but does not consume cash in the period.">C. Depreciation is draining the company&rsquo;s cash each year</button>
+              <button class="cc-option" data-correct="false" data-explain="This is a common and well-understood situation, not an impossibility.">D. This situation cannot actually happen</button>
+              <div class="cc-feedback"></div></div>
+            <div class="quiz-question" data-q="3"><div class="q-num">Question 3</div><div class="q-text">Return on equity (ROE) can be decomposed by the DuPont identity into:</div>
+              <button class="cc-option" data-correct="true" data-explain="Yes &mdash; net margin &times; asset turnover &times; equity multiplier.">A. Net margin &times; asset turnover &times; equity multiplier</button>
+              <button class="cc-option" data-correct="false" data-explain="Current ratio and quick ratio are liquidity measures and do not multiply to ROE.">B. Current ratio &times; quick ratio</button>
+              <button class="cc-option" data-correct="false" data-explain="P/E and dividend yield are valuation multiples, not components of ROE.">C. P/E &times; dividend yield</button>
+              <button class="cc-option" data-correct="false" data-explain="Revenue minus costs gives profit, not the three-way ROE decomposition.">D. Revenue &minus; costs</button>
+              <div class="cc-feedback"></div></div>
+            <div class="quiz-question" data-q="4"><div class="q-num">Question 4</div><div class="q-text">A firm&rsquo;s operating income (EBIT) is $170m and its interest expense is $30m. Its interest coverage ratio is about:</div>
+              <button class="cc-option" data-correct="true" data-explain="Correct. 170/30 &approx; 5.7&times; &mdash; operating income covers interest almost six times over, a comfortable margin.">A. 5.7&times;</button>
+              <button class="cc-option" data-correct="false" data-explain="0.18 inverts the ratio; coverage is EBIT divided by interest, not the reverse.">B. 0.18&times;</button>
+              <button class="cc-option" data-correct="false" data-explain="140 is pre-tax income (EBIT minus interest), not the coverage ratio.">C. 140&times;</button>
+              <button class="cc-option" data-correct="false" data-explain="Recompute EBIT / interest = 170/30.">D. 2.0&times;</button>
+              <div class="cc-feedback"></div></div>
+            <div class="quiz-question" data-q="5"><div class="q-num">Question 5</div><div class="q-text">The Gordon growth model, Price = D&#8321;/(r &minus; g), requires that:</div>
+              <button class="cc-option" data-correct="true" data-explain="Yes &mdash; r must exceed g, or the value is infinite/undefined.">A. The required return r exceeds the growth rate g</button>
               <button class="cc-option" data-correct="false" data-explain="Growth above the discount rate breaks the model (infinite value).">B. Growth g exceeds the required return r</button>
-              <button class="cc-option" data-correct="false" data-explain="The company need not pay zero dividends — quite the opposite; it needs a growing dividend.">C. The company pays no dividends</button>
-              <button class="cc-option" data-correct="false" data-explain="The model assumes steady growth, not zero growth necessarily.">D. Dividends never change</button>
+              <button class="cc-option" data-correct="false" data-explain="The company needs a growing dividend, not a zero dividend.">C. The company pays no dividends</button>
+              <button class="cc-option" data-correct="false" data-explain="The model assumes steady growth, not constant dividends.">D. Dividends never change</button>
               <div class="cc-feedback"></div></div>
-            <div class="quiz-question" data-q="3"><div class="q-num">Question 3</div><div class="q-text">In a DCF, the &ldquo;terminal value&rdquo; captures:</div>
-              <button class="cc-option" data-correct="true" data-explain="Yes — the value of all cash flows beyond the explicit forecast period, usually as a growing perpetuity.">A. All the cash flows after the explicit forecast years</button>
-              <button class="cc-option" data-correct="false" data-explain="The first year's cash flow is part of the explicit forecast, not the terminal value.">B. Only the first year of cash flow</button>
-              <button class="cc-option" data-correct="false" data-explain="The company's debt is subtracted separately; it isn't the terminal value.">C. The company's debt</button>
-              <button class="cc-option" data-correct="false" data-explain="Terminal value is a forward-looking projection, not last year's dividend.">D. Last year's dividend</button>
+            <div class="quiz-question" data-q="6"><div class="q-num">Question 6</div><div class="q-text">To compare two otherwise-identical firms that carry very different amounts of debt, the best valuation multiple is:</div>
+              <button class="cc-option" data-correct="true" data-explain="Yes &mdash; EV/EBITDA values the whole firm before interest and financing, so it is neutral to capital structure.">A. EV/EBITDA</button>
+              <button class="cc-option" data-correct="false" data-explain="P/E is measured after interest, so it is distorted by each firm&rsquo;s debt load.">B. Price-to-earnings</button>
+              <button class="cc-option" data-correct="false" data-explain="Dividend yield depends on payout policy and ignores leverage comparability.">C. Dividend yield</button>
+              <button class="cc-option" data-correct="false" data-explain="The cash conversion cycle is an efficiency measure, not a valuation multiple.">D. The cash conversion cycle</button>
               <div class="cc-feedback"></div></div>
-            <div class="quiz-question" data-q="4"><div class="q-num">Question 4</div><div class="q-text">Valuing a stock at &ldquo;15 times earnings&rdquo; because peers trade there is an example of:</div>
-              <button class="cc-option" data-correct="true" data-explain="Yes — that's valuation by multiples (relative valuation).">A. Valuation by multiples</button>
-              <button class="cc-option" data-correct="false" data-explain="A DCF discounts projected cash flows; it doesn't rely on peer ratios.">B. A discounted cash flow model</button>
-              <button class="cc-option" data-correct="false" data-explain="The dividend discount model uses dividends and growth, not a P/E of peers.">C. The dividend discount model</button>
-              <button class="cc-option" data-correct="false" data-explain="This is a valuation method, not bond pricing.">D. Bond pricing</button>
-              <div class="cc-feedback"></div></div>
-            <div class="quiz-question" data-q="5"><div class="q-num">Question 5</div><div class="q-text">A DCF valuation is highly sensitive to the discount rate and terminal growth rate. The best professional response is to:</div>
+            <div class="quiz-question" data-q="7"><div class="q-num">Question 7</div><div class="q-text">A DCF valuation is highly sensitive to the discount rate and terminal growth rate. The best professional response is to:</div>
               <button class="cc-option" data-correct="false" data-explain="Reporting a single number hides the uncertainty and invites false precision.">A. Report a single precise value and trust it</button>
-              <button class="cc-option" data-correct="true" data-explain="Right — run the model across a range of assumptions and report a valuation band.">B. Run a range of assumptions and report a valuation band</button>
+              <button class="cc-option" data-correct="true" data-explain="Right &mdash; run the model across a range of assumptions and report a valuation band.">B. Run a range of assumptions and report a valuation band</button>
               <button class="cc-option" data-correct="false" data-explain="Abandoning DCF throws away a powerful tool; the fix is sensitivity analysis, not avoidance.">C. Abandon DCF entirely</button>
               <button class="cc-option" data-correct="false" data-explain="Picking the assumptions that give the highest value is wishful thinking, not analysis.">D. Choose the assumptions that give the highest value</button>
               <div class="cc-feedback"></div></div>
           </div>
-          <div class="quiz-actions"><button class="btn-primary" id="quiz-6-submit">Submit answers</button><button class="btn-ghost" id="quiz-6-reset">Reset</button><span class="text-[12px]" style="color: var(--text-muted);" id="quiz-6-progress">0 of 5 answered</span></div>
+          <div class="quiz-actions"><button class="btn-primary" id="quiz-6-submit">Submit answers</button><button class="btn-ghost" id="quiz-6-reset">Reset</button><span class="text-[12px]" style="color: var(--text-muted);" id="quiz-6-progress">0 of 7 answered</span></div>
           <div id="quiz-6-result"></div>
         </div>
 
@@ -3075,6 +3265,7 @@
         </div>
       </div>
     </article>
+
 
     <article class="chapter" data-chapter="7">
       <div class="reading">
@@ -3656,7 +3847,7 @@
 
         <p>The <strong>efficient markets hypothesis (EMH)</strong> says that asset prices already reflect all available information. The logic is competitive: if a stock were obviously underpriced, thousands of profit-seeking investors would rush to buy it, pushing the price up until the bargain vanished. So by the time you hear a piece of news, prices have already moved &mdash; the information is &ldquo;in the price.&rdquo; Prices then change only in response to <em>new</em>, unpredictable information, which is why they look like a <strong>random walk</strong>: the next move is essentially a coin flip.</p>
 
-        <p>Economists distinguish three forms. <strong>Weak-form</strong> efficiency says past prices can't predict future ones (so chart-reading is futile). <strong>Semi-strong</strong> says all <em>public</em> information is already priced (so analyzing public financials gives no edge). <strong>Strong-form</strong> says even private information is priced (which is mostly false &mdash; and trading on true inside information is illegal). The everyday takeaway lives in the semi-strong form: by the time information is public, it is priced, so publicly-known &ldquo;tips&rdquo; are worthless.</p>
+        <p>Economists distinguish three forms. <strong>Weak-form</strong> efficiency says past prices can't predict future ones (so chart-reading is futile). <strong>Semi-strong</strong> says all <em>public</em> information is already priced (so analyzing public financials gives no edge). <strong>Strong-form</strong> says even private information is priced (which is mostly false &mdash; and trading on true inside information is illegal). The practical implication is captured by the semi-strong form: by the time information is public, it is already priced, so publicly known &ldquo;tips&rdquo; are worthless.</p>
 
         <div class="concept-check" data-quiz-id="cc11-1">
           <div class="cc-label">&#9889; Concept check</div>
@@ -4186,7 +4377,7 @@ const CH_READ = {0:'','-1':'5 min read',1:'14 min read',2:'18 min read',3:'16 mi
 
 /* ---- access gating config: OFF by default (fully open book). Set true to gate. ---- */
 const FIN_GATE_ENABLED = true;
-const FIN_FREE_THROUGH = 3;   // when gating is on, chapters 1..3 are free preview
+const FIN_FREE_THROUGH = 2;   // when gating is on, chapters 1..3 are free preview
 
 function navigateTo(chapterNum){
   if (FIN_GATE_ENABLED && chapterNum > FIN_FREE_THROUGH && FIN_ACCESS.resolved && !FIN_ACCESS.hasAccess){ showCurriculumLock(chapterNum); return; }
