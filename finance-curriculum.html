@@ -1519,9 +1519,17 @@
   }
   .fs-excel code { font-size: 11px; }
 
+
+  /* --- accessibility --- */
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  a.skip-link{position:absolute;left:8px;top:-48px;z-index:2000;background:#2563EB;color:#fff;padding:9px 16px;border-radius:0 0 10px 10px;text-decoration:none;font-size:14px;transition:top .15s;}
+  a.skip-link:focus{top:0;}
+  :focus-visible{outline:2px solid #38BDF8;outline-offset:2px;border-radius:3px;}
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;} }
 </style>
 
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
 
 <div class="app">
 
@@ -1594,7 +1602,7 @@
   <!-- =========================================================
        READING AREA
        ========================================================= -->
-  <main class="main">
+  <main class="main" id="main-content" role="main" aria-label="Reading content" tabindex="-1">
     <div class="reading-bar">
       <div style="display: flex; align-items: center; gap: 14px;">
         <a href="index.html" class="sa-back-btn" title="Back to menu" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;border:1px solid var(--border-strong);color:var(--text-muted);font-size:13px;text-decoration:none;background:var(--surface);transition:all .12s;">&#8592; Menu</a>
@@ -4778,7 +4786,7 @@ function navigateTo(chapterNum){
   if (FIN_GATE_ENABLED && chapterNum > FIN_FREE_THROUGH && FIN_ACCESS.resolved && !FIN_ACCESS.hasAccess){ showCurriculumLock(chapterNum); return; }
   State.currentChapter = chapterNum;
   $$('.chapter').forEach(c => c.classList.toggle('active', parseInt(c.dataset.chapter,10) === chapterNum));
-  $$('.nav-link').forEach(link => link.classList.toggle('active', parseInt(link.dataset.chapter,10) === chapterNum));
+  $$('.nav-link').forEach(link => { var on = parseInt(link.dataset.chapter,10) === chapterNum; link.classList.toggle('active', on); if(on){ link.setAttribute('aria-current','page'); } else { link.removeAttribute('aria-current'); } });
   $('#barChapter').textContent = (chapterNum>0) ? ('Chapter '+chapterNum+' · '+(CH_TITLES[chapterNum]||'')) : (CH_TITLES[chapterNum]||'');
   $('#barReadTime').textContent = CH_READ[chapterNum] || '';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -5056,9 +5064,27 @@ function initSheets(){
 /* ============================================================ BOOT */
 document.addEventListener('DOMContentLoaded',()=>{
   loadProgress(); bindNav(); bindConceptChecks(); bindQuizzes(); bindReadingProgress(); bindMobileMenu(); bindExerciseSolutions();
-  updateSidebarProgress(); renderMath(); initSheets(); navigateToHash();
+  updateSidebarProgress(); renderMath(); initSheets(); enhanceA11y(); navigateToHash();
   if (State.currentChapter===1){ navigateTo(1); }
 });
+function enhanceA11y(){
+  try{
+    var side=document.getElementById('sidebar');
+    if(side && !side.getAttribute('role')){ side.setAttribute('role','navigation'); side.setAttribute('aria-label','Chapters'); }
+    function nearestHeading(el){ var n=el,h=null,g=0; while(n&&!h&&g<10){ var ps=n.previousElementSibling; while(ps){ if(/^H[23]$/.test(ps.tagName)){h=ps;break;} var q=ps.querySelector&&ps.querySelector('h2,h3'); if(q){h=q;} ps=ps.previousElementSibling; } n=n.parentElement; g++; } return h?h.textContent.trim():null; }
+    document.querySelectorAll('.reading table').forEach(function(t){
+      if(!t.querySelector('caption')){ var cap=document.createElement('caption'); cap.className='sr-only'; var hd=nearestHeading(t); cap.textContent=hd?('Table: '+hd):'Data table'; t.insertBefore(cap,t.firstChild); }
+      t.querySelectorAll('thead th').forEach(function(th){ if(!th.getAttribute('scope')) th.setAttribute('scope','col'); });
+    });
+    document.querySelectorAll('.reading svg').forEach(function(sv){ if(!sv.getAttribute('aria-label')){ sv.setAttribute('role','img'); var hd=nearestHeading(sv); sv.setAttribute('aria-label', hd?('Figure: '+hd):'Figure'); } });
+    document.querySelectorAll('.fin-sheet canvas').forEach(function(c){ if(!c.getAttribute('aria-label')){ c.setAttribute('role','img'); var fs=c.closest('.fin-sheet'); var nm=fs?fs.querySelector('.fs-name'):null; c.setAttribute('aria-label',(nm?nm.textContent.trim():'Interactive chart')+' — visual output'); } });
+    document.querySelectorAll('.fin-sheet .fs-field').forEach(function(f){ var lab=f.querySelector('label'); if(!lab) return; var txt=lab.textContent.trim(); f.querySelectorAll('input').forEach(function(inp){ if(!inp.getAttribute('aria-label')) inp.setAttribute('aria-label', txt+(inp.type==='range'?' (slider)':'')); }); });
+    document.querySelectorAll('[id^="quiz-"][id$="-result"]').forEach(function(r){ r.setAttribute('aria-live','polite'); r.setAttribute('role','status'); });
+    document.querySelectorAll('[id^="quiz-"][id$="-progress"]').forEach(function(pr){ pr.setAttribute('aria-live','polite'); });
+    document.querySelectorAll('.cc-feedback').forEach(function(fb){ fb.setAttribute('aria-live','polite'); });
+    document.querySelectorAll('.fin-sheet .fs-outs').forEach(function(o){ o.setAttribute('aria-live','polite'); });
+  }catch(e){}
+}
 function navigateToHash(){ var m=(window.location.hash||'').match(/chapter-(-?\d+)/); if(!m) return; var ch=parseInt(m[1],10); if(!isNaN(ch)) navigateTo(ch); }
 window.addEventListener('hashchange', navigateToHash);
 </script>
