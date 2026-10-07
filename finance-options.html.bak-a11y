@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Options Lab — MacroNations Finance</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Instrument Serif','serif'] } } } };
+</script>
+<style>
+  html,body{background:#070C16;}
+  body{font-family:'Inter',system-ui,sans-serif;color:#EAF2FF;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  ::selection{background:rgba(37,99,235,.35);color:#fff;}
+  .arena-bg{position:fixed;inset:0;z-index:-2;background:#060A12;overflow:hidden;}
+  .arena-bg::before{content:'';position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,#1D4ED8 0%,transparent 65%);filter:blur(140px);opacity:.30;top:-25vw;left:38%;}
+  .arena-bg::after{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,#9333EA 0%,transparent 65%);filter:blur(150px);opacity:.16;bottom:-20vw;left:-10vw;}
+  ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:5px;}
+  .card{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08);border-radius:18px;backdrop-filter:blur(12px);}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:11px;transition:transform .14s,box-shadow .25s,background .15s;}
+  .btn-primary{background:linear-gradient(135deg,#2563EB,#38BDF8);color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.55),inset 0 1px 0 rgba(255,255,255,.2);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-gold{background:linear-gradient(135deg,#F59E0B,#B45309);color:#241405;box-shadow:0 8px 22px -6px rgba(245,158,11,.5),inset 0 1px 0 rgba(255,255,255,.3);}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#EAF2FF;border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{background:rgba(255,255,255,.09);}
+  .btn-ghost.sel{border-color:#2DD4BF;background:rgba(45,212,191,.12);color:#5EEAD4;}
+  input[type=range]{accent-color:#2DD4BF;width:100%;}
+  select,input.num{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#EAF2FF;padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+  .stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(234,242,255,.5);font-weight:600;}
+  .stat .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;line-height:1.1;margin-top:4px;}
+  .pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(234,242,255,.75);}
+  .glow-dot{width:8px;height:8px;border-radius:50%;background:#2DD4BF;box-shadow:0 0 10px #2DD4BF;display:inline-block;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .leg{display:grid;grid-template-columns:auto 1fr 78px 30px;gap:8px;align-items:center;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px;margin-bottom:8px;}
+  .reveal{animation:rin .4s cubic-bezier(.16,1,.3,1);}
+  @keyframes rin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  a.backlink{color:rgba(234,242,255,.6);text-decoration:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+  a.backlink:hover{color:#fff;background:rgba(255,255,255,.08);}
+</style>
+</head>
+<body>
+<div class="arena-bg"></div>
+<div class="max-w-6xl mx-auto px-5 py-6">
+
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <a href="finance-curriculum.html#chapter-12" class="backlink inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]">&larr; Back to book</a>
+      <span class="pill" style="border-color:rgba(45,212,191,.4);color:#5EEAD4;">MacroNations · Finance</span>
+    </div>
+    <div class="text-[12px]" style="color:rgba(234,242,255,.5);"><span class="glow-dot"></span> &nbsp;Options Lab &middot; <span id="roundLbl">Challenge 1 of 4</span></div>
+  </div>
+
+  <div class="mb-6">
+    <div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1.05;">The Options Lab</div>
+    <div class="mt-2 text-[15px] max-w-2xl" style="color:rgba(234,242,255,.72);line-height:1.6;">Build positions from calls, puts, and shares and watch the profit-and-loss diagram bend to your will. Each challenge gives you a market <b>view</b> — build a position that profits if you're right, then the market reveals what happened and scores you.</div>
+  </div>
+
+  <div class="grid md:grid-cols-[360px_1fr] gap-5">
+
+    <!-- builder -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[11px] uppercase tracking-wider font-semibold" style="color:#FBBF24;">The challenge</div>
+        </div>
+        <div id="challenge" class="text-[14px]" style="color:rgba(234,242,255,.85);line-height:1.55;">—</div>
+        <div class="grid grid-cols-3 gap-2 mt-3 text-center text-[12px]">
+          <div class="stat" style="padding:8px;"><div class="lbl">Stock now</div><div class="val" id="c_s" style="font-size:15px;">$100</div></div>
+          <div class="stat" style="padding:8px;"><div class="lbl">Expiry</div><div class="val" id="c_t" style="font-size:15px;">3 mo</div></div>
+          <div class="stat" style="padding:8px;"><div class="lbl">Implied vol</div><div class="val" id="c_v" style="font-size:15px;">30%</div></div>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[11px] uppercase tracking-wider font-semibold" style="color:#38BDF8;">Your position</div>
+          <button class="btn btn-ghost px-3 py-1.5 text-[12px]" id="addLeg">+ Add leg</button>
+        </div>
+        <div id="legs"></div>
+        <div class="text-[11px] mb-3" style="color:rgba(234,242,255,.45);">Premiums are priced with Black–Scholes. Buying costs premium; selling collects it.</div>
+        <div class="text-[11px] uppercase tracking-wider mb-2" style="color:rgba(234,242,255,.5);">Quick presets</div>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-ghost py-2 text-[12px]" data-preset="call">Long call</button>
+          <button class="btn btn-ghost py-2 text-[12px]" data-preset="put">Long put</button>
+          <button class="btn btn-ghost py-2 text-[12px]" data-preset="straddle">Straddle</button>
+          <button class="btn btn-ghost py-2 text-[12px]" data-preset="bull">Bull spread</button>
+          <button class="btn btn-ghost py-2 text-[12px]" data-preset="covered">Covered call</button>
+          <button class="btn btn-ghost py-2 text-[12px]" data-preset="collar">Protective put</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- payoff + result -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="text-[13px] mb-2" style="color:rgba(234,242,255,.7);">Profit &amp; loss at expiration</div>
+        <canvas id="chart" width="820" height="330" style="width:100%;height:auto;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);"></canvas>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+          <div class="stat"><div class="lbl">Net premium</div><div class="val" id="s_prem" style="color:#EAF2FF;">$0</div></div>
+          <div class="stat"><div class="lbl">Max profit</div><div class="val" id="s_maxp" style="color:#5EEAD4;">$0</div></div>
+          <div class="stat"><div class="lbl">Max loss</div><div class="val" id="s_maxl" style="color:#FB7185;">$0</div></div>
+          <div class="stat"><div class="lbl">Breakeven(s)</div><div class="val" id="s_be" style="color:#FBBF24;font-size:14px;">—</div></div>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[11px] uppercase tracking-wider font-semibold" style="color:#2DD4BF;">Score</div>
+          <div class="text-[12px]" style="font-family:'JetBrains Mono',monospace;color:#5EEAD4;">Total: <span id="score">0</span></div>
+        </div>
+        <button class="btn btn-primary w-full py-3 text-[14px] mb-3" id="reveal">Reveal the market &amp; score</button>
+        <div id="result" class="text-[13px]" style="color:rgba(234,242,255,.6);line-height:1.6;">Build a position, then reveal what the stock did.</div>
+        <div class="flex gap-2 mt-3">
+          <button class="btn btn-ghost flex-1 py-2.5 text-[13px]" id="next" style="display:none;">Next challenge &rarr;</button>
+          <button class="btn btn-gold flex-1 py-2.5 text-[13px]" id="finish" style="display:none;">✓ Finish &amp; save</button>
+        </div>
+        <div id="savedNote" class="text-[12px] mt-2" style="display:none;color:#5EEAD4;">Saved to your progress.</div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-6 text-[12px] text-center" style="color:rgba(234,242,255,.4);">One contract = 100 shares. Black–Scholes pricing, European style — a teaching model, not advice.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='options';</script>
+<script src="fin-gate.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.getElementById(s);};
+  var money=function(x){return (x<0?'-$':'$')+Math.abs(Math.round(x)).toLocaleString('en-US');};
+  // normal CDF
+  function ncdf(x){ var t=1/(1+0.2316419*Math.abs(x)); var d=0.3989423*Math.exp(-x*x/2);
+    var p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274)))); return x>0?1-p:p; }
+  function bs(type,S,K,T,r,v){
+    if(T<=0){ return type==='call'?Math.max(0,S-K):Math.max(0,K-S); }
+    var d1=(Math.log(S/K)+(r+v*v/2)*T)/(v*Math.sqrt(T)); var d2=d1-v*Math.sqrt(T);
+    if(type==='call') return S*ncdf(d1)-K*Math.exp(-r*T)*ncdf(d2);
+    return K*Math.exp(-r*T)*ncdf(-d2)-S*ncdf(-d1);
+  }
+
+  var CH=[
+    {view:'You expect the stock to rise sharply over the next 3 months.', S:100,T:0.25,v:0.30, drift:0.9, want:'up'},
+    {view:'You expect the stock to fall — bad earnings are coming.', S:100,T:0.25,v:0.32, drift:-0.9, want:'down'},
+    {view:'You expect a BIG move but have no idea which direction.', S:100,T:0.25,v:0.40, drift:0, big:true, want:'move'},
+    {view:'You own 100 shares and expect the stock to stay flat — earn extra income.', S:100,T:0.25,v:0.28, drift:0.05, want:'flat', ownShares:true}
+  ];
+  CH.sort(function(){return Math.random()-0.5;});
+  var round=0, score=0, r=0.04, legs=[], locked=false;
+
+  function premium(leg){ // per share
+    if(leg.type==='stock') return CH[round].S;
+    return bs(leg.type, CH[round].S, leg.K, CH[round].T, r, CH[round].v);
+  }
+  function legPayoff(leg,ST){ // per share intrinsic at expiry
+    if(leg.type==='stock') return ST;
+    return leg.type==='call'?Math.max(0,ST-leg.K):Math.max(0,leg.K-ST);
+  }
+  function netPremium(){ var s=0; legs.forEach(function(l){ s+=(l.pos==='long'?1:-1)*premium(l)*l.qty*100; }); return s; } // cost (paid) positive
+  function totalPL(ST){ var pl=0; legs.forEach(function(l){ var sign=l.pos==='long'?1:-1; pl+=sign*legPayoff(l,ST)*l.qty*100; }); pl-=netPremium(); return pl; }
+
+  function renderLegs(){
+    $('legs').innerHTML=legs.map(function(l,i){
+      var strikeCell = l.type==='stock' ? '<span style="font-family:JetBrains Mono,monospace;font-size:12px;color:rgba(234,242,255,.5);">shares</span>'
+        : '<input class="num" style="width:70px;" type="number" data-i="'+i+'" data-f="K" value="'+l.K+'" step="5">';
+      return '<div class="leg">'+
+        '<select data-i="'+i+'" data-f="pos"><option value="long"'+(l.pos==='long'?' selected':'')+'>Buy</option><option value="short"'+(l.pos==='short'?' selected':'')+'>Sell</option></select>'+
+        '<select data-i="'+i+'" data-f="type"><option value="call"'+(l.type==='call'?' selected':'')+'>Call</option><option value="put"'+(l.type==='put'?' selected':'')+'>Put</option><option value="stock"'+(l.type==='stock'?' selected':'')+'>Stock</option></select>'+
+        strikeCell+
+        '<button class="btn btn-ghost" style="padding:4px 8px;font-size:14px;" data-del="'+i+'">×</button>'+
+        '</div>';
+    }).join('') || '<div class="text-[12px]" style="color:rgba(234,242,255,.4);">No legs yet — add one or pick a preset.</div>';
+    $('legs').querySelectorAll('select,input.num').forEach(function(el){
+      el.addEventListener('change',function(){ var i=+this.dataset.i,f=this.dataset.f; legs[i][f]=(f==='K')?parseFloat(this.value):this.value; if(legs[i].type==='stock')legs[i].K=0; recompute(); });
+      el.addEventListener('input',function(){ if(this.dataset.f==='K'){ legs[+this.dataset.i].K=parseFloat(this.value); recompute(); } });
+    });
+    $('legs').querySelectorAll('[data-del]').forEach(function(b){ b.addEventListener('click',function(){ legs.splice(+this.dataset.del,1); renderLegs(); recompute(); }); });
+  }
+
+  var cv=$('chart'),ctx=cv.getContext('2d');
+  function recompute(){
+    var C=CH[round]; var lo=C.S*0.4, hi=C.S*1.6, N=140;
+    var xs=[],ys=[]; for(var i=0;i<=N;i++){ var ST=lo+(hi-lo)*i/N; xs.push(ST); ys.push(totalPL(ST)); }
+    var maxp=Math.max.apply(null,ys), maxl=Math.min.apply(null,ys);
+    // breakevens (sign changes)
+    var bes=[]; for(var i=1;i<ys.length;i++){ if((ys[i-1]<0&&ys[i]>=0)||(ys[i-1]>0&&ys[i]<=0)){ var t=Math.abs(ys[i-1])/(Math.abs(ys[i-1])+Math.abs(ys[i])); bes.push(xs[i-1]+(xs[i]-xs[i-1])*t); } }
+    $('s_prem').textContent=(netPremium()>=0?'-':'+')+money(Math.abs(netPremium()))+(netPremium()>=0?' paid':' recd');
+    $('s_maxp').textContent=maxp>1e5?'unlimited':money(maxp);
+    $('s_maxl').textContent=maxl<-1e5?'large':money(maxl);
+    $('s_be').textContent=bes.length?bes.map(function(b){return '$'+b.toFixed(0);}).join(', '):'—';
+    draw(xs,ys,C,lo,hi,maxp,maxl);
+    return {xs:xs,ys:ys,maxp:maxp,maxl:maxl,bes:bes};
+  }
+  function draw(xs,ys,C,lo,hi,maxp,maxl){
+    var W=cv.width,H=cv.height,padL=58,padR=16,padT=16,padB=30;
+    ctx.clearRect(0,0,W,H);
+    var yMax=Math.max(500, Math.min(maxp,50000)), yMin=Math.min(-500, Math.max(maxl,-50000));
+    var X=function(s){return padL+(W-padL-padR)*((s-lo)/(hi-lo));};
+    var Y=function(p){return H-padB-(H-padT-padB)*((p-yMin)/(yMax-yMin));};
+    // zero line
+    var zy=Y(0); ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(padL,zy);ctx.lineTo(W-padR,zy);ctx.stroke();
+    ctx.fillStyle='rgba(234,242,255,.4)';ctx.font='10px monospace';ctx.textAlign='right';ctx.fillText('$0',padL-6,zy+3);
+    ctx.fillText(money(yMax),padL-6,Y(yMax)+9); ctx.fillText(money(yMin),padL-6,Y(yMin)-3);
+    // current price line
+    var cx=X(C.S); ctx.strokeStyle='rgba(56,189,248,.4)';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx,padT);ctx.lineTo(cx,H-padB);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(56,189,248,.7)';ctx.textAlign='center';ctx.fillText('now $'+C.S,cx,padT+2);
+    // P&L curve, green above zero / red below via clipping segments
+    for(var i=1;i<xs.length;i++){ var x0=X(xs[i-1]),y0=Y(ys[i-1]),x1=X(xs[i]),y1=Y(ys[i]);
+      ctx.strokeStyle=(ys[i]>=0?'#2DD4BF':'#FB7185');ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke(); }
+    // x labels
+    ctx.fillStyle='rgba(234,242,255,.45)';ctx.textAlign='center';
+    ctx.fillText('$'+lo.toFixed(0),X(lo)+14,H-9);ctx.fillText('$'+hi.toFixed(0),X(hi)-14,H-9);
+    ctx.fillText('stock price at expiration →',W/2,H-9);
+    // reveal marker
+    if(window._revST!=null){ var rx=X(window._revST); ctx.strokeStyle='#FBBF24';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(rx,padT);ctx.lineTo(rx,H-padB);ctx.stroke();ctx.setLineDash([]);
+      var rp=totalPL(window._revST); ctx.fillStyle='#FBBF24';ctx.beginPath();ctx.arc(rx,Y(Math.max(yMin,Math.min(yMax,rp))),5,0,7);ctx.fill();
+      ctx.textAlign='center';ctx.fillText('close $'+window._revST.toFixed(0),rx,H-20); }
+  }
+
+  function loadRound(){
+    var C=CH[round]; locked=false; window._revST=null;
+    $('roundLbl').textContent='Challenge '+(round+1)+' of '+CH.length;
+    $('challenge').textContent=C.view;
+    $('c_s').textContent='$'+C.S; $('c_t').textContent=(C.T*12)+' mo'; $('c_v').textContent=(C.v*100).toFixed(0)+'%';
+    legs = C.ownShares ? [{type:'stock',pos:'long',K:0,qty:1}] : [];
+    $('result').textContent='Build a position, then reveal what the stock did.'; $('reveal').disabled=false; $('next').style.display='none'; $('finish').style.display='none';
+    renderLegs(); recompute();
+  }
+
+  var PRESETS={
+    call:[{type:'call',pos:'long',K:100,qty:1}],
+    put:[{type:'put',pos:'long',K:100,qty:1}],
+    straddle:[{type:'call',pos:'long',K:100,qty:1},{type:'put',pos:'long',K:100,qty:1}],
+    bull:[{type:'call',pos:'long',K:100,qty:1},{type:'call',pos:'short',K:115,qty:1}],
+    covered:[{type:'stock',pos:'long',K:0,qty:1},{type:'call',pos:'short',K:110,qty:1}],
+    collar:[{type:'stock',pos:'long',K:0,qty:1},{type:'put',pos:'long',K:95,qty:1}]
+  };
+  document.querySelectorAll('[data-preset]').forEach(function(b){ b.addEventListener('click',function(){ if(locked)return;
+    legs=JSON.parse(JSON.stringify(PRESETS[this.dataset.preset])).map(function(l){ if(l.K===100)l.K=CH[round].S; return l; }); renderLegs(); recompute(); }); });
+  $('addLeg').addEventListener('click',function(){ if(locked)return; legs.push({type:'call',pos:'long',K:CH[round].S,qty:1}); renderLegs(); recompute(); });
+
+  $('reveal').addEventListener('click',function(){
+    if(locked||legs.length===0)return; locked=true; $('reveal').disabled=true;
+    var C=CH[round];
+    // simulate S_T: lognormal with drift toward the "true" move
+    var z=(function(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);})();
+    var mu=C.drift*C.v*Math.sqrt(C.T); // push mean by drift
+    var ST=C.S*Math.exp((-.5*C.v*C.v)*C.T + C.v*Math.sqrt(C.T)*z + mu);
+    if(C.big){ ST=C.S*Math.exp((-.5*C.v*C.v)*C.T + C.v*Math.sqrt(C.T)*z*1.8); } // fatter move
+    window._revST=ST;
+    var pl=totalPL(ST); var st=recompute();
+    // score: profit good; bonus if strategy matched the view shape
+    var profitable=pl>0;
+    var pts = profitable ? Math.min(100, 40+Math.round(pl/50)) : Math.max(0, 20+Math.round(pl/80));
+    pts=Math.max(0,Math.min(100,pts));
+    score+=pts;
+    $('score').textContent=score;
+    var moveWord = ST>C.S*1.06?'rose to':(ST<C.S*0.94?'fell to':'ended near');
+    $('result').innerHTML='<b style="color:'+(profitable?'#5EEAD4':'#FB7185')+';font-size:15px;font-family:Instrument Serif,serif;">'+(profitable?'Profit: '+money(pl):'Loss: '+money(pl))+'</b>'+
+      '<div style="margin-top:8px;">The stock '+moveWord+' <b>$'+ST.toFixed(0)+'</b> at expiration. Your position returned '+money(pl)+' on a net '+(netPremium()>=0?money(netPremium())+' outlay':money(-netPremium())+' credit')+'.</div>'+
+      '<div style="margin-top:6px;color:rgba(234,242,255,.55);">'+(profitable?'Your structure paid off for this view.':'This outcome hurt your structure — try a shape whose profit zone covers where you expected the stock to go.')+'</div>'+
+      '<div style="margin-top:8px;font-family:JetBrains Mono,monospace;color:#5EEAD4;">+'+pts+' points</div>';
+    if(round<CH.length-1)$('next').style.display=''; else $('finish').style.display='';
+    window._finResult={ score:Math.max(0,Math.min(1,score/(CH.length*100))), outcome:(pl>0?'win':'loss'), detail:{round:round+1,score:score,lastPL:Math.round(pl),
+      explain:'Each round awards points for ending profitable and for matching the right option structure to the view. Your grade is total points \u00f7 the maximum.',
+      breakdown:[{label:'Rounds played',value:(round+1)+' / '+CH.length},{label:'Total points',value:score+' / '+(CH.length*100)},{label:'Last round P/L',value:money(pl)},{label:'Score',value:Math.round(Math.max(0,Math.min(1,score/(CH.length*100)))*100)+'%'}] } };
+  });
+  $('next').addEventListener('click',function(){ round++; loadRound(); window.scrollTo({top:0,behavior:'smooth'}); });
+  $('finish').addEventListener('click',function(){ if(window.FINProgress&&window.FINProgress.reportArenaNow){window.FINProgress.reportArenaNow();} $('finish').style.display='none'; $('savedNote').style.display=''; });
+
+  if(window.FINProgress&&window.FINProgress.initArena){ window.FINProgress.initArena({slug:'options',getSession:function(){return window._finResult||null;}}); }
+  loadRound();
+})();
+</script>
+</body>
+</html>

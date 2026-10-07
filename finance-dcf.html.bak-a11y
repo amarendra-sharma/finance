@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valuation Arena — MacroNations Finance</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Instrument Serif','serif'] }
+  } } };
+</script>
+<style>
+  html,body{background:#070C16;}
+  body{font-family:'Inter',system-ui,sans-serif;color:#EAF2FF;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  ::selection{background:rgba(37,99,235,.35);color:#fff;}
+  .arena-bg{position:fixed;inset:0;z-index:-2;background:#060A12;overflow:hidden;}
+  .arena-bg::before{content:'';position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,#1D4ED8 0%,transparent 65%);filter:blur(140px);opacity:.30;top:-25vw;left:40%;}
+  .arena-bg::after{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,#7C3AED 0%,transparent 65%);filter:blur(150px);opacity:.18;bottom:-20vw;left:-10vw;}
+  ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:5px;}
+  .card{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08);border-radius:18px;backdrop-filter:blur(12px);}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:11px;transition:transform .14s,box-shadow .25s,background .15s;}
+  .btn-primary{background:linear-gradient(135deg,#2563EB,#38BDF8);color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.55),inset 0 1px 0 rgba(255,255,255,.2);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#EAF2FF;border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{background:rgba(255,255,255,.09);}
+  input[type=range]{accent-color:#2DD4BF;width:100%;}
+  .field-val{font-family:'JetBrains Mono',monospace;color:#5EEAD4;font-weight:700;}
+  .stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+  .stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(234,242,255,.5);font-weight:600;}
+  .stat .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:19px;line-height:1.1;margin-top:4px;}
+  .verdict-btn{border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:12px;padding:12px;cursor:pointer;transition:all .15s;font-weight:600;font-size:14px;}
+  .verdict-btn:hover{background:rgba(255,255,255,.07);}
+  .verdict-btn.sel{border-color:#2DD4BF;background:rgba(45,212,191,.12);color:#5EEAD4;}
+  .pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(234,242,255,.75);}
+  .glow-dot{width:8px;height:8px;border-radius:50%;background:#2DD4BF;box-shadow:0 0 10px #2DD4BF;display:inline-block;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  table.dcf{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:12px;}
+  table.dcf th{color:rgba(234,242,255,.5);text-align:right;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.12);font-size:10px;text-transform:uppercase;letter-spacing:.04em;}
+  table.dcf td{text-align:right;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.06);}
+  table.dcf td:first-child,table.dcf th:first-child{text-align:left;color:rgba(234,242,255,.6);}
+  .reveal{animation:rin .4s cubic-bezier(.16,1,.3,1);}
+  @keyframes rin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  a.backlink{color:rgba(234,242,255,.6);text-decoration:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+  a.backlink:hover{color:#fff;background:rgba(255,255,255,.08);}
+</style>
+</head>
+<body>
+<div class="arena-bg"></div>
+<div class="max-w-6xl mx-auto px-5 py-6">
+
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <a href="finance-curriculum.html#chapter-6" class="backlink inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]">&larr; Back to book</a>
+      <span class="pill" style="border-color:rgba(45,212,191,.4);color:#5EEAD4;">MacroNations · Finance</span>
+    </div>
+    <div class="text-[12px]" style="color:rgba(234,242,255,.5);"><span class="glow-dot"></span> &nbsp;Valuation Arena · <span id="roundLbl">Company 1 of 4</span></div>
+  </div>
+
+  <div class="mb-6">
+    <div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1.05;">The Valuation Arena</div>
+    <div class="mt-2 text-[15px] max-w-2xl" style="color:rgba(234,242,255,.72);line-height:1.6;">Four companies, one job: figure out what each is really worth. Build a discounted-cash-flow model with your own assumptions, compare your intrinsic value to the market price, and make the call — <b>Buy</b>, <b>Hold</b>, or <b>Sell</b>. Then the market reveals fair value and scores you.</div>
+  </div>
+
+  <div class="grid md:grid-cols-[1fr_360px] gap-5">
+
+    <!-- LEFT: company + model -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="flex items-start justify-between flex-wrap gap-3">
+          <div>
+            <div class="text-[11px] uppercase tracking-wider font-semibold" style="color:#38BDF8;" id="sector">Sector</div>
+            <div style="font-family:'Instrument Serif',serif;font-size:30px;line-height:1.1;" id="cname">Company</div>
+            <div class="text-[13px] mt-1" style="color:rgba(234,242,255,.6);" id="cdesc">—</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[11px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Market price</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:#FBBF24;" id="price">$0</div>
+            <div class="text-[11px]" style="color:rgba(234,242,255,.5);" id="shares">— shares</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+          <div class="stat"><div class="lbl">Revenue (TTM)</div><div class="val" id="rev">$0</div></div>
+          <div class="stat"><div class="lbl">Recent growth</div><div class="val" id="hist_g">0%</div></div>
+          <div class="stat"><div class="lbl">FCF margin now</div><div class="val" id="hist_m">0%</div></div>
+          <div class="stat"><div class="lbl">Net debt</div><div class="val" id="debt">$0</div></div>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <div class="text-[11px] uppercase tracking-wider font-semibold mb-3" style="color:#38BDF8;">Your 5-year DCF model</div>
+        <table class="dcf" id="dcfTable">
+          <thead><tr><th>$M</th><th>Y1</th><th>Y2</th><th>Y3</th><th>Y4</th><th>Y5</th><th>Term.</th></tr></thead>
+          <tbody id="dcfBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT: assumptions + verdict -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="text-[11px] uppercase tracking-wider font-semibold mb-4" style="color:#38BDF8;">Your assumptions</div>
+        <div class="mb-4"><div class="flex justify-between text-[13px] mb-1"><span>Revenue growth / yr</span><span class="field-val" id="v_g">10%</span></div><input type="range" id="g" min="-5" max="40" step="1" value="10"></div>
+        <div class="mb-4"><div class="flex justify-between text-[13px] mb-1"><span>FCF margin</span><span class="field-val" id="v_m">15%</span></div><input type="range" id="m" min="2" max="40" step="1" value="15"></div>
+        <div class="mb-4"><div class="flex justify-between text-[13px] mb-1"><span>Discount rate (WACC)</span><span class="field-val" id="v_w">9%</span></div><input type="range" id="w" min="5" max="16" step="0.5" value="9"></div>
+        <div class="mb-2"><div class="flex justify-between text-[13px] mb-1"><span>Terminal growth</span><span class="field-val" id="v_t">2.5%</span></div><input type="range" id="t" min="0" max="4" step="0.25" value="2.5"></div>
+        <div class="text-[11px]" style="color:rgba(234,242,255,.4);">Terminal growth must stay below your discount rate — it's the economy's long-run pace, ~2–3%.</div>
+      </div>
+
+      <div class="card p-5">
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="stat"><div class="lbl">Your value / share</div><div class="val" id="iv" style="color:#5EEAD4;">$0</div></div>
+          <div class="stat"><div class="lbl">vs market</div><div class="val" id="gap" style="color:#EAF2FF;">—</div></div>
+        </div>
+        <div class="text-[12px] mb-2" style="color:rgba(234,242,255,.6);">Your call on this stock:</div>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <div class="verdict-btn text-center" data-v="buy">Buy</div>
+          <div class="verdict-btn text-center" data-v="hold">Hold</div>
+          <div class="verdict-btn text-center" data-v="sell">Sell</div>
+        </div>
+        <button class="btn btn-primary w-full py-3 text-[14px]" id="lock" disabled>Lock in &amp; reveal fair value</button>
+      </div>
+
+      <div class="card p-5" id="revealCard" style="display:none;">
+        <div class="text-[11px] uppercase tracking-wider font-semibold mb-3" style="color:#FBBF24;">Reveal</div>
+        <div id="reveal" class="text-[13px]" style="color:rgba(234,242,255,.7);line-height:1.6;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- scoreboard -->
+  <div class="card p-5 mt-5">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-5">
+        <div><div class="text-[10px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Round score</div><div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#5EEAD4;" id="score">0</div></div>
+        <div><div class="text-[10px] uppercase tracking-wider" style="color:rgba(234,242,255,.5);">Correct calls</div><div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;" id="calls">0 / 0</div></div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="btn btn-ghost px-4 py-3 text-[13px]" id="next" style="display:none;">Next company &rarr;</button>
+        <button class="btn btn-primary px-5 py-3 text-[14px]" id="finish" style="display:none;">✓ Finish &amp; save score</button>
+      </div>
+    </div>
+    <div id="finishNote" class="text-[12px] mt-2" style="display:none;color:#5EEAD4;">Saved to your progress. Refresh to play a new set of companies.</div>
+  </div>
+
+  <div class="mt-6 text-[12px] text-center" style="color:rgba(234,242,255,.4);">A teaching model. Real DCF valuation involves far more detail — but the logic is exactly this: forecast cash flows, discount them, compare to price.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='dcf';</script>
+<script src="fin-gate.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.getElementById(s);};
+  var money=function(x){return (x<0?'-$':'$')+Math.abs(Math.round(x)).toLocaleString('en-US');};
+  var moneyM=function(x){return '$'+Math.round(x).toLocaleString('en-US')+'M';};
+
+  // Company universe: fundamentals + the "true" fair assumptions the market reveal uses.
+  var COMPANIES=[
+    {name:'Cascade Freight',sector:'Industrials',desc:'Regional freight & warehousing. Steady, cyclical, cash-generative.',rev:4200,shares:210,debt:900,histG:6,histM:11,tG:6,tM:12,tW:9,tT:2.5,mis:0.82},
+    {name:'Lumen Health',sector:'Healthcare',desc:'Diagnostics platform growing fast with expanding margins.',rev:1300,shares:120,debt:-200,histG:22,histM:14,tG:18,tM:20,tW:10.5,tT:3,mis:1.28},
+    {name:'Atlas Foods',sector:'Consumer staples',desc:'Packaged foods. Slow growth, fat and dependable cash flows.',rev:9800,shares:540,debt:2600,histG:3,histM:13,tG:3,tM:13,tW:7.5,tT:2.5,mis:1.05},
+    {name:'Vantze Cloud',sector:'Technology',desc:'Enterprise software. High growth, high multiple, richly priced.',rev:2100,shares:180,debt:-500,histG:34,histM:16,tG:24,tM:26,tW:11,tT:3,mis:1.55}
+  ];
+  // shuffle a little each load
+  COMPANIES.sort(function(){return Math.random()-0.5;});
+
+  function fairValuePerShare(c, g, m, w, t){
+    // 5yr FCF then Gordon terminal; enterprise value less net debt / shares
+    g=g/100; m=m/100; w=w/100; t=t/100;
+    var rev=c.rev, pv=0, fcf5=0;
+    for(var i=1;i<=5;i++){ rev=rev*(1+g); var fcf=rev*m; fcf5=fcf; pv+=fcf/Math.pow(1+w,i); }
+    var tv=(w>t)? fcf5*(1+t)/(w-t) : fcf5*40; // guard
+    pv+=tv/Math.pow(1+w,5);
+    var equity=pv - c.debt;              // enterprise value minus net debt
+    return equity/c.shares;
+  }
+
+  var round=0, score=0, correct=0, verdict=null, locked=false;
+
+  function loadCompany(){
+    var c=COMPANIES[round]; verdict=null; locked=false;
+    $('roundLbl').textContent='Company '+(round+1)+' of '+COMPANIES.length;
+    $('sector').textContent=c.sector; $('cname').textContent=c.name; $('cdesc').textContent=c.desc;
+    $('rev').textContent=moneyM(c.rev); $('hist_g').textContent=c.histG+'%'; $('hist_m').textContent=c.histM+'%';
+    $('debt').textContent=(c.debt<0?'-':'')+moneyM(Math.abs(c.debt)); $('shares').textContent=c.shares+'M shares';
+    // fair value (hidden truth) and market price with a mispricing factor
+    c._fair=fairValuePerShare(c,c.tG,c.tM,c.tW,c.tT);
+    c._price=c._fair*c.mis;
+    $('price').textContent='$'+c._price.toFixed(2);
+    // reset controls to neutral-ish defaults
+    $('g').value=Math.round(c.histG*0.8); $('m').value=c.histM; $('w').value=9; $('t').value=2.5;
+    document.querySelectorAll('.verdict-btn').forEach(function(b){b.classList.remove('sel');});
+    $('lock').disabled=true; $('revealCard').style.display='none'; $('next').style.display='none'; $('finish').style.display='none';
+    recompute();
+  }
+
+  function recompute(){
+    var c=COMPANIES[round];
+    var g=parseFloat($('g').value),m=parseFloat($('m').value),w=parseFloat($('w').value),t=parseFloat($('t').value);
+    $('v_g').textContent=g+'%'; $('v_m').textContent=m+'%'; $('v_w').textContent=w+'%'; $('v_t').textContent=t+'%';
+    // build table
+    var rev=c.rev, gg=g/100, mm=m/100, ww=w/100, tt=t/100;
+    var revs=[],fcfs=[],pvs=[]; var fcf5=0;
+    for(var i=1;i<=5;i++){ rev=rev*(1+gg); var fcf=rev*mm; fcf5=fcf; revs.push(rev); fcfs.push(fcf); pvs.push(fcf/Math.pow(1+ww,i)); }
+    var tv=(ww>tt)?fcf5*(1+tt)/(ww-tt):fcf5*40;
+    var tvpv=tv/Math.pow(1+ww,5);
+    var ev=pvs.reduce(function(a,b){return a+b;},0)+tvpv;
+    var equity=ev-c.debt; var perShare=equity/c.shares;
+    c._iv=perShare;
+    // render rows
+    var rowFcf='<tr><td>Free cash flow</td>'+fcfs.map(function(f){return '<td>'+Math.round(f)+'</td>';}).join('')+'<td>'+Math.round(tv)+'</td></tr>';
+    var rowPv='<tr><td>Discounted</td>'+pvs.map(function(p){return '<td>'+Math.round(p)+'</td>';}).join('')+'<td>'+Math.round(tvpv)+'</td></tr>';
+    $('dcfBody').innerHTML=rowFcf+rowPv;
+    $('iv').textContent='$'+perShare.toFixed(2);
+    var gap=(perShare-c._price)/c._price*100;
+    $('gap').textContent=(gap>=0?'+':'')+gap.toFixed(0)+'%';
+    $('gap').style.color = gap>8?'#5EEAD4':(gap<-8?'#FB7185':'#FBBF24');
+  }
+
+  ['g','m','w','t'].forEach(function(id){ $(id).addEventListener('input',function(){ if(!locked) recompute(); }); });
+  document.querySelectorAll('.verdict-btn').forEach(function(b){ b.addEventListener('click',function(){ if(locked)return; document.querySelectorAll('.verdict-btn').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); verdict=b.dataset.v; $('lock').disabled=false; }); });
+
+  $('lock').addEventListener('click',function(){
+    if(locked||!verdict)return; locked=true;
+    var c=COMPANIES[round];
+    var trueGap=(c._fair-c._price)/c._price; // >0 => undervalued (should buy)
+    var truth = trueGap>0.08?'buy':(trueGap<-0.08?'sell':'hold');
+    var ok=(verdict===truth);
+    // closeness of the student's intrinsic value to the fair value
+    var closeErr=Math.abs(c._iv-c._fair)/c._fair;
+    var closeScore=Math.max(0, 1-closeErr/0.5); // within 50% => partial
+    var pts=(ok?60:0)+Math.round(closeScore*40);
+    score+=pts; if(ok)correct++;
+    var dir = trueGap>0.08?'undervalued':(trueGap<-0.08?'overvalued':'fairly valued');
+    $('reveal').innerHTML=
+      '<div><b style="color:'+(ok?'#5EEAD4':'#FB7185')+';font-size:15px;font-family:Instrument Serif,serif;">'+(ok?'Correct call — '+verdict.toUpperCase():'Missed it — the call was '+truth.toUpperCase())+'</b></div>'+
+      '<div style="margin-top:8px;">Fair value was about <b style="color:#38BDF8;">$'+c._fair.toFixed(2)+'</b> vs a market price of <b style="color:#FBBF24;">$'+c._price.toFixed(2)+'</b>, so the stock was <b>'+dir+'</b>.</div>'+
+      '<div style="margin-top:8px;color:rgba(234,242,255,.6);">Your DCF landed at $'+c._iv.toFixed(2)+' — '+(closeErr<0.15?'very close to fair value.':(closeErr<0.35?'in the right neighborhood.':'off by a fair bit; check your growth and discount-rate assumptions.'))+'</div>'+
+      '<div style="margin-top:10px;font-family:JetBrains Mono,monospace;color:#5EEAD4;">+'+pts+' points ('+(ok?'60 call':'0 call')+' + '+Math.round(closeScore*40)+' accuracy)</div>';
+    $('revealCard').style.display=''; $('lock').disabled=true;
+    $('score').textContent=score; $('calls').textContent=correct+' / '+(round+1);
+    if(round<COMPANIES.length-1){ $('next').style.display=''; } else { $('finish').style.display=''; }
+    // update running result for the auto-reporter
+    window._finResult={ score:Math.max(0,Math.min(1, score/(COMPANIES.length*100))), outcome: (correct> COMPANIES.length/2?'win':'completed'),
+      detail:{ round:round+1, score:score, correctCalls:correct,
+      explain:'Each company is worth up to 100 points: 60 for the right over/under-valued call, up to 40 for how close your DCF value was to fair value. Your grade is total points \u00f7 the maximum.',
+      breakdown:[{label:'Correct calls',value:correct+' / '+COMPANIES.length},{label:'Total points',value:score+' / '+(COMPANIES.length*100)},{label:'Score',value:Math.round(Math.max(0,Math.min(1,score/(COMPANIES.length*100)))*100)+'%'}] } };
+  });
+
+  $('next').addEventListener('click',function(){ round++; loadCompany(); window.scrollTo({top:0,behavior:'smooth'}); });
+  $('finish').addEventListener('click',function(){
+    if(window.FINProgress && window.FINProgress.reportArenaNow){ window.FINProgress.reportArenaNow(); }
+    $('finish').style.display='none'; $('finishNote').style.display='';
+  });
+
+  if(window.FINProgress && window.FINProgress.initArena){
+    window.FINProgress.initArena({ slug:'dcf', getSession:function(){ return window._finResult||null; } });
+  }
+
+  loadCompany();
+})();
+</script>
+</body>
+</html>

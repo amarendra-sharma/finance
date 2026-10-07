@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Compounding Lab — MacroNations Finance</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Instrument Serif','serif'] },
+    colors: { ink:{950:'#070C16',900:'#0B1220',800:'#111a2e',700:'#18233d'}, sky:{glow:'#38BDF8',primary:'#2563EB',deep:'#1D4ED8'}, teal:{DEFAULT:'#14B8A6',glow:'#2DD4BF'}, gold:{DEFAULT:'#F59E0B',glow:'#FBBF24'}, rose:{glow:'#FB7185'} }
+  } } };
+</script>
+<style>
+  html,body{background:#070C16;}
+  body{font-family:'Inter',system-ui,sans-serif;color:#EAF2FF;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
+  ::selection{background:rgba(37,99,235,.35);color:#fff;}
+  .arena-bg{position:fixed;inset:0;z-index:-2;background:#060A12;overflow:hidden;}
+  .arena-bg::before{content:'';position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,#1D4ED8 0%,transparent 65%);filter:blur(140px);opacity:.32;top:-25vw;left:35%;}
+  .arena-bg::after{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,#0E7490 0%,transparent 65%);filter:blur(150px);opacity:.22;bottom:-20vw;left:-10vw;}
+  ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:5px;}
+  .card{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08);border-radius:18px;backdrop-filter:blur(12px);}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:11px;transition:transform .14s ease,box-shadow .25s ease,background .15s ease;}
+  .btn-primary{background:linear-gradient(135deg,#2563EB,#38BDF8);color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.55),inset 0 1px 0 rgba(255,255,255,.2);}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 14px 30px -8px rgba(37,99,235,.7);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .btn-gold{background:linear-gradient(135deg,#F59E0B,#B45309);color:#241405;box-shadow:0 8px 22px -6px rgba(245,158,11,.5),inset 0 1px 0 rgba(255,255,255,.3);}
+  .btn-gold:hover{transform:translateY(-1px);}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#EAF2FF;border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{background:rgba(255,255,255,.09);}
+  input[type=range]{accent-color:#2DD4BF;width:100%;}
+  .field-val{font-family:'JetBrains Mono',monospace;color:#5EEAD4;font-weight:700;}
+  .stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;}
+  .stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(234,242,255,.5);font-weight:600;}
+  .stat .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px;line-height:1.1;margin-top:5px;}
+  .evt{font-size:12.5px;padding:8px 12px;border-radius:9px;margin-bottom:7px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);line-height:1.4;}
+  .evt.good{border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.06);}
+  .evt.bad{border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.06);}
+  .evt.mile{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.06);}
+  .pill{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:rgba(234,242,255,.75);}
+  .glow-dot{width:8px;height:8px;border-radius:50%;background:#2DD4BF;box-shadow:0 0 10px #2DD4BF;display:inline-block;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .reveal{animation:rin .4s cubic-bezier(.16,1,.3,1);}
+  @keyframes rin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  a.backlink{color:rgba(234,242,255,.6);text-decoration:none;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+  a.backlink:hover{color:#fff;background:rgba(255,255,255,.08);}
+</style>
+</head>
+<body>
+<div class="arena-bg"></div>
+
+<div class="max-w-6xl mx-auto px-5 py-6">
+
+  <!-- top bar -->
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <a href="finance-curriculum.html#chapter-3" class="backlink inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]">&larr; Back to book</a>
+      <div class="flex items-center gap-2">
+        <span class="pill" style="border-color:rgba(45,212,191,.4);color:#5EEAD4;">MacroNations · Finance</span>
+      </div>
+    </div>
+    <div class="text-[12px]" style="color:rgba(234,242,255,.5);"><span class="glow-dot"></span> &nbsp;Compounding Lab &middot; Arena 4 of 5</div>
+  </div>
+
+  <!-- hero -->
+  <div class="mb-7">
+    <div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1.05;">The Compounding Lab</div>
+    <div class="mt-2 text-[15px] max-w-2xl" style="color:rgba(234,242,255,.72);line-height:1.6;">Set your plan, then live through a lifetime of markets — good years, bad years, and the slow miracle of compounding. Your goal: reach retirement with enough. A ghost saver who started at 25 runs alongside you, so you can feel exactly what a head start is worth.</div>
+  </div>
+
+  <div class="grid md:grid-cols-[340px_1fr] gap-5">
+
+    <!-- CONTROLS -->
+    <div class="card p-5">
+      <div class="text-[11px] uppercase tracking-wider font-semibold mb-4" style="color:#38BDF8;">Your plan</div>
+
+      <div class="mb-4">
+        <div class="flex justify-between text-[13px] mb-1"><span>Current age</span><span class="field-val" id="v_age">30</span></div>
+        <input type="range" id="age" min="20" max="55" step="1" value="30">
+      </div>
+      <div class="mb-4">
+        <div class="flex justify-between text-[13px] mb-1"><span>Retirement age</span><span class="field-val" id="v_ret">65</span></div>
+        <input type="range" id="ret" min="55" max="75" step="1" value="65">
+      </div>
+      <div class="mb-4">
+        <div class="flex justify-between text-[13px] mb-1"><span>Monthly contribution</span><span class="field-val" id="v_pmt">$400</span></div>
+        <input type="range" id="pmt" min="0" max="2000" step="25" value="400">
+      </div>
+      <div class="mb-4">
+        <div class="flex justify-between text-[13px] mb-1"><span>Starting balance</span><span class="field-val" id="v_pv">$5,000</span></div>
+        <input type="range" id="pv" min="0" max="100000" step="1000" value="5000">
+      </div>
+      <div class="mb-4">
+        <div class="flex justify-between text-[13px] mb-1"><span>Expected return</span><span class="field-val" id="v_ret2">7.0%</span></div>
+        <input type="range" id="mu" min="1" max="12" step="0.5" value="7">
+      </div>
+      <div class="mb-4">
+        <div class="flex justify-between text-[13px] mb-1"><span>Market volatility</span><span class="field-val" id="v_vol">Medium</span></div>
+        <input type="range" id="vol" min="0" max="25" step="1" value="14">
+        <div class="text-[11px] mt-1" style="color:rgba(234,242,255,.45);">How wild the good and bad years get.</div>
+      </div>
+      <div class="mb-5">
+        <div class="flex justify-between text-[13px] mb-1"><span>Retirement goal</span><span class="field-val" id="v_goal">$1,000,000</span></div>
+        <input type="range" id="goal" min="250000" max="3000000" step="50000" value="1000000">
+      </div>
+
+      <button class="btn btn-primary w-full py-3 text-[14px] mb-2" id="run">▶ Run my lifetime</button>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="btn btn-ghost py-2 text-[13px]" id="fast">Skip animation</button>
+        <button class="btn btn-ghost py-2 text-[13px]" id="reset">Reset</button>
+      </div>
+    </div>
+
+    <!-- SIMULATION -->
+    <div class="flex flex-col gap-5">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div class="text-[13px]" style="color:rgba(234,242,255,.7);">Wealth over your lifetime</div>
+          <div class="flex items-center gap-4 text-[11px]" style="color:rgba(234,242,255,.6);">
+            <span class="inline-flex items-center gap-1.5"><span style="width:14px;height:3px;background:#2DD4BF;display:inline-block;border-radius:2px;"></span> You</span>
+            <span class="inline-flex items-center gap-1.5"><span style="width:14px;height:3px;background:#FBBF24;display:inline-block;border-radius:2px;opacity:.9;"></span> Contributions</span>
+            <span class="inline-flex items-center gap-1.5"><span style="width:14px;height:0;border-top:2px dashed #38BDF8;display:inline-block;"></span> Started at 25</span>
+          </div>
+        </div>
+        <canvas id="chart" width="820" height="330" style="width:100%;height:auto;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);"></canvas>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+          <div class="stat"><div class="lbl">Year / Age</div><div class="val" id="s_age" style="color:#EAF2FF;">—</div></div>
+          <div class="stat"><div class="lbl">Your balance</div><div class="val" id="s_bal" style="color:#5EEAD4;">$0</div></div>
+          <div class="stat"><div class="lbl">You contributed</div><div class="val" id="s_con" style="color:#FBBF24;">$0</div></div>
+          <div class="stat"><div class="lbl">Growth (interest)</div><div class="val" id="s_int" style="color:#38BDF8;">$0</div></div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="card p-5">
+          <div class="text-[11px] uppercase tracking-wider font-semibold mb-3" style="color:#FBBF24;">Market log</div>
+          <div id="log" style="max-height:190px;overflow:auto;">
+            <div class="text-[13px]" style="color:rgba(234,242,255,.45);">Press <b style="color:#EAF2FF;">Run my lifetime</b> to begin. Each year draws a real-ish market return around your expected average.</div>
+          </div>
+        </div>
+        <div class="card p-5" id="resultCard">
+          <div class="text-[11px] uppercase tracking-wider font-semibold mb-3" style="color:#2DD4BF;">Result</div>
+          <div id="result" class="text-[13px]" style="color:rgba(234,242,255,.55);line-height:1.6;">Your final balance, whether you hit your goal, and how you compare to the head-start saver will appear here.</div>
+          <button class="btn btn-gold w-full py-3 text-[14px] mt-4" id="save" style="display:none;">✓ Finish &amp; save my score</button>
+          <div id="savedNote" class="text-[12px] mt-2" style="display:none;color:#5EEAD4;">Saved to your progress. Try a different plan and beat it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 text-[12px] text-center" style="color:rgba(234,242,255,.4);">Returns are simulated (a random draw each year around your expected average) — a teaching model, not investment advice.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="fin-progress.js"></script>
+<script>window.FIN_ARENA_SLUG='retirement';</script>
+<script src="fin-gate.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.getElementById(s);};
+  var fmt=function(x){return (x<0?'-':'')+'$'+Math.abs(Math.round(x)).toLocaleString('en-US');};
+  var fmtK=function(x){ if(Math.abs(x)>=1e6) return '$'+(x/1e6).toFixed(2)+'M'; if(Math.abs(x)>=1e3) return '$'+Math.round(x/1e3)+'k'; return '$'+Math.round(x); };
+
+  var P={age:30,ret:65,pmt:400,pv:5000,mu:7,vol:14,goal:1000000};
+  var lastRun=null, anim=null;
+
+  function volLabel(v){ return v<=6?'Low':v<=16?'Medium':'High'; }
+  function syncLabels(){
+    $('v_age').textContent=P.age; $('v_ret').textContent=P.ret; $('v_pmt').textContent=fmt(P.pmt);
+    $('v_pv').textContent=fmt(P.pv); $('v_ret2').textContent=P.mu.toFixed(1)+'%'; $('v_vol').textContent=volLabel(P.vol);
+    $('v_goal').textContent=fmt(P.goal);
+  }
+  [['age','age'],['ret','ret'],['pmt','pmt'],['pv','pv'],['mu','mu'],['vol','vol'],['goal','goal']].forEach(function(pair){
+    $(pair[0]).addEventListener('input',function(){ P[pair[1]]=parseFloat(this.value); if(P.ret<=P.age){P.ret=P.age+1;$('ret').value=P.ret;} syncLabels(); });
+  });
+
+  // Box-Muller normal
+  function randn(){ var u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+  // Simulate a wealth path. contrib annual = pmt*12. Returns {years, bal[], contribCum[], steady[], rets[]}
+  function simulate(startAge, endAge, pv, pmt, mu, vol){
+    var years=endAge-startAge; var bal=[pv], steady=[pv], contribCum=[0], rets=[];
+    var b=pv, s=pv, cc=0; var annual=pmt*12; var m=mu/100, sd=vol/100;
+    for(var i=1;i<=years;i++){
+      var r=m+sd*randn(); if(r<-0.6)r=-0.6; if(r>0.9)r=0.9;
+      b=b*(1+r)+annual; s=s*(1+m)+annual; cc+=annual;
+      rets.push(r); bal.push(b); steady.push(s); contribCum.push(cc);
+    }
+    return {years:years,bal:bal,steady:steady,contribCum:contribCum,rets:rets};
+  }
+
+  // chart
+  var cv=$('chart'), ctx=cv.getContext('2d');
+  function draw(state){
+    var W=cv.width,H=cv.height,padL=64,padR=18,padT=16,padB=30;
+    ctx.clearRect(0,0,W,H);
+    if(!state){ return; }
+    var upTo=state.upTo;
+    var maxY=Math.max(state.goal*1.05, Math.max.apply(null,state.you.bal), Math.max.apply(null, state.ghost?state.ghost.bal:[0]))||1;
+    var n=state.you.bal.length;
+    var X=function(i){return padL+(W-padL-padR)*(n<=1?0:i/(n-1));};
+    var Y=function(v){return H-padB-(H-padT-padB)*(v/maxY);};
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.fillStyle='rgba(234,242,255,.45)';ctx.font='10px monospace';ctx.textAlign='right';
+    for(var g=0;g<=4;g++){var v=maxY*g/4,yy=Y(v);ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(W-padR,yy);ctx.stroke();ctx.fillText(fmtK(v),padL-6,yy+3);}
+    // goal line
+    var gy=Y(state.goal); ctx.strokeStyle='rgba(251,191,36,.55)';ctx.setLineDash([6,5]);ctx.beginPath();ctx.moveTo(padL,gy);ctx.lineTo(W-padR,gy);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(251,191,36,.8)';ctx.textAlign='left';ctx.fillText('goal '+fmtK(state.goal),padL+4,gy-5);
+    function series(arr,color,width,dash,fill){
+      ctx.beginPath(); for(var i=0;i<=upTo&&i<arr.length;i++){var x=X(i),y=Y(arr[i]);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      if(fill){var li=Math.min(upTo,arr.length-1);ctx.lineTo(X(li),Y(0));ctx.lineTo(X(0),Y(0));ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+        ctx.beginPath();for(var j=0;j<=upTo&&j<arr.length;j++){var x2=X(j),y2=Y(arr[j]);j?ctx.lineTo(x2,y2):ctx.moveTo(x2,y2);}}
+      ctx.strokeStyle=color;ctx.lineWidth=width;if(dash)ctx.setLineDash(dash);else ctx.setLineDash([]);ctx.stroke();ctx.setLineDash([]);
+    }
+    if(state.ghost) series(state.ghost.bal,'rgba(56,189,248,.8)',2,[6,4]);
+    series(state.you.contribCum,'rgba(251,191,36,.85)',1.8);
+    series(state.you.bal,'#2DD4BF',2.8,null,'rgba(45,212,191,.10)');
+    // x labels
+    ctx.fillStyle='rgba(234,242,255,.45)';ctx.textAlign='center';
+    ctx.fillText('age '+state.startAge,X(0),H-9);
+    ctx.fillText('age '+state.endAge,X(n-1),H-9);
+    // marker dot at current
+    var ci=Math.min(upTo,n-1); ctx.fillStyle='#5EEAD4';ctx.beginPath();ctx.arc(X(ci),Y(state.you.bal[ci]),4,0,7);ctx.fill();
+  }
+
+  function logEvt(html,cls){ var d=document.createElement('div'); d.className='evt '+(cls||'')+' reveal'; d.innerHTML=html; $('log').appendChild(d); $('log').scrollTop=$('log').scrollHeight; }
+
+  function run(fast){
+    if(anim){ cancelAnimationFrame(anim); anim=null; }
+    $('log').innerHTML=''; $('result').innerHTML=''; $('save').style.display='none'; $('savedNote').style.display='none';
+    var you=simulate(P.age,P.ret,P.pv,P.pmt,P.mu,P.vol);
+    var ghost=(P.age>25)?simulate(25,P.ret,P.pv,P.pmt,P.mu,0):null; // steady head-start saver from 25
+    // align ghost length to full timeline for drawing: ghost starts at 25, so it's longer; we plot it on its own age axis mapped to same span
+    var state={you:you,ghost:ghost?padGhost(ghost,you.bal.length,P.age):null,goal:P.goal,startAge:P.age,endAge:P.ret,upTo:0};
+    lastRun={you:you,ghost:ghost,state:state};
+    var n=you.bal.length;
+    var startCal=2026;
+    function step(){
+      var i=state.upTo;
+      var age=P.age+i, contrib=you.contribCum[i], bal=you.bal[i], intr=bal-P.pv-contrib;
+      $('s_age').textContent=age; $('s_bal').textContent=fmt(bal); $('s_con').textContent=fmt(contrib); $('s_int').textContent=fmt(intr);
+      if(i>0){ var r=you.rets[i-1];
+        if(r<=-0.15) logEvt('<b>'+(startCal+i)+' · age '+age+'</b> — market crash '+Math.round(r*100)+'%. Balance '+fmt(bal)+'.','bad');
+        else if(r>=0.22) logEvt('<b>'+(startCal+i)+' · age '+age+'</b> — boom year +'+Math.round(r*100)+'%! Balance '+fmt(bal)+'.','good');
+        [100000,250000,500000,1000000,2000000].forEach(function(mile){ if(bal>=mile && you.bal[i-1]<mile){ logEvt('<b>🏁 '+fmtK(mile)+'</b> crossed at age '+age+'.','mile'); } });
+      }
+      draw(state);
+      if(state.upTo<n-1){ state.upTo++; anim=fast?null:requestAnimationFrame(step); if(fast){ while(state.upTo<n-1){ state.upTo++; } finishReveal(you,ghost); draw(state); } }
+      else { finishReveal(you,ghost); }
+    }
+    if(fast){ state.upTo=n-1; draw(state);
+      var age=P.ret; $('s_age').textContent=age; $('s_bal').textContent=fmt(you.bal[n-1]); $('s_con').textContent=fmt(you.contribCum[n-1]); $('s_int').textContent=fmt(you.bal[n-1]-P.pv-you.contribCum[n-1]);
+      finishReveal(you,ghost);
+    } else { step(); }
+  }
+
+  // pad/resample ghost (which spans 25..ret) onto the you-timeline length for overlay
+  function padGhost(ghost,youLen,youStart){
+    // ghost.bal indexes are ages 25..ret; we want the segment aligned so both end at ret.
+    var g=ghost.bal; var out=[]; var offset=g.length-youLen; if(offset<0)offset=0;
+    for(var i=0;i<youLen;i++){ out.push(g[Math.min(g.length-1,offset+i)]); }
+    return {bal:out};
+  }
+
+  function finishReveal(you,ghost){
+    var n=you.bal.length; var final=you.bal[n-1]; var contrib=you.contribCum[n-1]; var intr=final-P.pv-contrib;
+    var real=final/Math.pow(1.03, P.ret-P.age); // rough real value at 3% inflation
+    var reached=final>=P.goal;
+    var ghostFinal=ghost?ghost.bal[ghost.bal.length-1]:null;
+    var intShare=Math.round(intr/final*100);
+    var verdict = reached
+      ? '<b style="color:#5EEAD4;font-size:16px;font-family:Instrument Serif,serif;">You made it. '+fmt(final)+' at '+P.ret+'.</b>'
+      : '<b style="color:#FBBF24;font-size:16px;font-family:Instrument Serif,serif;">Short of goal: '+fmt(final)+' vs '+fmt(P.goal)+'.</b>';
+    var ghostLine = ghost
+      ? '<div style="margin-top:8px;">A saver who started the very same plan at <b>25</b> instead of '+P.age+' would have about <b style="color:#38BDF8;">'+fmt(ghostFinal)+'</b> — '+(ghostFinal>final?('roughly '+ (ghostFinal/final).toFixed(1)+'× your total'):'similar')+'. That gap is the price of waiting.</div>'
+      : '<div style="margin-top:8px;">You started at 25 — the best possible head start. Compounding had maximum time to work.</div>';
+    $('result').innerHTML = verdict +
+      '<div style="margin-top:10px;">Of your '+fmt(final)+', you personally contributed <b style="color:#FBBF24;">'+fmt(contrib+P.pv)+'</b>; the other <b style="color:#38BDF8;">'+fmt(intr)+'</b> ('+intShare+'%) is pure growth — interest on interest.</div>' +
+      '<div style="margin-top:8px;color:rgba(234,242,255,.6);">In today\'s purchasing power (3% inflation), that\'s about <b>'+fmt(real)+'</b>.</div>' +
+      ghostLine;
+    // score for progress
+    var score=Math.max(0,Math.min(1, final/P.goal));
+    window._finResult={ score:score, outcome: reached?'reached':'short',
+      detail:{ final:Math.round(final), contributed:Math.round(contrib+P.pv), growth:Math.round(intr), startAge:P.age, retireAge:P.ret, monthly:P.pmt, expReturn:P.mu, goal:P.goal, realValue:Math.round(real),
+      explain:'Your score is how close your nest egg came to the goal: final balance \u00f7 goal (capped at 100%).',
+      breakdown:[{label:'Final balance',value:fmt(final)},{label:'Goal',value:fmt(P.goal)},{label:'You contributed',value:fmt(contrib+P.pv)},{label:'Growth (interest on interest)',value:fmt(intr)},{label:'Score = final \u00f7 goal',value:Math.round(score*100)+'%'}] } };
+    $('save').style.display='';
+  }
+
+  $('run').addEventListener('click',function(){ run(false); });
+  $('fast').addEventListener('click',function(){ run(true); });
+  $('reset').addEventListener('click',function(){ P={age:30,ret:65,pmt:400,pv:5000,mu:7,vol:14,goal:1000000};
+    ['age','ret','pmt','pv','mu','vol','goal'].forEach(function(id){ $(id).value=P[id==='mu'?'mu':id]; }); $('mu').value=P.mu;
+    syncLabels(); draw(null); ctx.clearRect(0,0,cv.width,cv.height);
+    $('s_age').textContent='—';$('s_bal').textContent='$0';$('s_con').textContent='$0';$('s_int').textContent='$0';
+    $('log').innerHTML='<div class="text-[13px]" style="color:rgba(234,242,255,.45);">Press <b style="color:#EAF2FF;">Run my lifetime</b> to begin.</div>';
+    $('result').innerHTML='Your final balance and comparison will appear here.'; $('save').style.display='none'; $('savedNote').style.display='none';
+  });
+  $('save').addEventListener('click',function(){
+    if(window.FINProgress && window.FINProgress.reportArenaNow && window._finResult){
+      window.FINProgress.reportArenaNow();
+    }
+    $('save').style.display='none'; $('savedNote').style.display='';
+  });
+
+  // arena auto-reporter registration
+  if(window.FINProgress && window.FINProgress.initArena){
+    window.FINProgress.initArena({ slug:'retirement', getSession:function(){ return window._finResult||null; } });
+  }
+
+  syncLabels(); draw(null);
+})();
+</script>
+</body>
+</html>
